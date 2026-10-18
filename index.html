@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"><title>Releveu instalații · 17.10, 13:45</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style id="app-css">
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"><title>Releveu instalații · 18.10, 21:00</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style id="app-css">
 /* Layout: one-screen field tool. Slim header, a row of rooms to jump to, the plan filling the rest,
    a big add-palette above the tab bar. Editors rise as bottom sheets on a phone and sit as a right panel on wide screens.
    Identity: blueprint ink on a cool grey drafting ground, condensed display type like a title block, mono for measurements. */
@@ -9,7 +9,7 @@
   --fl-tile:#f2e6c0; --fl-wood:#dbd2bd; --wall:#1b2530; --thin:#4f5a65;
   --work:#c9372c; --work-soft:rgba(201,55,44,.16);
   --st-ex:#1b2530; --st-ex-fg:#ffffff; --st-new:#0d8465; --st-move:#c27705; --st-del:#c22f2f; --mk-fg:#ffffff;
-  --ok:#0d8465; --warn:#b26a00; --bad:#c22f2f; --cote:#6a3fb5; --hgt:#0a6f86; --hgt-fg:#ffffff;
+  --ok:#0d8465; --warn:#b26a00; --bad:#c22f2f; --cote:#6a3fb5; --gh:#c4511f; --gh-fg:#ffffff; --hgt:#0a6f86; --hgt-fg:#ffffff;
   --scrim:rgba(15,22,30,.32); --shadow:0 12px 32px rgba(18,28,40,.20);
   --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
   --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -22,7 +22,7 @@
   --fl-tile:#38321f; --fl-wood:#2c2924; --wall:#cdd5db; --thin:#8a95a0;
   --work:#ff7266; --work-soft:rgba(255,114,102,.22);
   --st-ex:#dfe5ea; --st-ex-fg:#0f1418; --st-new:#2fc79d; --st-move:#f2a83a; --st-del:#ff6b6b; --mk-fg:#0f1418;
-  --ok:#2fc79d; --warn:#f2a83a; --bad:#ff6b6b; --cote:#b99cff; --hgt:#5ccbe0; --hgt-fg:#0f1418;
+  --ok:#2fc79d; --warn:#f2a83a; --bad:#ff6b6b; --cote:#b99cff; --gh:#ff8a5c; --gh-fg:#1a0f0a; --hgt:#5ccbe0; --hgt-fg:#0f1418;
   --scrim:rgba(0,0,0,.5); --shadow:0 12px 32px rgba(0,0,0,.5); color-scheme:dark }}
 :root[data-theme="dark"]{
   --bg:#0f1418; --surface:#171e24; --surface-2:#1f272e; --ink:#e3e8ec; --muted:#98a3ad; --line:#2c363f;
@@ -30,7 +30,7 @@
   --fl-tile:#38321f; --fl-wood:#2c2924; --wall:#cdd5db; --thin:#8a95a0;
   --work:#ff7266; --work-soft:rgba(255,114,102,.22);
   --st-ex:#dfe5ea; --st-ex-fg:#0f1418; --st-new:#2fc79d; --st-move:#f2a83a; --st-del:#ff6b6b; --mk-fg:#0f1418;
-  --ok:#2fc79d; --warn:#f2a83a; --bad:#ff6b6b; --cote:#b99cff; --hgt:#5ccbe0; --hgt-fg:#0f1418;
+  --ok:#2fc79d; --warn:#f2a83a; --bad:#ff6b6b; --cote:#b99cff; --gh:#ff8a5c; --gh-fg:#1a0f0a; --hgt:#5ccbe0; --hgt-fg:#0f1418;
   --scrim:rgba(0,0,0,.5); --shadow:0 12px 32px rgba(0,0,0,.5); color-scheme:dark }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -104,6 +104,29 @@ main{position:relative;min-height:0;overflow:hidden}
 .hc rect{fill:var(--hgt)}
 .hc text{fill:var(--hgt-fg);font-family:var(--f-mono);font-size:11px;font-weight:500;text-anchor:middle;pointer-events:none}
 .rlabel .rh{font-family:var(--f-mono);font-size:10px;fill:var(--hgt)}
+.gh{cursor:pointer}
+.gh .hitl{stroke:transparent;stroke-width:22px;pointer-events:stroke}
+.gh .ar{stroke:var(--gh);stroke-width:2px;opacity:.5}
+.gh .ah{fill:var(--gh);opacity:.5}
+.gh.next .ar{stroke-width:3px;opacity:1} .gh.next .ah{opacity:1}
+.gh.done .ar{stroke:var(--ok);stroke-dasharray:4 3;opacity:.6}
+.ghd circle{fill:var(--gh);stroke:var(--surface);stroke-width:2px;opacity:.7}
+.gh.next .ghd circle{opacity:1}
+.gh.done .ghd circle{fill:var(--ok);opacity:.85}
+.ghd text{fill:var(--gh-fg);font-family:var(--f-mono);font-size:10.5px;font-weight:600;text-anchor:middle;pointer-events:none}
+.gh.next .ghd text{font-size:12px}
+.gone{fill:none;stroke:var(--muted);stroke-width:1px;stroke-dasharray:4 3}
+.lchip.ghid{border-color:var(--gh)}
+.ghbox{border:1.5px solid var(--gh);border-radius:10px;padding:10px 12px;margin:10px 0}
+.ghbox .ghh{font-size:12px;color:var(--gh);font-weight:600;margin:0 0 6px}
+.ghbox dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;margin:0;font-size:14px;line-height:1.45}
+.ghbox dt{color:var(--muted)} .ghbox dd{margin:0}
+.ghbox .help{margin-top:8px}
+.cote .cst circle{fill:var(--cote);stroke:var(--surface);stroke-width:2px}
+.cote .ah2{fill:var(--cote)}
+.cote .mvl{stroke:var(--accent);stroke-width:2.5px;stroke-dasharray:none}
+.cote .mvp rect{fill:var(--accent);stroke:var(--surface);stroke-width:1.5px}
+.vecpre circle{fill:var(--cote);stroke:var(--surface);stroke-width:2px}
 .cote.flash .lb rect{fill:var(--accent-soft);stroke-width:2px}
 .far .lb,.far .olddeb-t{display:none}
 .olddeb{fill:none;stroke:var(--cote);stroke-width:1.4px;stroke-dasharray:6 4}
@@ -184,6 +207,11 @@ main{position:relative;min-height:0;overflow:hidden}
 .btn svg{width:17px;height:17px;flex:none}
 .btn:disabled{opacity:.5;cursor:default}
 .sh-done{margin-top:12px}
+.sh-min{margin-top:12px}
+.sheet-head{touch-action:none}
+.sheet.mini .sheet-body{display:none}
+.sheet.mini .sh-min svg{transform:rotate(180deg)}
+.sheet.mini .sh-title{cursor:pointer}
 .sheet-body{overflow-y:auto;overscroll-behavior:contain;padding:12px 16px 18px;display:grid;gap:16px;-webkit-overflow-scrolling:touch}
 .fld{display:grid;gap:7px;min-width:0}
 .fld>label,.fld>.lab{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -478,18 +506,18 @@ label.btn,label.addph{cursor:pointer;-webkit-user-select:none;user-select:none}
       <div class="sub" id="sub">Plan · 7 camere · <span class="num">90,65</span> m²</div>
     </div>
     <div id="sync" class="sync cloud-only" role="status"><i></i><span>Se conectează…</span></div>
-    <button id="btnSwap" class="hbtn cloud-only ed-only" type="button" aria-label="Partajare pe alt telefon"><svg><use href="#u-send"></use></svg><span class="lbl">Partajare</span></button>
-    <button id="btnSave" class="hbtn primary file-only" type="button"><svg><use href="#u-save"></use></svg><span class="lbl">Salvează</span><span class="badge" id="dirtyBadge" hidden="">0</span></button>
+    <button id="btnSwap" class="hbtn cloud-only ed-only" type="button" aria-label="Partajare pe alt telefon"><svg><use href="#u-send"/></svg><span class="lbl">Partajare</span></button>
+    <button id="btnSave" class="hbtn primary file-only" type="button"><svg><use href="#u-save"/></svg><span class="lbl">Salvează</span><span class="badge" id="dirtyBadge" hidden>0</span></button>
   </header>
   <main>
     <section id="view-plan" class="view" aria-label="Plan">
-      <div id="banner" class="banner" hidden=""><span id="bannerText"></span><span class="row" id="bannerBtns"></span></div>
+      <div id="banner" class="banner" hidden><span id="bannerText"></span><span class="row" id="bannerBtns"></span></div>
       <div class="rooms" id="roomsBar" role="group" aria-label="Mergi la cameră"></div>
       <div class="stage" id="stage">
         <svg id="plan" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="Planul apartamentului">
           <defs>
             <pattern id="hatch" patternUnits="userSpaceOnUse" width="0.09" height="0.09" patternTransform="rotate(45)">
-              <line class="hatch-line" x1="0" y1="0" x2="0" y2="0.09"></line>
+              <line class="hatch-line" x1="0" y1="0" x2="0" y2="0.09"/>
             </pattern>
           </defs>
           <g id="g-base"></g>
@@ -499,38 +527,39 @@ label.btn,label.addph{cursor:pointer;-webkit-user-select:none;user-select:none}
           <g id="g-sel"></g>
           <g id="g-heights" class="layer-off"></g>
           <g id="g-names"></g>
+          <g id="g-ghid" class="layer-off"></g>
           <g id="g-items"></g>
           <g id="g-measure" class="ms"></g>
         </svg>
-        <div class="lrow" id="lrow"><button id="lbtn" class="lbtn" type="button" aria-expanded="false" aria-controls="lpop"><svg><use href="#u-layers"></use></svg>Straturi</button><span class="lchips" id="lchips"></span></div>
-        <div class="lpop" id="lpop" role="dialog" aria-label="Ce se vede pe plan" hidden=""></div>
-        <div id="hint" class="hint" hidden=""><span id="hintText"></span><button id="hintBtn" type="button">Gata</button></div>
+        <div class="lrow" id="lrow"><button id="lbtn" class="lbtn" type="button" aria-expanded="false" aria-controls="lpop"><svg><use href="#u-layers"/></svg>Straturi</button><span class="lchips" id="lchips"></span></div>
+        <div class="lpop" id="lpop" role="dialog" aria-label="Ce se vede pe plan" hidden></div>
+        <div id="hint" class="hint" hidden><span id="hintText"></span><button id="hintBtn" type="button">Gata</button></div>
         <div class="ctl">
-          <button id="zIn" type="button" aria-label="Mărește"><svg><use href="#u-plus"></use></svg></button>
-          <button id="zOut" type="button" aria-label="Micșorează"><svg><use href="#u-minus"></use></svg></button>
-          <button id="zFit" type="button" aria-label="Tot planul"><svg><use href="#u-fit"></use></svg></button>
-          <button id="tRuler" type="button" aria-label="Riglă" aria-pressed="false"><svg><use href="#u-ruler"></use></svg></button>
+          <button id="zIn" type="button" aria-label="Mărește"><svg><use href="#u-plus"/></svg></button>
+          <button id="zOut" type="button" aria-label="Micșorează"><svg><use href="#u-minus"/></svg></button>
+          <button id="zFit" type="button" aria-label="Tot planul"><svg><use href="#u-fit"/></svg></button>
+          <button id="tRuler" type="button" aria-label="Riglă" aria-pressed="false"><svg><use href="#u-ruler"/></svg></button>
         </div>
         <div class="scalebar" id="scalebar"><span id="sbl">1 m</span><div class="bar" id="sbb"></div></div>
-        <div id="coach" class="coach" hidden=""></div>
+        <div id="coach" class="coach" hidden></div>
       </div>
       <div class="palette" id="palette" role="group" aria-label="Adaugă pe plan">
-        <button class="pal main" type="button" data-type="priza" aria-pressed="false"><svg><use href="#i-priza"></use></svg>Priză</button>
-        <button class="pal main" type="button" data-type="intrerupator" aria-pressed="false"><svg><use href="#i-intrerupator"></use></svg>Întrerupător</button>
-        <button class="pal" type="button" data-type="lumina" aria-pressed="false"><svg><use href="#i-lumina"></use></svg>Lumină</button>
-        <button class="pal" type="button" id="palMore" aria-pressed="false"><svg><use href="#u-grid"></use></svg><span id="palMoreLbl">Altele</span></button>
+        <button class="pal main" type="button" data-type="priza" aria-pressed="false"><svg><use href="#i-priza"/></svg>Priză</button>
+        <button class="pal main" type="button" data-type="intrerupator" aria-pressed="false"><svg><use href="#i-intrerupator"/></svg>Întrerupător</button>
+        <button class="pal" type="button" data-type="lumina" aria-pressed="false"><svg><use href="#i-lumina"/></svg>Lumină</button>
+        <button class="pal" type="button" id="palMore" aria-pressed="false"><svg><use href="#u-grid"/></svg><span id="palMoreLbl">Altele</span></button>
       </div>
     </section>
 
-    <section id="view-inv" class="view scroll" hidden="" aria-label="Listă">
+    <section id="view-inv" class="view scroll" hidden aria-label="Listă">
       <div class="wrap" id="invWrap"></div>
     </section>
 
-    <section id="view-works" class="view scroll" hidden="" aria-label="Lucrări">
+    <section id="view-works" class="view scroll" hidden aria-label="Lucrări">
       <div class="wrap" id="worksWrap"></div>
     </section>
 
-    <section id="view-cote" class="view scroll" hidden="" aria-label="Măsurători">
+    <section id="view-cote" class="view scroll" hidden aria-label="Măsurători">
       <div class="wrap" id="coteWrap"></div>
     </section>
   </main>
@@ -542,64 +571,66 @@ label.btn,label.addph{cursor:pointer;-webkit-user-select:none;user-select:none}
   </nav>
 </div>
 
-<div id="scrim" class="scrim" hidden=""></div>
-<aside id="sheet" class="sheet" hidden="" aria-label="Fișă">
+<div id="scrim" class="scrim" hidden></div>
+<aside id="sheet" class="sheet" hidden aria-label="Fișă">
   <div class="sheet-head">
     <button class="grab" id="grab" type="button" aria-label="Extinde sau restrânge fișa"></button>
-    <div class="sh-title"><span class="sh-ic" id="shIc"><svg><use id="shIcUse" href="#i-priza"></use></svg></span><div><div class="sh-type" id="shType"></div><div class="sh-where" id="shWhere"></div></div></div>
+    <div class="sh-title"><span class="sh-ic" id="shIc"><svg><use id="shIcUse" href="#i-priza"/></svg></span><div><div class="sh-type" id="shType"></div><div class="sh-where" id="shWhere"></div></div></div>
+    <button class="iconbtn sh-min" id="shMin" type="button" aria-label="Restrânge fișa ca să vezi planul"><svg><use href="#u-chev"/></svg></button>
     <button class="btn primary sh-done" id="shDone" type="button">Gata</button>
   </div>
   <div class="sheet-body" id="shBody"></div>
 </aside>
 
-<div id="lightbox" class="lightbox" hidden="">
+<div id="lightbox" class="lightbox" hidden>
   <img id="lbImg" alt="Poză">
-  <div class="lb-bar"><button class="btn danger ed-only" id="lbDel" type="button"><svg><use href="#u-trash"></use></svg>Șterge poza</button><button class="btn" id="lbClose" type="button">Închide</button></div>
+  <div class="lb-bar"><button class="btn danger ed-only" id="lbDel" type="button"><svg><use href="#u-trash"/></svg>Șterge poza</button><button class="btn" id="lbClose" type="button">Închide</button></div>
 </div>
-<div id="toast" class="toast" hidden="" role="status"><span id="toastText"></span><button id="toastBtn" type="button" hidden=""></button></div>
-<input type="file" id="fileIn" class="vh" accept="image/*" multiple="" tabindex="-1" aria-hidden="true">
+<div id="toast" class="toast" hidden role="status"><span id="toastText"></span><button id="toastBtn" type="button" hidden></button></div>
+<input type="file" id="fileIn" class="vh" accept="image/*" multiple tabindex="-1" aria-hidden="true">
+<input type="file" id="camIn" class="vh" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="importIn" class="vh" tabindex="-1" aria-hidden="true">
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="i-priza" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"></circle><circle cx="8.8" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="15.2" cy="12" r="1.5" fill="currentColor" stroke="none"></circle></symbol>
-    <symbol id="i-intrerupator" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="16" r="3.4"></circle><path d="M10.4 13.6 17.5 6.5M15.2 4.2l4.6 4.6"></path></symbol>
-    <symbol id="i-lumina" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><path d="M6.4 6.4 17.6 17.6M17.6 6.4 6.4 17.6"></path></symbol>
-    <symbol id="i-aplica" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v16"></path><circle cx="13.5" cy="12" r="5.6"></circle><path d="M9.6 8.1l7.8 7.8M17.4 8.1l-7.8 7.8"></path></symbol>
-    <symbol id="i-tvdate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="11.5" rx="1.6"></rect><path d="M8.5 20h7M12 16.5V20"></path></symbol>
-    <symbol id="i-tablou" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="1.6"></rect><path d="M13 7l-3 5h4l-3 5"></path></symbol>
-    <symbol id="i-doza" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5.5" y="5.5" width="13" height="13" rx="1.4"></rect><path d="M5.5 5.5l13 13"></path></symbol>
-    <symbol id="i-interfon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 1.8H4.4z"></path><path d="M10 20.6a2.1 2.1 0 0 0 4 0"></path></symbol>
-    <symbol id="i-termostat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13.8V5.2a2 2 0 0 1 4 0v8.6a4.2 4.2 0 1 1-4 0z"></path><path d="M12 10v6.5"></path></symbol>
-    <symbol id="i-calorifer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 5v13M10 5v13M14 5v13M18 5v13M4 19.5h16"></path></symbol>
-    <symbol id="i-apa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5c3 4 6.2 7.2 6.2 10.6a6.2 6.2 0 0 1-12.4 0C5.8 10.7 9 7.5 12 3.5z"></path></symbol>
-    <symbol id="i-scurgere" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.2"></circle><path d="M7.6 9.6h8.8M7 12.4h10M7.8 15.2h8.4"></path></symbol>
-    <symbol id="i-coloana" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.2"></circle><circle cx="12" cy="12" r="3.8"></circle></symbol>
-    <symbol id="i-contor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 0 1 16 0"></path><path d="M12 16l4.2-5"></path><path d="M4 20h16"></path></symbol>
-    <symbol id="i-ventilatie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8M8 12h8M8 15h8"></path></symbol>
-    <symbol id="i-gaz" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3c1.2 3.6 5.2 5.6 5.2 10.2a5.2 5.2 0 0 1-10.4 0c0-2.6 1.4-4.2 2.6-5.2 0 2 1 3.2 2.1 3.2C11.5 8.4 10.6 6 12 3z"></path></symbol>
-    <symbol id="i-obs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l9.2 16H2.8z"></path><path d="M12 10v4.4M12 17.2v.2"></path></symbol>
-    <symbol id="u-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></symbol>
-    <symbol id="u-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></symbol>
-    <symbol id="u-fit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></symbol>
-    <symbol id="u-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 15.5 15.5 3.5l5 5-12 12z"></path><path d="M7 12l2 2M10 9l2 2M13 6l2 2"></path></symbol>
-    <symbol id="u-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 4 3 9l9 5 9-5z"></path><path d="M3 14l9 5 9-5"></path></symbol>
-    <symbol id="u-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6.5" height="6.5" rx="1.2"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.2"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.2"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.2"></rect></symbol>
-    <symbol id="u-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"></path></symbol>
-    <symbol id="u-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"></path></symbol>
-    <symbol id="u-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3.5l1.8-2.5h5.4L16.5 8H20v11H4z"></path><circle cx="12" cy="13.2" r="3.3"></circle></symbol>
-    <symbol id="u-swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"></path></symbol>
-    <symbol id="u-move" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h12M13 7l5 5-5 5"></path><circle cx="5" cy="12" r="1.6"></circle></symbol>
-    <symbol id="u-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 16.5V20h15v-3.5"></path></symbol>
-    <symbol id="u-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 10 14"></path><path d="M20.5 3.5 14 20.5l-4-6.5-6.5-4z"></path></symbol>
-    <symbol id="u-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5"></path><path d="M4.5 14v6h15v-6"></path></symbol>
-    <symbol id="u-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.6M12 16.8v.2"></path></symbol>
-    <symbol id="u-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"></path><circle cx="12" cy="10" r="2.3"></circle></symbol>
-    <symbol id="u-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"></path></symbol>
-    <symbol id="u-plusc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8v8M8 12h8"></path></symbol>
+    <symbol id="i-priza" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><circle cx="8.8" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.2" cy="12" r="1.5" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-intrerupator" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="16" r="3.4"/><path d="M10.4 13.6 17.5 6.5M15.2 4.2l4.6 4.6"/></symbol>
+    <symbol id="i-lumina" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M6.4 6.4 17.6 17.6M17.6 6.4 6.4 17.6"/></symbol>
+    <symbol id="i-aplica" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v16"/><circle cx="13.5" cy="12" r="5.6"/><path d="M9.6 8.1l7.8 7.8M17.4 8.1l-7.8 7.8"/></symbol>
+    <symbol id="i-tvdate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="11.5" rx="1.6"/><path d="M8.5 20h7M12 16.5V20"/></symbol>
+    <symbol id="i-tablou" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="1.6"/><path d="M13 7l-3 5h4l-3 5"/></symbol>
+    <symbol id="i-doza" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5.5" y="5.5" width="13" height="13" rx="1.4"/><path d="M5.5 5.5l13 13"/></symbol>
+    <symbol id="i-interfon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 1.8H4.4z"/><path d="M10 20.6a2.1 2.1 0 0 0 4 0"/></symbol>
+    <symbol id="i-termostat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13.8V5.2a2 2 0 0 1 4 0v8.6a4.2 4.2 0 1 1-4 0z"/><path d="M12 10v6.5"/></symbol>
+    <symbol id="i-calorifer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 5v13M10 5v13M14 5v13M18 5v13M4 19.5h16"/></symbol>
+    <symbol id="i-apa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5c3 4 6.2 7.2 6.2 10.6a6.2 6.2 0 0 1-12.4 0C5.8 10.7 9 7.5 12 3.5z"/></symbol>
+    <symbol id="i-scurgere" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.2"/><path d="M7.6 9.6h8.8M7 12.4h10M7.8 15.2h8.4"/></symbol>
+    <symbol id="i-coloana" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.8"/></symbol>
+    <symbol id="i-contor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 0 1 16 0"/><path d="M12 16l4.2-5"/><path d="M4 20h16"/></symbol>
+    <symbol id="i-ventilatie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 12h8M8 15h8"/></symbol>
+    <symbol id="i-gaz" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3c1.2 3.6 5.2 5.6 5.2 10.2a5.2 5.2 0 0 1-10.4 0c0-2.6 1.4-4.2 2.6-5.2 0 2 1 3.2 2.1 3.2C11.5 8.4 10.6 6 12 3z"/></symbol>
+    <symbol id="i-obs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l9.2 16H2.8z"/><path d="M12 10v4.4M12 17.2v.2"/></symbol>
+    <symbol id="u-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="u-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></symbol>
+    <symbol id="u-fit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="u-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 15.5 15.5 3.5l5 5-12 12z"/><path d="M7 12l2 2M10 9l2 2M13 6l2 2"/></symbol>
+    <symbol id="u-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 4 3 9l9 5 9-5z"/><path d="M3 14l9 5 9-5"/></symbol>
+    <symbol id="u-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6.5" height="6.5" rx="1.2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.2"/></symbol>
+    <symbol id="u-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></symbol>
+    <symbol id="u-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></symbol>
+    <symbol id="u-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3.5l1.8-2.5h5.4L16.5 8H20v11H4z"/><circle cx="12" cy="13.2" r="3.3"/></symbol>
+    <symbol id="u-swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></symbol>
+    <symbol id="u-move" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h12M13 7l5 5-5 5"/><circle cx="5" cy="12" r="1.6"/></symbol>
+    <symbol id="u-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4.5 16.5V20h15v-3.5"/></symbol>
+    <symbol id="u-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 10 14"/><path d="M20.5 3.5 14 20.5l-4-6.5-6.5-4z"/></symbol>
+    <symbol id="u-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5"/><path d="M4.5 14v6h15v-6"/></symbol>
+    <symbol id="u-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.6M12 16.8v.2"/></symbol>
+    <symbol id="u-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+    <symbol id="u-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></symbol><symbol id="u-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="u-plusc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></symbol>
   </defs>
 </svg>
-</div><script type="application/json" id="seed">{"format":"releveu-instalatii/fisier-1","doc":{"id":"imvc9t4rg87yq9","created":1792233932380,"savedAt":1792233932380,"saves":0,"origin":"claude","target":"iphone"},"items":{"imv3v047uz9gxy":{"circuit":"","created":1791725334618,"defect":false,"h":30,"move":null,"note":"","photos":[],"room":"living","status":"existent","type":"priza","updated":1791725338249,"variant":"Simplă","wall":{"e":17,"room":"living","t":0.6079,"side":"R"},"wallType":"necunoscut","x":5.655,"y":7.244,"name":"","dist":null,"dMeas":false,"hMeas":false},"imv9uah0e4fjnx":{"circuit":"","created":1792086935198,"defect":false,"h":110,"move":null,"note":"","photos":[],"room":"hol","status":"existent","type":"intrerupator","updated":1792086935198,"variant":"Simplu","wall":{"e":25,"room":"hol","t":0.1466,"side":"R"},"wallType":"necunoscut","x":5.476,"y":7.4,"name":"","dist":null,"dMeas":false,"hMeas":false},"imv9uajpqmjzmv":{"circuit":"","created":1792086938702,"defect":false,"h":110,"move":null,"note":"","photos":[],"room":"living","status":"existent","type":"intrerupator","updated":1792086938702,"variant":"Simplu","wall":{"e":4,"room":"living","t":0.1784,"side":"R"},"wallType":"necunoscut","x":6.741,"y":9.934,"name":"","dist":null,"dMeas":false,"hMeas":false},"imv9uakio620ip":{"circuit":"","created":1792086939745,"defect":false,"h":110,"move":null,"note":"","photos":[],"room":"living","status":"existent","type":"intrerupator","updated":1792086939745,"variant":"Simplu","wall":{"e":4,"room":"living","t":0.5878,"side":"R"},"wallType":"necunoscut","x":8.952,"y":9.934,"name":"","dist":null,"dMeas":false,"hMeas":false}},"rooms":{},"works":{},"measures":{},"deleted":{},"blobs":{}}</script><script id="app-js">
+</div><script type="application/json" id="seed">{"format":"releveu-instalatii/fisier-1","doc":{"id":"imve4swr33wsc6","created":1792346456271,"savedAt":1792346456271,"saves":0,"origin":"claude","target":"iphone"},"items":{"imvctg5d0upn7g":{"circuit":"","created":1792266918948,"dMeas":true,"defect":false,"dist":51,"h":38,"hMeas":true,"move":null,"name":"p1","note":"","photos":[],"room":"dormitor2","status":"existent","type":"priza","updated":1792267352312,"variant":"Dublă","wall":{"e":0,"room":"dormitor2","side":"L","t":0.8503},"wallType":"necunoscut","x":7.702,"y":5.123},"imvctkozkj5cl0":{"circuit":"","created":1792267131008,"dMeas":true,"defect":false,"dist":61,"h":40,"hMeas":true,"move":null,"name":"","note":"","photos":[],"room":"dormitor2","status":"existent","type":"priza","updated":1792267190982,"variant":"Dublă","wall":{"e":0,"room":"dormitor2","side":"R","t":0.2432},"wallType":"necunoscut","x":7.702,"y":2.836},"imvctr3481fquv":{"circuit":"","created":1792267429256,"dMeas":true,"defect":false,"dist":35,"h":36,"hMeas":true,"move":null,"name":"","note":"","photos":[],"room":"dormitor2","status":"existent","type":"priza","updated":1792267476109,"variant":"Dublă","wall":{"e":8,"room":"dormitor2","side":"R","t":0.0956},"wallType":"necunoscut","x":11.93,"y":5.538},"imvctszy03kd82":{"circuit":"","created":1792267518456,"dMeas":true,"defect":false,"dist":37,"h":40,"hMeas":true,"move":null,"name":"","note":"","photos":[],"room":"dormitor2","status":"existent","type":"priza","updated":1792267542624,"variant":"Simplă","wall":{"e":8,"room":"dormitor2","side":"L","t":0.899},"wallType":"necunoscut","x":11.93,"y":2.596},"imvctwcnh48yeb":{"circuit":"","created":1792267674893,"dMeas":true,"defect":false,"dist":35,"h":34,"hMeas":true,"move":null,"name":"","note":"","photos":[],"room":"dormitor2","status":"existent","type":"priza","updated":1792267703530,"variant":"Dublă","wall":{"e":3,"room":"dormitor2","side":"R","t":0.3915},"wallType":"necunoscut","x":8.995,"y":5.888},"imvctx8xlj8kqo":{"circuit":"","created":1792267716729,"dMeas":true,"defect":false,"dist":46,"h":34,"hMeas":true,"move":null,"name":"","note":"","photos":[],"room":"dormitor2","status":"existent","type":"tvdate","updated":1792267739520,"variant":"TV","wall":{"e":3,"room":"dormitor2","side":"L","t":0.4855},"wallType":"necunoscut","x":9.079,"y":5.888},"imvcty285q3usq":{"circuit":"","created":1792267754693,"dMeas":true,"defect":false,"dist":56,"h":147,"hMeas":true,"move":null,"name":"","note":"","photos":[],"room":"dormitor2","status":"existent","type":"intrerupator","updated":1792267785556,"variant":"Simplu","wall":{"e":3,"room":"dormitor2","side":"R","t":0.6264},"wallType":"necunoscut","x":9.205,"y":5.888},"imvctz0doza01":{"circuit":"","created":1792268100000,"dMeas":false,"defect":false,"dist":null,"h":34,"hMeas":false,"move":null,"name":"","note":"Capac pătrat alb, fără nimic pe el, lângă priza dublă, spre stâlp. Poziție estimată: cam 10 cm de mijlocul prizei duble; înălțimea luată ca la priză. De verificat ce e sub capac.","photos":[],"room":"dormitor2","status":"existent","type":"doza","updated":1792268100000,"variant":null,"wall":{"e":3,"room":"dormitor2","side":"R","t":0.2796},"wallType":"necunoscut","x":8.895,"y":5.888},"imvdun2vns9830":{"circuit":"","created":1792329388115,"dMeas":false,"defect":false,"dist":null,"h":30,"hMeas":false,"move":null,"name":"","note":"","photos":[],"room":"bucatarie","status":"existent","type":"priza","updated":1792329388115,"variant":"Simplă","wall":{"e":18,"room":"bucatarie","side":"L","t":0.7293},"wallType":"necunoscut","x":3.864,"y":3.017}},"rooms":{"baie":{"ceil":276,"note":"Tavanul: 276,4 cm (o citire anterioară a dat 275,8 cm). Stâlpul de pe peretele cu oglinda, opus ușii spre hol, în colțul dinspre bucătărie: 52 cm pe lungime, de-a lungul peretelui, și iese 25 cm (17.10.2026). Pe planul din 2004: 51,1 × 25,2 cm.","updated":1792273200000},"bucatarie":{"beam":206,"ceil":276,"corners":{"0":273,"23":273},"note":"Tavanul: 275,9 cm în mijlocul bucătăriei, 272,7 cm pe balcon. Sub grinda de deasupra parapeților (golul care rămâne după demolare): 206 cm. Stâlpi: P1, în dreapta ușii, iese 25,7 cm și are 82,2 cm cu tocul ușii; P2, în stânga ușii, lipit de toc, iese 19 cm și are 29 cm; P3, în colțul spre baie, iese 25 cm și are 94,7 cm. Între P2 și P3: 142 cm; între P1 și P3: 247,3 cm. Tavan coborât la 235 cm între P3 și P2, lipit de peretele lung din stânga ușii; iese 19 cm din perete, la fel ca P2, cu care e la față (17.10.2026).","updated":1792265400000},"debara":{"ceil":203,"note":"Tavanul: 202,8 cm. Pe peretele din fața ușii e un geam: marginea lui din stânga, cum stai în prag, e la 54 cm de peretele din stânga; de la marginea de jos până în tavan sunt 68,7 cm, deci marginea de jos e la 134,1 cm de pardoseală. Marginea din dreapta a geamului e la 104,7 cm de peretele din stânga, deci geamul are 50,7 cm lățime (pe planul din 2004, 50,1 cm). Nișă de depozitare cu rafturi în peretele din stânga, cum intri; are un prag și nu e încă măsurată. Peretele acela e cu cam 19 cm mai înăuntru decât pe planul din 2004. Stâlp în colțul dinspre baie: iese 20,6 cm din peretele cu geamul (82,5 − 61,9; de la stâlp până la peretele cu ușa sunt 61,9 cm) și are cam 15 cm pe fața dinspre ușă. Pe planul din 2004: 14,9 × 14,9 cm. Întrebare deschisă: încap aici o mașină de spălat și un uscător? De verificat golul ușii (60 cm) față de lățimea și adâncimea mașinilor, înălțimea coloanei sub tavanul de 202,8 cm și scurgerea, fiindcă pe planul din 2004 încăperea apare ca fost WC (17.10.2026).","updated":1792272000000},"dormitor1":{"ceil":277,"note":"277,1 cm, măsurat în mijlocul camerei (17.10.2026); înlocuiește valoarea de 2,27 m notată greșit.","updated":1792263000000},"dormitor2":{"ceil":277,"note":"277,3 cm, măsurat în mijlocul camerei (17.10.2026).","updated":1792262600000},"hol":{"beam":242,"ceil":275,"note":"Tavanul: 274,8 cm, între grindă și baie. Sub grinda de deasupra trecerii spre intrare: 241,8 cm. Stâlpul de pe peretele spre living: iese 26,0 cm pe latura dinspre dormitor și 26,1 cm pe latura dinspre ieșire; latura lungă (fața dinspre hol) are 44 cm. Între stâlp și golul spre living sunt 26,8 cm de perete. Golul are 138,3 cm lățime (pe planul din 2004, 170,5 cm, începând imediat după stâlp). 44 + 26,8 + 138,3 = 209,1 cm, față de 209,0 cm pe plan de la fața stâlpului dinspre dormitor până la capătul golului (17.10.2026).","updated":1792274400000},"living":{"ceil":275,"corners":{"11":279,"12":279},"note":"Tavanul: 275,4 cm în living și 274,0 cm într-un al doilea punct; 278,6 cm pe fostul balcon (17.10.2026).","updated":1792273200000}},"works":{},"measures":{"m_livtot":{"a":[5.655,6.6],"at":1792259306546,"b":[13.048,6.6],"created":1792258800000,"note":"Cotă nouă, adăugată după demolarea parapetului dintre living și balcon (17.10.2026). Pe plan: 7,39 m; dacă iese în jur de 7,27 m, are dreptate releveul din 2004.","room":"living","t":"Living cu fostul balcon, lungime totală","updated":1792259306546,"user":true,"v":705},"mbaiecada":{"a":[2,6.047],"anchor":"a","at":1792270200000,"b":[2,8.285],"created":1792270200000,"note":"223,8 cm, de la peretele dinspre bucătărie până la marginea căzii (17.10.2026).","room":"baie","t":"Baie, de la peretele dinspre bucătărie la cadă","updated":1792270200000,"user":true,"v":224,"vec":true},"mbalcongeam":{"a":[12.45,9.619],"anchor":"b","at":1792260766695,"b":[12.45,6.176],"created":1792261000000,"note":"352,8 cm, măsurat pe 17.10.2026, de la geam până la peretele de capăt dinspre dormitorul 2. Peretele de capăt de lângă geam e la 336,8 cm (cota „Balconul livingului, lungime”), deci geamul e cu 16 cm mai departe decât peretele.","room":"living","t":"Fostul balcon, de la geamul din capăt la peretele dinspre dormitor","updated":1792261000000,"user":true,"v":353,"vec":true},"mbuclungtot":{"a":[2.1,5.662],"anchor":"a","at":1792263400000,"b":[2.1,0.376],"created":1792263400000,"note":"510 cm, de la peretele lung din stânga ușii (fața A, cum intri în bucătărie) până la peretele exterior al balconului, deasupra caloriferului (17.10.2026).","room":"bucatarie","t":"Bucătărie cu balconul, lungime totală","updated":1792264200000,"user":true,"v":510,"vec":true},"mbucp1p3":{"a":[3.607,5.4],"anchor":"a","at":1792265400000,"b":[1.134,5.4],"created":1792265400000,"note":"247,3 cm, de la fața stâlpului din dreapta ușii (P1) până la stâlpul din colțul spre baie (P3).","room":"bucatarie","t":"Bucătărie, între stâlpii P1 și P3","updated":1792265400000,"user":true,"v":247,"vec":true},"mbucp2p3":{"a":[1.134,5.56],"anchor":"a","at":1792265400000,"b":[2.54,5.56],"created":1792265400000,"note":"142 cm, de la stâlpul din colțul spre baie (P3) până la stâlpul din stânga ușii (P2).","room":"bucatarie","t":"Bucătărie, între stâlpii P3 și P2","updated":1792265400000,"user":true,"v":142,"vec":true},"mdebarageam":{"a":[3.42,11.316],"anchor":"a","at":1792272000000,"b":[3.42,10.776],"created":1792272000000,"note":"54 cm, de la peretele din stânga (cum stai în prag) până la marginea geamului. Marginea de jos a geamului e la 68,7 cm sub tavan (17.10.2026).","room":"debara","t":"Debara, de la peretele din stânga la geam","updated":1792272000000,"user":true,"v":54,"vec":true},"mdebarausa":{"a":[4.23,10.393],"anchor":"a","at":1792270800000,"b":[4.23,10.993],"created":1792270800000,"note":"60 cm între tocuri, lățimea golului ușii de la debara (17.10.2026). Pe planul din 2004, golul din zid are 67 cm. Pe plan am pus cota centrată pe golul vechi.","room":"debara","t":"Debara, lățimea golului ușii","updated":1792274400000,"user":true,"v":60,"vec":true},"mholgol":{"a":[3.7,6.047],"anchor":"a","at":1792266000000,"b":[3.7,9.254],"created":1792266000000,"note":"328,7 cm, de la peretele spre dormitorul 1 până în fundul golului S2 (17.10.2026).","room":"hol","t":"Hol, de la peretele dormitorului la gol (S2)","updated":1792266000000,"user":true,"v":329,"vec":true},"mholgrinda":{"a":[4.45,6.047],"anchor":"a","at":1792266000000,"b":[4.45,9.17],"created":1792266000000,"note":"312,3 cm, de la peretele spre dormitorul 1 până la grinda de deasupra trecerii spre intrare (17.10.2026).","room":"hol","t":"Hol, de la peretele dormitorului la grindă","updated":1792266000000,"user":true,"v":312,"vec":true},"mholstalp":{"a":[2.717,7.82],"anchor":"a","at":1792266000000,"b":[5.241,7.82],"created":1792266000000,"note":"249,3 cm, de la peretele băii până la stâlpul de pe peretele spre living (17.10.2026).","room":"hol","t":"Hol, de la peretele băii la stâlpul spre living","updated":1792266000000,"user":true,"v":249,"vec":true},"mmvcpugplbq1m2":{"a":[7.976,5.888],"anchor":"b","at":1792260874045,"b":[7.976,2.226],"created":1792260868378,"note":"aici apare peretele extra","room":"dormitor2","t":"Măsurătoare liberă","updated":1792261600000,"user":true,"v":346,"vec":true},"mmvcq66kdf0sg2":{"a":[4.141,5.888],"anchor":"a","at":1792261436831,"b":[4.141,2.226],"created":1792261415101,"note":"1.5m inaltime","room":"dormitor1","t":"Măsurătoare liberă","updated":1792261600000,"user":true,"v":372,"vec":true},"mstalpd1c":{"a":[6.951,5.756],"anchor":"b","at":1792262000000,"b":[4.017,5.756],"created":1792262000000,"note":"C = 294,7 cm, de pe fața îngustă a stâlpului până la peretele dinspre bucătărie. Stâlpul: 61,5 cm de-a lungul peretelui cu ușa, iese 26,5 cm din el; e în colțul cu peretele spre dormitorul 2, în dreapta cum intri pe ușă.","room":"dormitor1","t":"Dormitor 1, de la stâlp la peretele dinspre bucătărie","updated":1792262000000,"user":true,"v":295,"vec":true},"mstalpd1d":{"a":[7.566,5.4],"anchor":"a","at":1792262000000,"b":[4.017,5.4],"created":1792262000000,"note":"D = 356 cm, de la peretele spre dormitorul 2 până la peretele dinspre bucătărie, pe partea dinspre ușă. D − C = 61,3 cm, față de 61,5 cm măsurați direct pe stâlp.","room":"dormitor1","t":"Dormitor 1, lățime lângă stâlp","updated":1792262000000,"user":true,"v":356,"vec":true},"mstalpd2c":{"a":[11.93,5.76],"anchor":"a","at":1792262600000,"b":[8.645,5.76],"created":1792262600000,"note":"324,5 cm, de la peretele opus dormitorului 1 până la fața îngustă a stâlpului. Stâlpul: 94,3 cm de-a lungul peretelui cu ușa, iese 25,5 cm din el; e în colțul cu peretele spre dormitorul 1, în stânga cum intri pe ușă.","room":"dormitor2","t":"Dormitor 2, de la peretele din dreapta la stâlp","updated":1792262600000,"user":true,"v":325,"vec":true},"mstalpd2d":{"a":[11.93,4.5],"anchor":"a","at":1792262600000,"b":[7.702,4.5],"created":1792262600000,"note":"420,5 cm, de la perete la perete, pe partea dinspre ușă. Minus 324,5 cm dă 96,0 cm, față de 94,3 cm măsurați direct pe stâlp.","room":"dormitor2","t":"Dormitor 2, lățime pe partea dinspre ușă","updated":1792262600000,"user":true,"v":421,"vec":true},"rel0":{"at":1792262424682,"note":"294,4 cm (17.10.2026).","updated":1792264800000,"v":294},"rel10":{"at":1792262200000,"note":"372 cm, de la peretele cu ușa, lângă ușă, până la peretele cu fereastra, la 1,5 m înălțime (măsurătoarea liberă din dormitorul 1).","updated":1792262200000,"v":372},"rel11":{"at":1792260505314,"note":"aici am masurat la 2m fata de peretele cu fereastra, la 1.2 m inaltime. tine cont de asta","updated":1792260553011,"v":422},"rel12":{"at":1792260087672,"note":"","updated":1792260097239,"v":373},"rel13":{"at":1792259830400,"note":"am masurat la 15xm fata de peretele vecin cu dormitorul, 120cm inaltime","updated":1792259890847,"v":538},"rel14":{"at":1792259662710,"note":"\nPe peretele dinspre dormitoare, la 1,35 m de peretele cu arcada.\n","updated":1792259683725,"v":393},"rel15":{"at":1792260692345,"note":"336.8 din perete balcon pana in perete dormitor\n352.8 din geam pana in perete dormitor","updated":1792260766695,"v":337},"rel16":{"note":"Parapetul a fost demolat (17.10.2026), deci cota nu se mai poate măsura direct. Rezultă din lungimea totală minus cota până la grindă minus grosimea fostului parapet (cam 0,32 m pe plan).","updated":1792259400000,"v":null},"rel2":{"at":1792264800000,"note":"265,0 cm (17.10.2026).","updated":1792264800000,"v":265},"rel3":{"at":1792264800000,"note":"144,9 cm (17.10.2026).","updated":1792264800000,"v":145},"rel4":{"at":1792269000000,"note":"167,6 cm între fețele travertinului, deasupra căzii. Cu 1,5 cm de travertin pe fiecare perete, de la zidărie la zidărie ies 170,6 cm (17.10.2026).","updated":1792269000000,"v":171},"rel5":{"at":1792269000000,"note":"294,2 cm măsurat, cu 1,5 cm de travertin pe unul dintre pereți. De la zidărie la zidărie ies 295,7 cm (17.10.2026).","updated":1792269000000,"v":296},"rel6":{"at":1792271400000,"note":"82,5 cm (17.10.2026).","updated":1792271400000,"v":83},"rel7":{"at":1792271400000,"note":"178,7 cm (17.10.2026). Pe planul din 2004: 198 cm. În peretele din stânga, cum intri, e o nișă de depozitare.","updated":1792271400000,"v":179},"rel8":{"at":1792266000000,"note":"277,4 cm (17.10.2026).","updated":1792266000000,"v":277},"rel9":{"at":1792262200000,"note":"356 cm, măsurat pe partea dinspre ușă, lângă stâlp (măsurătoarea D).","updated":1792262200000,"v":356}},"deleted":{},"blobs":{}}</script><script id="app-js">
 (() => {
 'use strict';
 /* The page can rebuild itself as a standalone file: SHELL is the pristine markup, captured before anything renders. */
@@ -693,6 +724,39 @@ const WSTAT = [['discutat','De discutat'],['facut','De făcut'],['lucru','În lu
 const ROOMS = GEO.rooms;
 const ROOM_BY = Object.fromEntries(ROOMS.map(r => [r.id, r]));
 const DEFAULT_CEIL = 260;
+// Changes on site since the original plan (17.10.2026): the parapets between the living room and its balcony are gone,
+// and the door between the two bedrooms has been closed, so it counts as wall.
+const NOW = {
+  gone: [[[11.177, 6.233], [11.496, 6.233], [11.496, 9.592], [11.177, 9.592]]],
+  // storage room: measured 178,7 cm long instead of 198, and the window sits 54 cm from the left wall instead of 73,
+  // so the wall on the left as you enter stands about 19 cm further in (it holds a niche, not measured yet)
+  // hall: 26,8 cm of wall between the pier and the opening to the living room, which is 138,3 cm wide;
+  // 44 + 26,8 + 138,3 = 209,1 cm, against 209,0 on the plan, so the pier keeps the plan's face toward bedroom 1
+  closed: [[7.566, 4.734, 7.702, 5.49], [3.384, 11.316, 4.203, 11.509], [5.470, 8.072, 5.655, 8.340]],
+  // the column in bedroom 1, right of the door, in the corner with the wall to bedroom 2: 61,5 × 26,5 cm (measured 17.10.2026)
+  // and its pair in bedroom 2, left of the door, on the other side of the same wall: 94,3 × 25,5 cm
+  columns: [[6.951, 5.623, 7.566, 5.888], [7.702, 5.633, 8.645, 5.888]],
+  // kitchen, left of the door: the pier (P2) is 29 × 19 cm and sits right against the door frame, 142 cm from P3;
+  // the plan had it 12 cm further from the door and deeper, so that strip becomes floor and the old recess becomes wall
+  floor: [[2.40, 5.405, 2.54, 5.662, 'gresie'], [2.54, 5.405, 2.735, 5.472, 'gresie']],
+  // hall, on the wall to the living room: 44 cm along the wall, sticks out 26 cm; its face is 249,3 cm from the bathroom wall
+  // bathroom, on the mirror wall opposite the door, in the corner toward the kitchen: 52 cm along the wall, sticks out 25 cm
+  piers: [[2.54, 5.472, 2.83, 5.878], [5.210, 7.632, 5.470, 8.072], [0.886, 6.047, 1.136, 6.567],
+    // storage room, in the corner toward the bathroom: sticks out 20,6 cm (82,5 wide minus 61,9 to the door wall), 15 cm along the wall
+    [3.378, 9.529, 3.584, 9.679]],
+  // lowered ceiling (box with pipes) between P3 and P2, flush with P2's face: 235 cm high
+  soffits: [[1.134, 5.472, 2.54, 5.662, '2,35']],
+};
+// Rooms whose outline changed on site. Wall snapping, the "from the corner" distances of sockets and the 3D view
+// use these outlines, so a corner is the one you see today (a column face, a closed door gone flush), not the 2004 one.
+NOW.rooms = {
+  dormitor1: [[4.017, 2.226], [4.017, 5.888], [4.561, 5.888], [4.561, 5.967], [5.4, 5.967], [5.4, 5.888], [6.951, 5.888], [6.951, 5.623], [7.566, 5.623], [7.566, 2.226]],
+  dormitor2: [[7.702, 2.226], [7.702, 5.633], [8.645, 5.633], [8.645, 5.888], [9.539, 5.888], [9.539, 6.047], [11.078, 6.047], [11.078, 5.888], [11.93, 5.888], [11.93, 2.226]],
+  hol: [[2.717, 6.475], [2.661, 6.475], [2.661, 7.155], [2.717, 7.155], [2.717, 9.015], [3.314, 9.015], [3.314, 9.254], [4.014, 9.254], [4.014, 9.138], [4.312, 9.138], [4.312, 10.358], [4.259, 10.358], [4.259, 11.028], [4.312, 11.028], [4.312, 11.509], [5.778, 11.509], [5.778, 11.323], [5.861, 11.323], [5.861, 10.388], [5.778, 10.388], [5.778, 10.355], [5.476, 10.355], [5.476, 8.072], [5.210, 8.072], [5.210, 7.632], [5.476, 7.632], [5.476, 6.047], [5.4, 6.047], [5.4, 5.967], [4.561, 5.967], [4.561, 6.047], [2.717, 6.047]],
+  debara: [[3.584, 9.529], [3.584, 9.679], [3.378, 9.679], [3.378, 11.316], [4.203, 11.316], [4.203, 11.028], [4.259, 11.028], [4.259, 10.358], [4.203, 10.358], [4.203, 9.529]],
+};
+for (const [id, poly] of Object.entries(NOW.rooms)) if (ROOM_BY[id]) ROOM_BY[id].poly = poly;
+const isGoneParapet = pp => pp.every(p => p[0] >= 11.17 && p[0] <= 11.5 && p[1] >= 6.2 && p[1] <= 9.6);
 const DOOR_OPENINGS_PARCHET = 7.0; // m, golurile de uși ale camerelor cu parchet, măsurate pe plan
 
 /* Releveul vechi (2004): cotele lui, puse pe pereții planului. */
@@ -710,9 +774,9 @@ const REL = {
     {room:'hol', t:'Hol, de la peretele băii la cel al livingului', v:2.76, a:[2.717,6.35], b:[5.476,6.35]},
     {room:'dormitor1', t:'Dormitor 1, lățime', v:3.55, a:[4.017,2.55], b:[7.566,2.55]},
     {room:'dormitor1', t:'Dormitor 1, de la fereastră la ușă', v:3.74, a:[6.6,2.226], b:[6.6,5.888]},
-    {room:'dormitor2', t:'Dormitor 2, lățime', v:4.23, a:[7.702,2.55], b:[11.93,2.55]},
+    {room:'dormitor2', t:'Dormitor 2, lățime', v:4.23, a:[7.702,4.226], b:[11.93,4.226]},
     {room:'dormitor2', t:'Dormitor 2, de la fereastră la ușă', v:3.74, a:[8.4,2.226], b:[8.4,5.888]},
-    {room:'living', t:'Living, lungime', v:5.40, a:[5.655,6.6], b:[11.177,6.6]},
+    {room:'living', t:'Living, lungime', v:5.40, a:[5.655,6.197], b:[11.177,6.197]},
     {room:'living', t:'Living, lățime', v:3.94, a:[7.0,6.047], b:[7.0,9.934]},
     {room:'living', t:'Balconul livingului, lungime', v:3.56, a:[12.3,6.176], b:[12.3,9.619]},
     {room:'living', t:'Balconul livingului, lățime', v:1.55, a:[11.496,6.6], b:[13.048,6.6]},
@@ -737,10 +801,11 @@ const st = {
   mode: 'idle', placeType: null, sel: null, lastOther: null, focusRoom: null,
   layers: {el: true, term: true, obs: true, works: false, cote: false, heights: false, names: true}, snap: true,
   measure: [], tab: 'plan', filt: {kind: 'toate', onlyEst: false}, coteMode: '2004', mtab: 'lungimi', focus3: null,
-  sheetFull: false, loaded: false, dirty: new Set(), doc: null, coachOff: false,
+  sheetFull: false, sheetMini: false, loaded: false, dirty: new Set(), doc: null, coachOff: false,
 };
 const cap = {db: null, assets: null, downloads: null, user: null};
 let storeMode = FILE ? 'file' : 'connecting';
+let vecStart = null; // first tap of a free measurement: where the back of the laser meter sits
 
 /* ---------- geometry */
 function pointInPoly(p, poly) {
@@ -1249,6 +1314,7 @@ svg.addEventListener('wheel', e => { e.preventDefault(); zoomAt(Math.exp(e.delta
 function onTap(cx, cy, id, kind, g = {}) {
   const p = toPlan(cx, cy);
   if (st.mode === 'coteadd') { addUserCote(p); return; }
+  if (st.mode === 'vecadd') { vecTap(p); return; }
   if (st.mode === 'measure') {
     if (st.measure.length >= 2) st.measure = [];
     st.measure.push(p); renderMeasure(); return;
@@ -1328,12 +1394,19 @@ function renderBase() {
   const pts = poly => poly.map(p => p.join(',')).join(' ');
   $('#g-base').innerHTML =
     ROOMS.map(r => `<polygon class="room ${r.floor}" data-room="${r.id}" points="${pts(r.poly)}"/>`).join('') +
+    NOW.gone.map(pp => `<polygon class="room parchet" points="${pts(pp)}"/>`).join('') +
     `<path class="walls" d="${GEO.walls}"/>` +
+    NOW.closed.concat(NOW.columns).map(r => `<rect class="walls" x="${r[0]}" y="${r[1]}" width="${(r[2] - r[0]).toFixed(3)}" height="${(r[3] - r[1]).toFixed(3)}"/>`).join('') +
+    NOW.gone.map(pp => `<polygon class="gone" points="${pts(pp)}" vector-effect="non-scaling-stroke"/>`).join('') +
     `<path class="thin" d="${GEO.thin}" vector-effect="non-scaling-stroke"/>` +
     `<rect class="thinbox" x="${GEO.msr[0]}" y="${GEO.msr[1]}" width="${(GEO.msr[2] - GEO.msr[0]).toFixed(3)}" height="${(GEO.msr[3] - GEO.msr[1]).toFixed(3)}" vector-effect="non-scaling-stroke"/>` +
-    `<text class="msrtxt" x="${((GEO.msr[0] + GEO.msr[2]) / 2).toFixed(3)}" y="${(GEO.msr[1] + 0.2).toFixed(3)}">MSR?</text>`;
+    `<text class="msrtxt" x="${((GEO.msr[0] + GEO.msr[2]) / 2).toFixed(3)}" y="${(GEO.msr[1] + 0.2).toFixed(3)}">MSR?</text>` +
+    NOW.floor.map(r => `<rect class="room ${r[4]}" x="${r[0]}" y="${r[1]}" width="${(r[2] - r[0]).toFixed(3)}" height="${(r[3] - r[1]).toFixed(3)}"/>`).join('') +
+    NOW.piers.map(r => `<rect class="walls" x="${r[0]}" y="${r[1]}" width="${(r[2] - r[0]).toFixed(3)}" height="${(r[3] - r[1]).toFixed(3)}"/>`).join('') +
+    NOW.soffits.map(r => `<rect class="gone" x="${r[0]}" y="${r[1]}" width="${(r[2] - r[0]).toFixed(3)}" height="${(r[3] - r[1]).toFixed(3)}" vector-effect="non-scaling-stroke"/>` +
+      `<text class="msrtxt" x="${((r[0] + r[2]) / 2).toFixed(3)}" y="${((r[1] + r[3]) / 2 + 0.045).toFixed(3)}">tavan ${r[4]} m</text>`).join('');
   $('#g-works').innerHTML =
-    GEO.parapets.map(pp => `<polygon class="parapet" points="${pts(pp)}" vector-effect="non-scaling-stroke"/>`).join('') +
+    GEO.parapets.filter(pp => !isGoneParapet(pp)).map(pp => `<polygon class="parapet" points="${pts(pp)}" vector-effect="non-scaling-stroke"/>`).join('') +
     GEO.workLabels.map(w => `<g class="wk" data-n="${w.n}" data-x="${w.pos[0]}" data-y="${w.pos[1]}"><circle r="9"/><text y="3.4">${pad2(w.n)}</text></g>`).join('');
   renderCote();
   renderLabels();
@@ -1478,7 +1551,7 @@ function updateCoach() {
 
 /* ---------- modes, palette */
 function setMode(m, type) {
-  st.mode = m; st.placeType = m === 'place' ? type : null;
+  st.mode = m; st.placeType = m === 'place' ? type : null; vecStart = null;
   if (m !== 'measure') { st.measure = []; renderMeasure(); }
   $('#tRuler').setAttribute('aria-pressed', m === 'measure');
   svg.classList.toggle('placing', m !== 'idle');
@@ -1491,6 +1564,7 @@ function setMode(m, type) {
   else if (m === 'movepick') { hint.hidden = false; ht.textContent = 'Atinge locul unde vrei să ajungă elementul.'; hb.textContent = 'Anulează'; }
   else if (m === 'rewall') { hint.hidden = false; ht.textContent = 'Atinge peretele corect, aproape de locul elementului.'; hb.textContent = 'Anulează'; }
   else if (m === 'coteadd') { hint.hidden = false; ht.textContent = 'Atinge peretele pe care l-ai măsurat.'; hb.textContent = 'Anulează'; }
+  else if (m === 'vecadd') { hint.hidden = false; ht.textContent = 'Atinge locul unde pui spatele telemetrului. Lângă un perete, punctul se lipește de el.'; hb.textContent = 'Anulează'; }
   else hint.hidden = true;
   $('#lrow').hidden = m !== 'idle';
   if (m !== 'idle') closeLayerPop();
@@ -1533,8 +1607,9 @@ const LAYER_DEFS = [
   {k: 'heights', l: 'Înălțimi de tavan', s: 'pe camere și în colțuri; atinge un colț ca să-l măsori', chip: 'Înălțimi'},
   {k: 'works', l: 'Lucrările din listă', s: 'numerele lucrărilor și parapeții', chip: 'Lucrări'},
   {k: 'cote', l: 'Cote', s: 'din releveul 2004 și măsurate acum; cifrele apar când mărești planul', chip: 'Cote'},
+  {k: 'ghid', l: 'Ghid de măsurare', s: 'de unde pornești cu telemetrul și spre ce ochești; pasul următor e mai mare', chip: 'Ghid'},
 ];
-const LAYER_DEFAULT = {el: true, term: true, obs: true, names: true, heights: false, works: false, cote: false};
+const LAYER_DEFAULT = {el: true, term: true, obs: true, names: true, heights: false, works: false, cote: false, ghid: false};
 function applyLayers() {
   $('#g-works').classList.toggle('layer-off', !st.layers.works);
   $('#g-cote').classList.toggle('layer-off', !st.layers.cote);
@@ -1581,15 +1656,17 @@ document.addEventListener('pointerdown', e => {
 const sheet = $('#sheet'), scrim = $('#scrim');
 let sheetKind = null; // 'item' | 'types' | 'room' | 'layers' | 'swap' | 'import' | 'saved' | 'help'
 function openSheetShell(full) {
-  if (full != null) st.sheetFull = full;
+  if (full != null) { st.sheetFull = full; st.sheetMini = false; }
   sheet.hidden = false;
-  scrim.hidden = !(st.sheetFull && !isSide());
-  sheet.classList.toggle('full', st.sheetFull);
+  scrim.hidden = !(st.sheetFull && !st.sheetMini && !isSide());
+  sheet.classList.toggle('full', st.sheetFull && !st.sheetMini);
+  sheet.classList.toggle('mini', st.sheetMini);
+  $('#shMin').setAttribute('aria-label', st.sheetMini ? 'Arată toată fișa' : 'Restrânge fișa ca să vezi planul');
   updateCoach(); kbFix();
 }
 function closeSheet(keepMode) {
   if (!keepMode && (st.mode === 'movepick' || st.mode === 'rewall')) setMode('idle');
-  st.sel = null; sheetKind = null; sheet.hidden = true; scrim.hidden = true; st.sheetFull = false;
+  st.sel = null; sheetKind = null; sheet.hidden = true; scrim.hidden = true; st.sheetFull = false; st.sheetMini = false;
   renderItems();
 }
 function setHead(icon, title, where, cls = 'plain') {
@@ -1599,11 +1676,26 @@ function setHead(icon, title, where, cls = 'plain') {
 }
 function select(id) {
   if (st.mode === 'place') setMode('idle');
-  st.sel = id; sheetKind = 'item'; st.sheetFull = false;
+  st.sel = id; sheetKind = 'item'; st.sheetFull = false; st.sheetMini = false;
   renderItems(); openSheetShell(); renderSheet();
   const it = st.items.get(id); if (it) requestAnimationFrame(() => ensureVisible(it.x, it.y));
 }
-$('#grab').addEventListener('click', () => { st.sheetFull = !st.sheetFull; openSheetShell(); });
+// The sheet has three heights: normal, full and folded down to its header so the plan shows.
+// Swipe down or up on the header, tap the arrow, or tap the title of a folded sheet.
+let sheetSwipeAt = 0, sheetY = null;
+$('#grab').addEventListener('click', () => { if (Date.now() - sheetSwipeAt < 450) return; if (st.sheetMini) st.sheetMini = false; else st.sheetFull = !st.sheetFull; openSheetShell(); });
+$('#shMin').addEventListener('click', () => { if (Date.now() - sheetSwipeAt < 450) return; st.sheetMini = !st.sheetMini; if (st.sheetMini) st.sheetFull = false; openSheetShell(); });
+$('.sh-title').addEventListener('click', () => { if (st.sheetMini && Date.now() - sheetSwipeAt > 450) { st.sheetMini = false; openSheetShell(); } });
+$('.sheet-head').addEventListener('pointerdown', e => { if (e.target.closest('.sh-done')) return; sheetY = e.clientY; });
+$('.sheet-head').addEventListener('pointerup', e => {
+  if (sheetY == null) return; const dy = e.clientY - sheetY; sheetY = null;
+  if (Math.abs(dy) < 30) return;
+  sheetSwipeAt = Date.now();
+  if (dy > 0) { if (st.sheetFull) st.sheetFull = false; else st.sheetMini = true; }
+  else if (st.sheetMini) st.sheetMini = false; else st.sheetFull = true;
+  openSheetShell();
+});
+$('.sheet-head').addEventListener('pointercancel', () => { sheetY = null; });
 scrim.addEventListener('click', () => { st.sheetFull = false; openSheetShell(); });
 $('#shDone').addEventListener('click', () => closeSheet());
 
@@ -1669,6 +1761,7 @@ function measBlock(it, wi) {
       <div class="mfield"><label for="f-dist">De la colțul din ${wi.side === 'L' ? 'stânga' : 'dreapta'}</label><div class="box"><input class="inp" id="f-dist" type="number" inputmode="numeric" enterkeyhint="next" min="0" max="2000" step="1" value="${it.dMeas && it.dist != null ? it.dist : ''}" placeholder="≈${est}"${ro ? ' disabled' : ''}><span class="unit">cm</span></div></div>
       <div class="mfield"><label for="f-h">De la pardoseală</label><div class="box"><input class="inp" id="f-h" type="number" inputmode="numeric" enterkeyhint="done" min="0" max="400" step="1" value="${it.hMeas && it.h != null ? it.h : ''}" placeholder="${it.h != null ? '≈' + it.h : 'cm'}"${ro ? ' disabled' : ''}><span class="unit">cm</span></div></div>
     </div>`;
+  if (!ro) h += `<button class="btn primary wide" type="button" data-act="showplan" style="margin-top:10px"><svg><use href="#u-pin"/></svg>Pune pe plan</button>`;
   if (T.hs.length) h += `<div class="chips" aria-label="Înălțimi uzuale">${T.hs.map(v => `<button class="opt" type="button" data-act="h" data-v="${v}" aria-pressed="${!!it.hMeas && it.h === v}">${v} cm</button>`).join('')}</div>`;
   h += `<div id="elevBox">${elevSVG(it, wi)}</div>`;
   h += `<div class="help" id="measHelp">Cu fața la perete, măsoară pe orizontală de la colț până la mijlocul ${it.type === 'intrerupator' ? 'întrerupătorului' : 'elementului'}, apoi pe verticală de la pardoseala de acum.</div>`;
@@ -1733,7 +1826,10 @@ function canAddPhotos() { return canEdit() && (storeMode === 'file' || (storeMod
 function photoBlock(ids, owner) {
   const thumbs = ids.map(id => `<button class="thumb" type="button" data-act="photo" data-v="${esc(id)}"><img src="${esc(photoSrc(id))}" alt="Poză" loading="lazy"></button>`).join('');
   const ups = uploading.filter(u => u.owner === ownerKey(owner)).map(() => '<div class="thumb up">Se încarcă…</div>').join('');
-  const add = canAddPhotos() ? `<label class="addph" for="fileIn" role="button" tabindex="0" data-act="addphoto"><svg><use href="#u-camera"/></svg>Fă o poză</label>` : '';
+  // Two ways in: the camera straight away, or a picture already in the gallery. Some phones offer only one of them
+  // from a single file field, so each gets its own button.
+  const add = canAddPhotos() ? `<label class="addph" for="camIn" role="button" tabindex="0" data-act="addphoto"><svg><use href="#u-camera"/></svg>Fă o poză</label>` +
+    `<label class="addph" for="fileIn" role="button" tabindex="0" data-act="addphoto"><svg><use href="#u-import"/></svg>Din galerie</label>` : '';
   const note = canAddPhotos() || !canEdit() ? '' : `<div class="help">${storeMode === 'local' ? 'Pozele se pot adăuga când deschizi pagina din aplicația Claude.' : 'Pozele nu sunt disponibile în această vizualizare.'}</div>`;
   if (!thumbs && !ups && !add) return note ? `<div class="fld"><div class="lab">Poze</div>${note}</div>` : '';
   return `<div class="fld"><div class="lab">Poze</div><div class="thumbs">${thumbs}${ups}${add}</div>${note}</div>`;
@@ -1747,7 +1843,7 @@ $('#shBody').addEventListener('click', e => {
   if (sheetKind === 'room') return roomAction(act, v);
   if (sheetKind === 'layers') return layersAction(act, v, b);
   if (sheetKind === 'swap' || sheetKind === 'import' || sheetKind === 'saved' || sheetKind === 'help') return miscAction(act, v, b);
-  if (sheetKind === 'cote') { if (act === 'cdel') armDanger(b, () => deleteUserCote(coteSel)); return; }
+  if (sheetKind === 'cote') { if (act === 'cswap' || act === 'canchor') { coteDirAction(act, v); return; } if (act === 'gnext') { if (!st.layers.ghid) setLayer('ghid', true); const n = ghidNext(coteSel); if (n) goCote(n.id); else toast('Toate cotele din ghid sunt măsurate.'); } else if (act === 'cdel') armDanger(b, () => deleteUserCote(coteSel)); return; }
   if (sheetKind === 'corner') return;
   const it = st.items.get(st.sel); if (!it) return;
   if (act === 'status') { patch(it.id, {status: v}, {sheet: true}); if (v === 'mutat' && !it.move) setMode('movepick'); }
@@ -1766,7 +1862,8 @@ $('#shBody').addEventListener('click', e => {
   else if (act === 'another') { const t = it.type; closeSheet(); setMode('place', t); }
   else if (act === 'dup') duplicate(it.id);
   else if (act === 'del') armDanger(b, () => removeItem(it.id));
-  else if (act === 'addphoto') { photoOwner = 'item'; $('#fileIn').value = ''; }
+  else if (act === 'addphoto') { photoOwner = 'item'; $('#fileIn').value = ''; $('#camIn').value = ''; watchPicker(); }
+  else if (act === 'showplan') showOnPlan(it);
   else if (act === 'photo') openLightbox(v, 'item');
 });
 $('#shBody').addEventListener('input', e => {
@@ -1795,8 +1892,26 @@ $('#shBody').addEventListener('input', e => {
 $('#shBody').addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   if (e.target.id === 'f-dist') { e.preventDefault(); const h = $('#f-h'); if (h) h.focus(); }
-  else if (e.target.id === 'f-h' || e.target.id === 'f-name') { e.preventDefault(); e.target.blur(); }
+  else if (e.target.id === 'f-h') { e.preventDefault(); const it = st.items.get(st.sel); if (it) showOnPlan(it); else e.target.blur(); }
+  else if (e.target.id === 'f-name') { e.preventDefault(); e.target.blur(); }
 });
+// The position is saved as soon as a distance is typed; this folds the sheet and brings the element into view,
+// so you see where it landed on the wall.
+function showOnPlan(it) {
+  const a = document.activeElement; if (a && a.blur) a.blur();
+  st.sheetMini = true; st.sheetFull = false; openSheetShell();
+  setTimeout(() => ensureVisible(it.x, it.y), 280);
+}
+// Some in-app browsers (the Claude phone app among them) ignore file fields: nothing opens and nothing is reported.
+// If the page neither loses focus nor gets hidden shortly after the tap, say so instead of staying silent.
+function watchPicker() {
+  let opened = false; const mark = () => { opened = true; };
+  addEventListener('blur', mark, {once: true}); document.addEventListener('visibilitychange', mark, {once: true});
+  setTimeout(() => {
+    removeEventListener('blur', mark); document.removeEventListener('visibilitychange', mark);
+    if (!opened) toast('Camera sau galeria nu s-au deschis. În aplicația Claude de pe telefon pozele nu merg: deschide pagina în Chrome sau trimite poza în chat.');
+  }, 2000);
+}
 $('#shBody').addEventListener('change', e => {
   const el = e.target;
   if (sheetKind === 'layers') return layersChange(el);
@@ -1890,7 +2005,7 @@ function roomInput(el) {
   persist('rooms/' + roomSel, {...d}); scheduleRender();
 }
 function roomAction(act, v) {
-  if (act === 'addphoto') { photoOwner = 'room'; $('#fileIn').value = ''; }
+  if (act === 'addphoto') { photoOwner = 'room'; $('#fileIn').value = ''; $('#camIn').value = ''; watchPicker(); }
   else if (act === 'photo') openLightbox(v, 'room');
 }
 
@@ -1905,7 +2020,7 @@ function dataURLToBlob(u) {
   const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
   return new Blob([arr], {type: mime});
 }
-$('#fileIn').addEventListener('change', async e => {
+const onPhotoFiles = async e => {
   const files = [...e.target.files]; if (!files.length) return;
   const owner = photoOwner || (sheetKind === 'room' ? 'room' : 'item');
   if ((owner === 'item' && !st.sel) || (owner === 'room' && !roomSel)) { toast('Deschide întâi fișa elementului, apoi adaugă poza.'); return; }
@@ -1932,7 +2047,9 @@ $('#fileIn').addEventListener('change', async e => {
         : storeMode === 'file' ? 'Nu am putut citi poza. Încearcă din nou.' : 'Poza nu s-a încărcat. Verifică semnalul și încearcă din nou.');
     } finally { uploading.splice(uploading.indexOf(tok), 1); rerenderOwner(owner); }
   }
-});
+};
+$('#fileIn').addEventListener('change', onPhotoFiles);
+$('#camIn').addEventListener('change', onPhotoFiles);
 function addPhotoId(key, id) {
   const [col, docId] = key.split('/');
   if (col === 'items') { const it = st.items.get(docId); if (!it) return; it.photos = [...(it.photos || []), id]; commit(it, 0); }
@@ -2449,7 +2566,7 @@ function allCotes() {
   for (const [id, m] of Object.entries(st.measures)) {
     if (!m || !m.user || !m.a || !m.b) continue;
     out.push({id, rel: false, room: m.room, t: m.t || 'Cotă nouă', a: m.a, b: m.b, plan: Math.hypot(m.b[0] - m.a[0], m.b[1] - m.a[1]),
-      v04: null, v26: m.v != null ? m.v / 100 : null, note: m.note || '', at: m.at || null});
+      v04: null, v26: m.v != null ? m.v / 100 : null, note: m.note || '', at: m.at || null, vec: !!m.vec, anchor: m.anchor === 'b' ? 'b' : 'a'});
   }
   return out;
 }
@@ -2483,11 +2600,152 @@ function renderCote() {
     let tl = 0.5;
     for (const tt of [0.5, 0.36, 0.64, 0.27, 0.73, 0.2, 0.8]) { const px = c.a[0] + dx * tt, py = c.a[1] + dy * tt; if (ROOMS.every(r => Math.hypot((r.label[0] - px) * 0.5, (r.label[1] + 0.12) - py) > 0.85)) { tl = tt; break; } }
     const w = 10 + lb.len * 6.6, mx = c.a[0] + dx * tl, my = c.a[1] + dy * tl;
+    const dec = c.rel ? '' : userCoteDecor(c);
     const seg = `x1="${c.a[0]}" y1="${c.a[1]}" x2="${c.b[0]}" y2="${c.b[1]}" vector-effect="non-scaling-stroke"`;
-    h += `<g class="cote${lb.pending ? ' pending' : ''}${lb.m ? ' m' : ''}${c.rel ? '' : ' user'}" data-cid="${c.id}"><line class="hitl" ${seg}/><line class="ln" ${seg}/>${tick(c.a)}${tick(c.b)}` +
+    h += `<g class="cote${lb.pending ? ' pending' : ''}${lb.m ? ' m' : ''}${c.rel ? '' : ' user'}" data-cid="${c.id}"><line class="hitl" ${seg}/><line class="ln" ${seg}/>${tick(c.a)}${tick(c.b)}${dec}` +
       `<g class="lb" data-x="${mx.toFixed(3)}" data-y="${my.toFixed(3)}"><rect x="${(-w / 2).toFixed(1)}" y="-10" width="${w.toFixed(1)}" height="19" rx="5"/><text y="4">${lb.html}</text></g></g>`;
   }
   const g = $('#g-cote'); g.innerHTML = h; g.classList.toggle('layer-off', !st.layers.cote);
+  renderGhid();
+}
+/* ---------- measuring guide: where the back of the laser meter goes, and what it aims at */
+const GHID = [
+  {id: 'm_livtot', s: 'b', stand: 'Jos, pe peretele exterior al fostului balcon, lângă calorifer, nu pe el.', aim: 'Peretele cu arcada spre hol, de vizavi, deasupra plintei. Fasciculul trebuie să treacă liber, pe lângă moloz și saci.', h: 'jos, dar peste plintă; aparatul ținut orizontal'},
+  {id: 'rel13', s: 'a', stand: 'Pe peretele cu arcada spre hol, la 15 cm de peretele dinspre dormitoare.', aim: 'Capătul de perete rămas lângă golul spre fostul balcon, pe partea dinspre dormitorul 2, adică linia fostului parapet.', h: '1,20 m'},
+  {id: 'rel14', s: 'a', stand: 'Pe peretele dinspre dormitoare, la 1,35 m de peretele cu arcada.', aim: 'Peretele lung de vizavi.', h: '1,2 m'},
+  {id: 'rel15', s: 'a', stand: 'Pe peretele de capăt al fostului balcon, dinspre dormitorul 2, la 75 cm de geam.', aim: 'Peretele de capăt de vizavi, cu draperiile date la o parte.', h: '1,2 m'},
+  {id: 'rel12', s: 'b', stand: 'Pe peretele cu ușa, imediat după capătul ieșindului din colțul dinspre dormitorul 1; linia de pe plan trece prin el, iar dacă pereții sunt paraleli valoarea e aceeași.', aim: 'Peretele cu fereastra, sub pervaz. Nu geamul.', h: '0,6–0,8 m'},
+  {id: 'rel11', s: 'a', stand: 'Pe peretele dinspre dormitorul 1, la 2 m de peretele cu fereastra.', aim: 'Peretele de vizavi.', h: '1,2 m'},
+  {id: 'rel10', s: 'b', stand: 'Pe peretele cu ușa, la 1 m de peretele dinspre dormitorul 2.', aim: 'Peretele cu fereastra, sub pervaz. Nu geamul.', h: '0,6–0,8 m'},
+  {id: 'rel9', s: 'a', stand: 'Pe peretele dinspre bucătărie, la 30 cm de peretele cu fereastra.', aim: 'Peretele dinspre dormitorul 2; fosta ușă e acum perete.', h: '1,2 m'},
+  {id: 'rel0', s: 'a', stand: 'Pe peretele de vizavi de dormitorul 1, la 30 cm de parapetul balconului.', aim: 'Peretele dinspre dormitorul 1.', h: '1,2 m'},
+  {id: 'mbuclungtot', s: 'a', stand: 'Pe peretele lung din stânga ușii, cum intri (fața A).', aim: 'Peretele exterior al balconului, deasupra caloriferului.', h: 'peste parapet, cam 1,2 m'},
+  {id: 'rel2', s: 'a', stand: 'Pe peretele de capăt al balconului, la 35–40 cm de geam.', aim: 'Peretele de capăt de vizavi.', h: '1,2 m'},
+  {id: 'rel3', s: 'b', stand: 'Pe parapet, pe fața dinspre balcon, aproape de capătul lui dinspre dormitorul 1.', aim: 'Peretele exterior al balconului, sub pervaz.', h: '0,5–0,7 m'},
+  {id: 'rel8', s: 'a', stand: 'Pe peretele băii, la 30 cm de colțul holului dinspre bucătărie și dormitorul 1.', aim: 'Peretele de vizavi, dinspre living.', h: '1,2 m'},
+  {id: 'rel4', s: 'b', stand: 'Pe peretele dinspre hol, la 30 cm de colțul din fundul băii.', aim: 'Peretele de vizavi.', h: '1,2 m'},
+  {id: 'rel5', s: 'b', stand: 'Pe peretele din fundul băii, la 50 cm de peretele de vizavi de ușă.', aim: 'Peretele de la intrare.', h: '1,2 m'},
+  {id: 'rel6', s: 'a', stand: 'Pe un perete lateral, la 25 cm de peretele din fund.', aim: 'Peretele lateral de vizavi.', h: '1,2 m'},
+  {id: 'rel7', s: 'b', stand: 'Pe unul dintre pereții scurți, la mijloc.', aim: 'Peretele scurt de vizavi.', h: '1,2 m'},
+];
+function ghidSteps() {
+  const cs = new Map(allCotes().map(c => [c.id, c]));
+  return GHID.map((g, i) => ({...g, n: i + 1, c: cs.get(g.id)})).filter(s => s.c);
+}
+function ghidNext(after) {
+  const steps = ghidSteps(), i = after ? steps.findIndex(s => s.id === after) : -1;
+  return steps.slice(i + 1).find(s => s.c.v26 == null) || steps.find(s => s.c.v26 == null && s.id !== after) || null;
+}
+function renderGhid() {
+  const g = $('#g-ghid'); if (!g) return;
+  if (!st.layers.ghid) { g.innerHTML = ''; g.classList.add('layer-off'); return; }
+  const steps = ghidSteps(), nx = ghidNext();
+  const f = v => v.toFixed(3);
+  const draw = s => {
+    const c = s.c, p = s.s === 'b' ? c.b : c.a, q = s.s === 'b' ? c.a : c.b;
+    const dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+    const done = c.v26 != null, isNext = !!nx && nx.id === s.id;
+    const tip = [q[0] - ux * 0.04, q[1] - uy * 0.04], base = [tip[0] - ux * 0.26, tip[1] - uy * 0.26], w = [-uy * 0.11, ux * 0.11];
+    const end = done ? tip : base, st0 = [p[0] + ux * 0.1, p[1] + uy * 0.1];
+    const head = done ? '' : `<polygon class="ah" points="${f(tip[0])},${f(tip[1])} ${f(base[0] + w[0])},${f(base[1] + w[1])} ${f(base[0] - w[0])},${f(base[1] - w[1])}"/>`;
+    const seg = `x1="${f(st0[0])}" y1="${f(st0[1])}" x2="${f(end[0])}" y2="${f(end[1])}" vector-effect="non-scaling-stroke"`;
+    return `<g class="gh${done ? ' done' : ''}${isNext ? ' next' : ''}" data-cid="${c.id}"><line class="hitl" ${seg}/><line class="ar" ${seg}/>${head}` +
+      `<g class="ghd" data-x="${p[0]}" data-y="${p[1]}"><circle r="${isNext ? 12 : 9}"/><text y="${isNext ? 4.2 : 3.6}">${done ? '✓' : s.n}</text></g></g>`;
+  };
+  // the next step goes last, so it sits on top of the others
+  g.innerHTML = steps.filter(s => !nx || s.id !== nx.id).map(draw).join('') + (nx ? draw(nx) : '');
+  g.classList.remove('layer-off');
+  collectScalables(); applyView();
+}
+function ghidSheetHTML(c) {
+  const steps = ghidSteps(), s = steps.find(x => x.id === c.id);
+  if (!s && c.vec) return `<div class="help">Pui spatele telemetrului la cercul plin de pe plan și ochești pe direcția săgeții. Valoarea o scrii mai jos, în centimetri întregi.</div>`;
+  if (!s) return `<div class="help">Măsoară de la perete la perete, pe linia arătată pe plan, la cam 1 m de pardoseală, unde nu încurcă plintele.</div>`;
+  return `<div class="ghbox"><div class="ghh">Ghid · pasul ${s.n} din ${steps.length}</div><dl>` +
+    `<dt>Spatele aparatului</dt><dd>${esc(s.stand)}</dd><dt>Ochești</dt><dd>${esc(s.aim)}</dd><dt>Înălțime</dt><dd>${esc(s.h)}</dd></dl>` +
+    `<div class="help">Pe plan, cercul cu numărul ${s.n} e locul de pornire, iar săgeata arată spre ce ochești. Min/Max e o funcție a telemetrului: apeși Func, alegi Min/Max din listă, confirmi cu ▲, apoi apeși ▲ ca să pornească laserul. Aparatul măsoară continuu și ține minte valoarea cea mai mică. Cu spatele lipit de perete, îl rotești încet puțin stânga-dreapta, cu punctul roșu tot pe peretele ochit; valoarea minimă e distanța perpendiculară. Fără Min/Max, ține aparatul cât mai drept: o abatere de 2° pe 5 m adaugă cam 3 mm. Aici scrii centimetri întregi; milimetrii îi poți trece în notă.</div></div>`;
+}
+/* user dimensions have a direction: a is where the back of the laser meter sits, b is what it aims at */
+function vecMeasuredPoint(c) {
+  if (!c.vec || c.v26 == null) return null;
+  const dx = c.b[0] - c.a[0], dy = c.b[1] - c.a[1], L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+  return c.anchor === 'b' ? [c.b[0] - ux * c.v26, c.b[1] - uy * c.v26] : [c.a[0] + ux * c.v26, c.a[1] + uy * c.v26];
+}
+function userCoteDecor(c) {
+  const f = v => v.toFixed(3);
+  const dx = c.b[0] - c.a[0], dy = c.b[1] - c.a[1], L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+  const base = [c.b[0] - ux * 0.2, c.b[1] - uy * 0.2], w = [-uy * 0.08, ux * 0.08];
+  let h = `<polygon class="ah2" points="${f(c.b[0])},${f(c.b[1])} ${f(base[0] + w[0])},${f(base[1] + w[1])} ${f(base[0] - w[0])},${f(base[1] - w[1])}"/>`;
+  const P = vecMeasuredPoint(c);
+  if (P) {
+    const from = c.anchor === 'b' ? P : c.a, to = c.anchor === 'b' ? c.b : P;
+    h += `<line class="mvl" x1="${f(from[0])}" y1="${f(from[1])}" x2="${f(to[0])}" y2="${f(to[1])}" vector-effect="non-scaling-stroke"/>` +
+      `<g class="mvp" data-x="${f(P[0])}" data-y="${f(P[1])}"><rect x="-4.5" y="-4.5" width="9" height="9" transform="rotate(45)"/></g>`;
+  }
+  return h + `<g class="cst" data-x="${c.a[0]}" data-y="${c.a[1]}"><circle r="5.5"/></g>`;
+}
+function snapPt(p) {
+  const w = nearestWall(p);
+  return w && w.d < 0.15 ? {p: [+w.q[0].toFixed(3), +w.q[1].toFixed(3)], snapped: true, w} : {p: [+p[0].toFixed(3), +p[1].toFixed(3)], snapped: false};
+}
+// The laser reads the perpendicular distance, so the line runs from the start straight onto the wall it aims at;
+// off a wall, a line within 10° of the plan's axes is straightened onto that axis.
+function straightTarget(a, s) {
+  if (s.w && ROOM_BY[s.w.room]) {
+    const P = ROOM_BY[s.w.room].poly, p0 = P[s.w.e], p1 = P[(s.w.e + 1) % P.length];
+    const dx = p1[0] - p0[0], dy = p1[1] - p0[1], t = ((a[0] - p0[0]) * dx + (a[1] - p0[1]) * dy) / (dx * dx + dy * dy);
+    return [+(p0[0] + t * dx).toFixed(3), +(p0[1] + t * dy).toFixed(3)];
+  }
+  const dx = s.p[0] - a[0], dy = s.p[1] - a[1];
+  if (Math.abs(dy) > Math.abs(dx) * 5.67) return [a[0], s.p[1]];
+  if (Math.abs(dx) > Math.abs(dy) * 5.67) return [s.p[0], a[1]];
+  return s.p;
+}
+function vecTap(p) {
+  const s = snapPt(p);
+  if (!vecStart) {
+    vecStart = s;
+    $('#g-measure').innerHTML = `<g class="vecpre" data-x="${s.p[0]}" data-y="${s.p[1]}"><circle r="6"/></g>`;
+    collectScalables(); applyView();
+    $('#hintText').textContent = 'Acum atinge locul spre care ochești, de obicei peretele din față.';
+    return;
+  }
+  const s0 = vecStart, a = s0.p, b = straightTarget(a, s);
+  setMode('idle');
+  if (Math.hypot(b[0] - a[0], b[1] - a[1]) < 0.1) { toast('Cele două puncte sunt prea apropiate. Mai încearcă.'); return; }
+  const id = 'm' + uid().slice(1);
+  const room = roomAt(a) || roomAt(b) || (nearestWall(a) || {}).room || null;
+  st.measures[id] = {user: true, vec: true, anchor: s.snapped && !s0.snapped ? 'b' : 'a', room, t: 'Măsurătoare liberă', a, b, v: null, note: '', created: Date.now(), updated: Date.now()};
+  persist('measures/' + id, {...st.measures[id]}, 0);
+  if (st.coteMode === '2004') setCoteMode('ambele');
+  if (!st.layers.cote) setLayer('cote', true); else renderCote();
+  collectScalables(); applyView();
+  openCote(id);
+}
+function coteDirHTML(c) {
+  if (c.rel) return '';
+  const ro = !canEdit();
+  let h = `<div class="fld"><div class="lab">Sensul măsurătorii</div><div class="help">Cercul plin de pe plan e locul unde pui spatele telemetrului; săgeata arată spre ce ochești.</div>` +
+    (ro ? '' : `<div class="row" style="margin-top:6px"><button class="btn" type="button" data-act="cswap">Inversează sensul</button></div>`) + `</div>`;
+  if (c.vec) {
+    h += `<div class="fld"><div class="lab">Ce capăt e sigur pe plan</div><div class="seg" role="group" style="grid-template-columns:repeat(2,1fr)">` +
+      `<button type="button" data-act="canchor" data-v="a" aria-pressed="${c.anchor === 'a'}"${ro ? ' disabled' : ''}>Pornirea</button>` +
+      `<button type="button" data-act="canchor" data-v="b" aria-pressed="${c.anchor === 'b'}"${ro ? ' disabled' : ''}>Ținta</button></div>` +
+      `<div class="help" id="cdirRes">${esc(vecDirText(c))}</div></div>`;
+  }
+  return h;
+}
+function vecDirText(c) {
+  const P = vecMeasuredPoint(c), drawn = c.anchor === 'b' ? c.a : c.b;
+  return P ? `Capătul calculat e la ${nf(Math.hypot(P[0] - drawn[0], P[1] - drawn[1]) * 100, 0)} cm de cel desenat și apare pe plan ca un romb.` :
+    'Capătul sigur rămâne pe loc, iar celălalt se calculează din valoarea măsurată. Dacă pui telemetrul pe o muchie care nu e pe plan și ochești un perete de pe plan, alege „Ținta”.';
+}
+function coteDirAction(act, v) {
+  const id = coteSel, m = st.measures[id]; if (!m || !m.user) return;
+  if (act === 'cswap') { const a = m.a; m.a = m.b; m.b = a; if (m.vec) m.anchor = m.anchor === 'b' ? 'a' : 'b'; }
+  else if (act === 'canchor') m.anchor = v === 'b' ? 'b' : 'a';
+  m.updated = Date.now(); persist('measures/' + id, {...m}, 0);
+  renderCote(); collectScalables(); applyView(); renderCoteSheet();
 }
 function setCoteMode(m) { st.coteMode = m; saveUI(); renderCote(); collectScalables(); applyView(); renderLayerUI(); }
 function setMeasure(id, raw) {
@@ -2517,9 +2775,11 @@ function renderCoteSheet() {
   const c = coteById(coteSel); if (!c) { closeSheet(); return; }
   const ro = !canEdit();
   let h = `<div class="vals">${c.v04 != null ? `<div><span>2004</span><b class="num">${nf(c.v04)} m</b></div>` : ''}<div><span>Plan</span><b class="num">${nf(c.plan)} m</b></div><div class="${c.v26 != null ? 'now' : ''}"><span>2026</span><b class="num" id="v26">${c.v26 != null ? nf(c.v26) + ' m' : '—'}</b></div></div>`;
+  h += ghidSheetHTML(c);
   h += `<div class="mfield"><label for="f-cv">Măsurat acum, cu ruleta</label><div class="box"><input class="inp" id="f-cv" type="number" inputmode="numeric" enterkeyhint="done" min="1" max="5000" step="1" value="${c.v26 != null ? Math.round(c.v26 * 100) : ''}" placeholder="${Math.round((c.v04 != null ? c.v04 : c.plan) * 100)}"${ro ? ' disabled' : ''}><span class="unit">cm</span></div></div>`;
   h += `<div class="help" id="cvRes">${esc(coteResult(c))}</div>`;
-  h += `<div class="help">Măsoară de la perete la perete, pe linia arătată pe plan, la cam 1 m de pardoseală, unde nu încurcă plintele.</div>`;
+  h += coteDirHTML(c);
+  if (GHID.some(g => g.id === c.id)) h += `<div class="row" style="margin-top:8px"><button class="btn" type="button" data-act="gnext">Pasul următor din ghid</button></div>`;
   if (!c.rel) h += `<div class="fld"><label for="f-cname">Nume</label><input class="inp w" id="f-cname" value="${esc(c.t)}" maxlength="60"${ro ? ' disabled' : ''}></div>`;
   h += `<div class="fld"><label for="f-cnote">Notă</label><textarea class="inp" id="f-cnote" placeholder="De exemplu: măsurat la 1 m, peretele e strâmb"${ro ? ' disabled' : ''}>${esc(c.note)}</textarea></div>`;
   if (!c.rel && !ro) h += `<div class="sh-foot"><span class="sp"></span><button class="btn danger" type="button" data-act="cdel"><svg><use href="#u-trash"/></svg>Șterge cota</button></div>`;
@@ -2529,7 +2789,7 @@ function coteInput(el) {
   const id = coteSel; if (!id) return;
   if (el.id === 'f-cv') {
     setMeasure(id, el.value);
-    const c = coteById(id); $('#v26').textContent = c.v26 != null ? nf(c.v26) + ' m' : '—'; $('#cvRes').textContent = coteResult(c);
+    const c = coteById(id); $('#v26').textContent = c.v26 != null ? nf(c.v26) + ' m' : '—'; $('#cvRes').textContent = coteResult(c); const dr = $('#cdirRes'); if (dr) dr.textContent = vecDirText(c);
   } else if (el.id === 'f-cnote' || el.id === 'f-cname') {
     const m = {...(st.measures[id] || {})};
     if (el.id === 'f-cnote') m.note = el.value; else { m.t = el.value.trim() || 'Cotă nouă'; $('#shType').textContent = m.t; }
@@ -2668,7 +2928,7 @@ function lengthsHTML() {
     <p>${measured} din ${cs.length} cote sunt măsurate acum. Începe cu cele ${todo.length} unde releveul din 2004 și planul diferă cu ${nf(Math.min(...todo.map(c => Math.abs(c.d04))), 0)}–${nf(Math.max(...todo.map(c => Math.abs(c.d04))), 0)} cm: acolo nu știm încă cine greșește. Valorile din 2004 rămân neschimbate; ce scrii aici se păstrează separat, ca măsurătoare din 2026.</p>
     <div class="fld"><div class="lab">Pe plan arăți</div><div class="seg seg3" role="group">${modes.map(([v, l]) => `<button type="button" data-cmode="${v}" aria-pressed="${st.coteMode === v}">${l}</button>`).join('')}</div>
     <div class="help">${st.coteMode === '2004' ? 'Valoarea din 2004 și diferența față de plan.' : st.coteMode === '2026' ? 'Valoarea măsurată acum și diferența față de plan; cifrele gri cu semnul întrebării sunt din 2004, încă nemăsurate.' : 'Valoarea din 2004, apoi cea de acum, colorată după cât de bine se potrivește cu planul.'}</div></div>
-    <div class="row"><button class="btn${st.layers.cote ? '' : ' primary'}" type="button" data-ctog="1">${st.layers.cote ? 'Ascunde cotele de pe plan' : 'Arată cotele pe plan'}</button>${canEdit() ? '<button class="btn" type="button" data-cadd="1"><svg><use href="#u-plusc"/></svg>Cotă nouă pe un perete</button>' : ''}</div></div>`;
+    <div class="row"><button class="btn primary" type="button" data-gstart="1">${ghidNext() ? 'Ghid pas cu pas' : 'Ghidul e terminat'}</button><button class="btn" type="button" data-ctog="1">${st.layers.cote ? 'Ascunde cotele de pe plan' : 'Arată cotele pe plan'}</button>${canEdit() ? '<button class="btn" type="button" data-cadd="1"><svg><use href="#u-plusc"/></svg>Cotă nouă pe un perete</button><button class="btn" type="button" data-vadd="1"><svg><use href="#u-plusc"/></svg>Măsurătoare liberă</button>' : ''}</div></div>`;
   h += `<h3 class="sec">De remăsurat</h3><div class="mlist">${todo.map(rowLen).join('')}</div>`;
   if (user.length) h += `<h3 class="sec">Adăugate de tine</h3><div class="mlist">${user.map(rowLen).join('')}</div>`;
   h += `<details class="more"><summary>Se potrivesc cu planul (${okc.length})</summary><div class="in"><div class="mlist">${okc.map(rowLen).join('')}</div></div></details>`;
@@ -2721,13 +2981,15 @@ function goCote(id) {
   openCote(id);
 }
 $('#coteWrap').addEventListener('click', e => {
-  const t = e.target.closest('[data-mtab],[data-cmode],[data-ctog],[data-cadd],[data-cgo],[data-htog],[data-hgo],[data-3room]'); if (!t) return;
+  const t = e.target.closest('[data-mtab],[data-cmode],[data-ctog],[data-cadd],[data-cgo],[data-htog],[data-hgo],[data-3room],[data-gstart],[data-vadd]'); if (!t) return;
   const ds = t.dataset;
   if (ds.mtab) { st.mtab = ds.mtab; saveUI(); renderCoteTab(); }
   else if (ds.cmode) { setCoteMode(ds.cmode); renderCoteTab(); }
   else if (ds.ctog) { if (st.layers.cote) { setLayer('cote', false); renderCoteTab(); } else { setLayer('cote', true); showTab('plan'); fit(); } }
   else if (ds.cadd) { if (!st.layers.cote) setLayer('cote', true); showTab('plan'); setMode('coteadd'); }
+  else if (ds.vadd) { if (!st.layers.cote) setLayer('cote', true); if (st.coteMode === '2004') setCoteMode('ambele'); showTab('plan'); setMode('vecadd'); }
   else if (ds.cgo) goCote(ds.cgo);
+  else if (ds.gstart) { if (!st.layers.ghid) setLayer('ghid', true); const n = ghidNext(); if (n) goCote(n.id); else { showTab('plan'); fit(); } }
   else if (ds.htog) { if (st.layers.heights) { setLayer('heights', false); renderCoteTab(); } else { setLayer('heights', true); showTab('plan'); fit(); } }
   else if (ds.hgo) { if (!st.layers.heights) setLayer('heights', true); showTab('plan'); fitRoom(ds.hgo); }
   else if (ds['3room'] !== undefined) { st.focus3 = ds['3room'] || null; $$('#coteWrap [data-3room]').forEach(b => b.setAttribute('aria-pressed', (b.dataset['3room'] || null) === st.focus3)); if (three) { frame3D(); render3D(); } }
