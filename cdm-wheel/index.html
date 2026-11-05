@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FX product classification wheel</title>
 <link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/about.css">
 </head>
 <body>
 
@@ -15,10 +16,135 @@
     Leaf positions never move; the rings do.</p>
   </div>
   <div class="switches">
+    <nav class="aboutnav" aria-label="About"><button class="viewbtn aboutbtn" id="aboutbtn" type="button" aria-pressed="false">About this page</button></nav>
     <nav class="views" id="views" aria-label="View"></nav>
     <nav class="lenses" id="lenses" aria-label="Classification lens"></nav>
   </div>
 </header>
+
+<div class="about" id="about" hidden>
+  <section>
+    <div class="eyebrow">About this page</div>
+    <h2>One product, five standards, and where they disagree</h2>
+    <p class="lede">Banks trade hundreds of kinds of financial products, and every system that touches
+      one describes it in its own way. Five international standards try to bring order, and they do
+      not agree with each other. This page takes the 17 foreign-exchange (FX) derivative products
+      that the official registry knows about and shows, product by product, what each standard
+      says about it, and where it says nothing.</p>
+    <div class="meta"><span>Research prototype from a personal project</span><span>Snapshot of 31 October 2026, 02:01</span><span>17 products &middot; 5 standards</span><span>Static page, no tracking, no network calls</span></div>
+    <div class="cta">
+      <button class="ctabtn" type="button" data-go="lanes">Open the comparison (Lanes) &rarr;</button>
+      <button class="ctabtn secondary" type="button" data-go="wheel">Open the wheel</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Why it matters</div>
+    <h2>The same product, described in five languages</h2>
+    <p>An FX forward or an FX option passes through a bank&rsquo;s trading system, its risk
+      engine, its regulatory reporting and the market-data feeds it buys. Each of them names and
+      structures the product differently, and every connection between two systems ends up with its
+      own hand-made translation, which can be wrong in its own way. A <em>canonical model</em> is a
+      single internal vocabulary with explicit, checkable translations to each outside standard.
+      Before building one, you need to see how far apart the standards really are. That is what this
+      page is for.</p>
+    <div class="cards">
+      <div class="card"><h3>UPI &middot; ANNA-DSB</h3><span class="tag">ISO 4914</span><p>The official identity of an over-the-counter derivative, used in regulatory reporting. A strict tree: asset class, instrument type, product.</p></div>
+      <div class="card"><h3>CFI</h3><span class="tag">ISO 10962</span><p>A six-character classification code. Each position answers its own question, so it is a set of facets, not a tree.</p></div>
+      <div class="card"><h3>CDM</h3><span class="tag">ISDA / FINOS</span><p>A common model of trades. It does not list product types; it decides them with rules that read the trade&rsquo;s terms.</p></div>
+      <div class="card"><h3>FpML</h3><span class="tag">XML for derivatives</span><p>The format banks use to confirm derivative trades with each other. A product is a composition of building blocks.</p></div>
+      <div class="card"><h3>FIBO</h3><span class="tag">EDM Council</span><p>An ontology of financial terms. A class can have several parents, so it does not fit into any single tree.</p></div>
+    </div>
+    <p>Because the five have different <em>shapes</em> (a tree, a code, a rule set, a composition, an
+      ontology), no single hierarchy is true for all of them at once. So the page does not impose one.
+      It fixes the list of products and lets each standard say what it says about each of them.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">How to read it</div>
+    <h2>Two views of the same 17 products</h2>
+    <div class="howto">
+      <div class="card"><h3>Lanes: the comparison table</h3><p>One row per product, grouped into forwards, options and swaps; one column per standard. Each cell shows what that standard calls the product. Hover a row to follow it across all five standards; click it to pin it and read the details on the right.</p></div>
+      <div class="card"><h3>Wheel: the overview</h3><p>The 17 products sit on the rim and never move. The inner rings show how one standard groups them; switch between UPI, CFI and CDM with the buttons above the wheel. Where a ring breaks into repeated pieces, that standard groups the products in a different order: the break is the disagreement.</p></div>
+      <div class="card"><h3>The panel on the right</h3><p>Pick a product to see how each standard describes it, and where it has nothing to say. Every line cites the file it was read from in the project&rsquo;s copy of the standards, so any claim can be checked.</p></div>
+      <div class="card"><h3>Below the views</h3><p>Headline numbers (for example how many of the 17 products have a CDM rule) and a list of the places where the standards do not line up, each with its sources.</p></div>
+    </div>
+    <p>On a screen narrower than about 1000 pixels the two diagrams would become unreadable, so the
+      page shows a list of the 17 products instead, with the same detail.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">How the links were made</div>
+    <h2>Every claim points to a file and a line</h2>
+    <p>Each standard was downloaded into the project and kept unchanged. Every value on this page
+      was read from those copies, and every link between a product and a standard cites the exact
+      file and line it rests on. A checking program opens every citation each time the page is built:
+      in this version, 5,410 checks over 224 citations. A citation that nobody opens is decoration.</p>
+    <p>Not every link is equally strong, so each one is labelled. These are the colours used in the
+      Lanes view:</p>
+    <ul class="legend">
+      <li><span class="dot exact"></span><span class="name">exact</span><span>the standard says the same thing, confirmed against the cited line</span></li>
+      <li><span class="dot evidenced-name"></span><span class="name">evidenced-name</span><span>the two names are made of the same words</span></li>
+      <li><span class="dot editorial"></span><span class="name">editorial</span><span>a judgement call, with a citation and a written reason</span></li>
+      <li><span class="dot broader"></span><span class="name">broader</span><span>the standard&rsquo;s term is true but says less than the product</span></li>
+      <li><span class="dot absent"></span><span class="name">absent</span><span>the standard could have answered and does not</span></li>
+    </ul>
+    <div class="callout">
+      <p><strong>Honest note on this version.</strong> In this first snapshot the links were written
+        by hand, each with its citation. Later the same morning they were replaced by links derived
+        automatically from the standards&rsquo; own files, because hundreds of hand-written links
+        cannot each be checked, and a plausible-looking invented reference passes review.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The process</div>
+    <h2>From a visual idea to a working model</h2>
+    <ol class="steps">
+      <li><div class="num">1</div><div class="body"><div class="when">30 October, 23:07</div><h3>A wheel</h3><p>The starting point was a demo in which an AI model sorted the plants of an old botany book onto a wheel, from family to species. The first attempt did the same for 17 FX products: products on the rim, inner rings switchable between UPI, CFI and CDM.</p></div></li>
+      <li><div class="num">2</div><div class="body"><div class="when">31 October, 01:13 to 01:35</div><h3>The wheel hid the disagreement</h3><p>On the wheel you see one standard at a time and have to remember the others. The lanes put all five side by side on the same product rows, so the differences become visible at a glance. Lanes became the main view; the wheel stayed as the overview.</p></div></li>
+      <li><div class="num">3</div><div class="body"><div class="when">31 October, 02:01</div><h3>This page</h3><p>Labels made readable at real screen sizes, both colour themes checked, and a plain list for narrow screens. This is the snapshot you are looking at.</p></div></li>
+      <li class="later"><div class="num">4</div><div class="body"><div class="when">31 October, later that day</div><h3>The whole landscape (not on this page)</h3><p>The list grew to 169 products: every over-the-counter template the registry publishes plus 59 groups of listed and cash instruments. Then came a playground that classifies a trade you type in, the building blocks of each product read from FpML and from ESMA&rsquo;s FIRDS register, four audits that found and fixed real errors, a first canonical model of the project&rsquo;s own, and a front-office page that books a test trade through it.</p></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="eyebrow">Limits</div>
+    <h2>What not to rely on</h2>
+    <ul class="plain">
+      <li>This is a research prototype, not a product. Nobody outside the automated process has yet reviewed the results against known trades.</li>
+      <li>Only the 17 FX templates of the registry are covered here, at the registry&rsquo;s coarse granularity.</li>
+      <li>The CFI descriptions come from a public secondary source (iotafinance.com), cross-checked against Wikipedia where possible. ISO 10962 itself is a paid standard and is not included.</li>
+      <li>The FpML schemas used are version 5.14, a working draft, not a final recommendation.</li>
+      <li>In this version the links between products and standards were written by hand (see above).</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">Glossary</div>
+    <h2>The terms, briefly</h2>
+    <dl class="gloss">
+      <dt>OTC</dt><dd>Over the counter: a contract agreed directly between two parties, not on an exchange.</dd>
+      <dt>FX forward</dt><dd>An agreement to exchange two currencies at a fixed rate on a future date.</dd>
+      <dt>NDF</dt><dd>Non-deliverable forward: a forward settled in cash, in one currency, for currencies that cannot be freely delivered.</dd>
+      <dt>FX option</dt><dd>The right, not the obligation, to exchange currencies at an agreed rate.</dd>
+      <dt>FX swap</dt><dd>Two currency exchanges in opposite directions on two dates.</dd>
+      <dt>UPI / ANNA-DSB</dt><dd>The Unique Product Identifier for OTC derivatives (ISO 4914), issued by the ANNA Derivatives Service Bureau from product templates.</dd>
+      <dt>CFI</dt><dd>Classification of Financial Instruments (ISO 10962): a six-character code.</dd>
+      <dt>FpML</dt><dd>Financial products Markup Language: the XML format for derivative trade confirmations.</dd>
+      <dt>CDM</dt><dd>Common Domain Model: ISDA&rsquo;s shared model of trades and their life-cycle events.</dd>
+      <dt>FIBO</dt><dd>Financial Industry Business Ontology from the EDM Council: formal definitions of financial terms.</dd>
+      <dt>Canonical model</dt><dd>An organisation&rsquo;s single internal vocabulary, with explicit translations to each outside format.</dd>
+    </dl>
+  </section>
+
+  <section>
+    <div class="cta">
+      <button class="ctabtn" type="button" data-go="lanes">Open the comparison (Lanes) &rarr;</button>
+      <button class="ctabtn secondary" type="button" data-go="wheel">Open the wheel</button>
+    </div>
+  </section>
+</div>
 
 <main>
   <section class="wheelpane">
@@ -74,5 +200,6 @@
 
 <script src="data/model.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/about.js"></script>
 </body>
 </html>

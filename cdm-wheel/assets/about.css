@@ -1,0 +1,101 @@
+/* "About this page" tab. Uses the page's own tokens from styles.css, so both themes follow. */
+
+.aboutnav { display: flex; gap: 6px; }
+.switches .aboutnav { order: -1; }
+.aboutbtn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+:root:not([data-theme="light"]) .aboutbtn[aria-pressed="true"] { color: #10161c; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .aboutbtn[aria-pressed="true"] { color: #fff; }
+}
+/* The page hides the view switches below 1000px; the About button stays, it is the way back. */
+@media (max-width: 1000px) {
+  .switches { align-items: flex-start; }
+}
+
+.about {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 20px 56px;
+  display: grid;
+  gap: 40px;
+  line-height: 1.6;
+  font-size: 15px;
+}
+.about[hidden] { display: none; }
+.about section { display: grid; gap: 14px; min-width: 0; }
+.about h2 { margin: 0; font-size: 21px; font-weight: 640; letter-spacing: -0.01em; line-height: 1.25; }
+.about h3 { margin: 0; font-size: 15px; font-weight: 640; }
+.about p { margin: 0; max-width: 70ch; }
+.about .eyebrow {
+  font-size: 11.5px; font-weight: 640; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.about .lede { font-size: 17px; max-width: 66ch; }
+.about .meta { font-size: 12.5px; color: var(--ink-faint); display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.about code { font-family: var(--mono); font-size: 0.88em; }
+
+.about .cta { display: flex; flex-wrap: wrap; gap: 8px; }
+.about .ctabtn {
+  font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  padding: 9px 16px; border-radius: 8px;
+  border: 1px solid var(--ink); background: var(--ink); color: var(--bg);
+}
+.about .ctabtn.secondary { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.about .ctabtn:hover { border-color: var(--accent); }
+.about .ctabtn:focus-visible, .aboutbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.about .cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 10px;
+}
+.about .card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; display: grid; gap: 6px; align-content: start;
+}
+.about .card .tag { font-size: 12px; color: var(--ink-faint); }
+.about .card p { font-size: 14px; }
+
+.about .howto { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 10px; }
+
+.about .legend { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.about .legend li { display: grid; grid-template-columns: 22px 130px 1fr; gap: 10px; align-items: baseline; font-size: 14px; }
+.about .legend .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; transform: translateY(1px); }
+.about .legend .dot.exact { background: var(--swp); }
+.about .legend .dot.evidenced-name { background: var(--fwd); }
+.about .legend .dot.editorial { background: var(--accent); }
+.about .legend .dot.broader { background: var(--opt); }
+.about .legend .dot.absent { border: 1.5px solid var(--none); }
+.about .legend .name { font-family: var(--mono); font-size: 12.5px; }
+@media (max-width: 560px) {
+  .about .legend li { grid-template-columns: 22px 1fr; }
+  .about .legend li > span:last-child { grid-column: 2; }
+}
+
+.about .steps { display: grid; gap: 22px; margin: 0; padding: 0; list-style: none; }
+.about .steps li { display: grid; grid-template-columns: 44px 1fr; gap: 0 14px; }
+.about .steps .num {
+  font-size: 24px; font-weight: 700; line-height: 1; color: var(--accent);
+  border-top: 3px solid var(--accent); padding-top: 6px;
+}
+.about .steps .when { font-size: 12px; color: var(--ink-faint); font-family: var(--mono); }
+.about .steps .body { display: grid; gap: 6px; min-width: 0; }
+.about .steps li.later .num { color: var(--ink-faint); border-top-color: var(--line-strong); }
+
+.about ul.plain { margin: 0; padding-left: 1.1rem; display: grid; gap: 8px; max-width: 72ch; }
+
+.about dl.gloss { display: grid; grid-template-columns: minmax(7rem, 11rem) 1fr; gap: 8px 18px; margin: 0; }
+.about dl.gloss dt { font-weight: 640; }
+.about dl.gloss dd { margin: 0; max-width: 64ch; }
+@media (max-width: 560px) {
+  .about dl.gloss { grid-template-columns: 1fr; gap: 2px; }
+  .about dl.gloss dd { margin-bottom: 10px; }
+}
+
+.about .callout {
+  background: var(--accent-soft); border-radius: 10px; padding: 14px 16px; max-width: 76ch;
+  display: grid; gap: 8px;
+}
+
+/* While About is open, the explorer underneath is out of the way. */
+body.about-open main, body.about-open #gaps, body.about-open .lenses { display: none !important; }
