@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product classification across five standards</title>
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="../assets/about.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="titles">
+    <h1 id="title">Product classification across five standards</h1>
+    <p class="sub" id="subtitle">169 leaves: every OTC product ANNA-DSB registers, and every ISO 10962
+    group outside the categories those products occupy.</p>
+  </div>
+  <div class="switches">
+    <nav class="aboutnav" aria-label="About"><button class="viewbtn aboutbtn" id="aboutbtn" type="button" aria-pressed="false">About this page</button></nav>
+    <nav class="classes" id="classes" aria-label="Asset class"></nav>
+    <nav class="views" id="views" aria-label="View"></nav>
+    <nav class="lenses" id="lenses" aria-label="Classification lens"></nav>
+  </div>
+</header>
+
+<div class="about" id="about" hidden>
+  <section>
+    <div class="eyebrow">About this page</div>
+    <h2>A catalogue of financial products, seen through five standards</h2>
+    <p class="lede">Banks trade hundreds of kinds of financial products, and every system that touches
+      one describes it in its own way. Five international standards try to bring order, and they do
+      not agree with each other. This page lines up <span data-fact="products">169</span> products:
+      the <span data-fact="otc">110</span> over-the-counter derivative templates that the official
+      registry publishes, plus <span data-fact="listed">59</span> groups of listed and cash
+      instruments such as shares, bonds, funds and exchange-traded futures and options. For each one
+      it shows what the five standards say, where they agree, where they do not, and where they say
+      nothing.</p>
+    <div class="meta"><span>Research prototype from a personal project</span><span>Snapshot of 31 October 2026, 13:57</span><span><span data-fact="products">169</span> products &middot; <span data-fact="assetClasses">7</span> asset classes &middot; <span data-fact="standards">5</span> standards</span><span>Static page, no tracking, no network calls</span></div>
+    <div class="cta">
+      <button class="ctabtn" type="button" data-go="lanes">Open the comparison (Lanes) &rarr;</button>
+      <button class="ctabtn secondary" type="button" data-go="wheel">Open the wheel</button>
+      <button class="ctabtn secondary" type="button" data-go="blocks">Open the building blocks</button>
+    </div>
+    <p>The <a href="../">first version</a> of this page covered only the 17 foreign-exchange products.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Why it matters</div>
+    <h2>The same product, described in five languages</h2>
+    <p>An interest-rate swap passes through a bank&rsquo;s trading system, its risk engine, its
+      regulatory reporting and the market-data feeds it buys. Each of them names and structures the
+      product differently, and every connection between two systems ends up with its own hand-made
+      translation, which can be wrong in its own way. A <em>canonical model</em> is a single internal
+      vocabulary with explicit, checkable translations to each outside standard. Before building one,
+      you need to see how far apart the standards really are.</p>
+    <div class="cards">
+      <div class="card"><h3>UPI &middot; ANNA-DSB</h3><span class="tag">ISO 4914</span><p>The official identity of an over-the-counter derivative, used in regulatory reporting. A strict tree: asset class, instrument type, product. It does not cover listed instruments.</p></div>
+      <div class="card"><h3>CFI</h3><span class="tag">ISO 10962</span><p>A six-character classification code for any instrument. Each position answers its own question, so it is a set of facets, not a tree.</p></div>
+      <div class="card"><h3>CDM</h3><span class="tag">ISDA / FINOS</span><p>A common model of trades. It does not list product types; it decides them with rules that read the trade&rsquo;s terms.</p></div>
+      <div class="card"><h3>FpML</h3><span class="tag">XML for derivatives</span><p>The format banks use to confirm derivative trades with each other. A product is a composition of building blocks.</p></div>
+      <div class="card"><h3>FIBO</h3><span class="tag">EDM Council</span><p>An ontology of financial terms. A class can have several parents, so it does not fit into any single tree.</p></div>
+    </div>
+    <p>Because the five have different <em>shapes</em> (a tree, a code, a rule set, a composition, an
+      ontology), no single hierarchy is true for all of them at once. So the page does not impose one.
+      It fixes the list of products and lets each standard say what it says about each of them.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">How to read it</div>
+    <h2>One list of products, several ways to look at it</h2>
+    <div class="howto">
+      <div class="card"><h3>Asset classes</h3><p>The buttons at the top choose a group of products: foreign exchange, rates, credit, equity, commodities, other, and listed &amp; cash. Every view below shows that group.</p></div>
+      <div class="card"><h3>Lanes: the comparison table</h3><p>One row per product, one column per standard (<span data-fact="laneNames">UPI / DSB, CFI, CDM, FpML, FIBO</span>). Each cell shows what that standard calls the product. Hover a row to follow it across the standards; click it to pin it and read the details on the right.</p></div>
+      <div class="card"><h3>Wheel: the overview</h3><p>The products sit on the rim and never move. The inner rings show how one standard groups them; switch between <span data-fact="lensNames">the three lenses</span> with the buttons above the wheel. Where a ring breaks into repeated pieces, that standard groups the products in a different order: the break is the disagreement.</p></div>
+      <div class="card"><h3>Blocks: what a product is made of</h3><p>The building blocks of the pinned product, read out of the schemas that model it: FpML for derivatives and ESMA&rsquo;s FIRDS register for listed instruments. <span data-fact="blocks">342</span> blocks and <span data-fact="fields">2,004</span> fields in all, followed <span data-fact="maxDepth">3</span> levels deep.</p></div>
+      <div class="card"><h3>The panel on the right</h3><p>Pick a product to see how each standard describes it, where it has nothing to say, and, at the top, where it sits in the project&rsquo;s own model. Every line cites the file it was read from, so any claim can be checked.</p></div>
+      <div class="card"><h3>Playground, further down</h3><p>Fill in the terms of a trade, paste an FpML document, or type a CFI code. The page says which product it is, which rule decided, and what is still missing. The rules are the same tables the lanes are built from.</p></div>
+    </div>
+    <p>On a screen narrower than about 1000 pixels the diagrams would become unreadable, so the page
+      shows a list of the products instead, with the same detail.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">How much each standard says</div>
+    <h2>Answers, gaps, and questions that do not apply</h2>
+    <p>For every product, each standard either answers, does not apply (the UPI registry, for
+      example, does not cover listed shares), or could have answered and does not. Counting the
+      last two apart matters: otherwise three standards would look as if they fail on a third of
+      the catalogue where nobody asked them.</p>
+    <div class="scrollx" data-coverage></div>
+  </section>
+
+  <section>
+    <div class="eyebrow">How the links were made</div>
+    <h2>Derived from the standards, and every claim points to a file and a line</h2>
+    <p>Each standard was downloaded into the project and kept unchanged; every file is checked
+      against its recorded hash. The links on this page are not typed in by hand. They are derived
+      from those files: the UPI side from the registry&rsquo;s own templates; the CFI code from the
+      registry&rsquo;s instrument type and by matching attribute names against the CFI standard&rsquo;s
+      own names; CDM, FpML and FIBO by name, with the kind of match recorded on every row. The few
+      judgement calls are written down, each with its reason.</p>
+    <p>Every link cites the exact file and line it rests on, and a checking program opens every
+      citation each time the page is built. Not every link is equally strong, so each one is
+      labelled. These are the labels the Lanes view uses:</p>
+    <ul class="legend" data-legend></ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">A model of our own</div>
+    <h2>Classification is a field, structure is the type</h2>
+    <p>On top of the comparison sits a first canonical model of the project&rsquo;s own:
+      <span data-fact="canonClasses">29</span> classes, <span data-fact="canonSlots">59</span>
+      attributes and <span data-fact="canonEnums">5</span> enumerations, named after CDM where CDM has
+      the concept and after FpML or FIRDS where it does not. Each one maps back to the five standards,
+      with the strength of the link and the line it was read from.</p>
+    <p>Two ideas are kept apart on purpose. <strong>Classification</strong> (UPI template, CFI code,
+      asset class) is a field of a product, so a product can be reclassified without being rebuilt.
+      <strong>Structure</strong> is what the product is made of: a set of payment legs and the terms
+      they share. An interest-rate swap and a cross-currency swap have the same structure and differ
+      by one rule in CDM: do the two legs pay in different currencies?</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">The process</div>
+    <h2>From a visual idea to a working model</h2>
+    <ol class="steps">
+      <li><div class="num">1</div><div class="body"><div class="when">30 October, 23:07</div><h3>A wheel</h3><p>Inspired by a demo in which an AI model sorted the plants of an old botany book onto a wheel, the first version did the same for 17 FX products.</p></div></li>
+      <li><div class="num">2</div><div class="body"><div class="when">31 October, 01:13 to 02:01</div><h3>Lanes</h3><p>The wheel shows one standard at a time; the lanes put all five side by side, so the disagreement becomes visible. That version is the <a href="../">first page</a>.</p></div></li>
+      <li><div class="num">3</div><div class="body"><div class="when">31 October, 11:00</div><h3>The whole landscape</h3><p>All the registry&rsquo;s over-the-counter templates plus the listed and cash groups, and links derived from the standards instead of written by hand.</p></div></li>
+      <li><div class="num">4</div><div class="body"><div class="when">31 October, 11:24 to 11:43</div><h3>Playground and building blocks</h3><p>A place to classify a trade by its terms, and the composition of each product read from the FpML and FIRDS schemas rather than invented.</p></div></li>
+      <li><div class="num">5</div><div class="body"><div class="when">31 October, 12:36</div><h3>Audits</h3><p>Four separate audits, one per group of asset classes, checked the links against the sources and found real errors, which were fixed or documented.</p></div></li>
+      <li><div class="num">6</div><div class="body"><div class="when">31 October, 13:57</div><h3>A model of our own</h3><p>The canonical model described above. This is the snapshot you are looking at.</p></div></li>
+      <li class="later"><div class="num">7</div><div class="body"><div class="when">After this snapshot</div><h3>Still in progress</h3><p>An independent audit of the canonical model, a finer catalogue with a front-office page that books a test trade through the model, and fixes to what the audit found.</p></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="eyebrow">Limits</div>
+    <h2>What not to rely on</h2>
+    <ul class="plain">
+      <li>This is a research prototype, not a product. Nobody outside the automated process has yet reviewed the results against known trades.</li>
+      <li>Products are at the registry&rsquo;s coarse granularity: a swaption is one template, whether it is European, Bermudan or American.</li>
+      <li>Links matched by name can be wrong in both directions; the label on each link says how much it rests on.</li>
+      <li>The own model is small next to the catalogue, and the building blocks stop at a fixed depth, so it cannot yet validate a real FpML document.</li>
+      <li>The CFI descriptions come from a public secondary source (iotafinance.com), cross-checked against Wikipedia where possible. ISO 10962 itself is a paid standard and is not included. The FpML schemas are version 5.14, a working draft.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">Glossary</div>
+    <h2>The terms, briefly</h2>
+    <dl class="gloss">
+      <dt>OTC</dt><dd>Over the counter: a contract agreed directly between two parties, not on an exchange.</dd>
+      <dt>Listed</dt><dd>Traded on an exchange: shares, bonds, exchange-traded futures and options.</dd>
+      <dt>IRS</dt><dd>Interest-rate swap: one party pays a fixed rate, the other a floating rate, in the same currency.</dd>
+      <dt>CIRS</dt><dd>Cross-currency interest-rate swap: the same, with the two legs in different currencies.</dd>
+      <dt>Swaption</dt><dd>An option to enter into a swap.</dd>
+      <dt>UPI / ANNA-DSB</dt><dd>The Unique Product Identifier for OTC derivatives (ISO 4914), issued by the ANNA Derivatives Service Bureau from product templates.</dd>
+      <dt>CFI</dt><dd>Classification of Financial Instruments (ISO 10962): a six-character code.</dd>
+      <dt>FpML</dt><dd>Financial products Markup Language: the XML format for derivative trade confirmations.</dd>
+      <dt>CDM</dt><dd>Common Domain Model: ISDA&rsquo;s shared model of trades and their life-cycle events.</dd>
+      <dt>FIBO</dt><dd>Financial Industry Business Ontology from the EDM Council: formal definitions of financial terms.</dd>
+      <dt>FIRDS</dt><dd>ESMA&rsquo;s register of reference data for listed instruments in the EU, published in the ISO 20022 format.</dd>
+      <dt>Canonical model</dt><dd>An organisation&rsquo;s single internal vocabulary, with explicit translations to each outside format.</dd>
+    </dl>
+  </section>
+
+  <section>
+    <div class="cta">
+      <button class="ctabtn" type="button" data-go="lanes">Open the comparison (Lanes) &rarr;</button>
+      <button class="ctabtn secondary" type="button" data-go="wheel">Open the wheel</button>
+      <button class="ctabtn secondary" type="button" data-go="blocks">Open the building blocks</button>
+    </div>
+  </section>
+</div>
+
+<main>
+  <section class="wheelpane">
+    <div class="lensnote" id="lensnote"></div>
+    <div class="wheelwrap" id="wheelview">
+      <svg id="wheel" viewBox="-404 -404 808 808" role="application"
+           aria-label="Radial classification wheel. Use Tab to reach the products, then arrow keys to move between them.">
+        <g id="rings"></g>
+        <g id="leaves"></g>
+        <g id="spokes"></g>
+        <g id="labels"></g>
+        <g id="leaflabels"></g>
+        <g id="hub"></g>
+      </svg>
+    </div>
+    <div class="laneswrap" id="lanesview" hidden>
+      <svg id="lanes" role="application"
+           aria-label="Five classification lanes over a shared product rail."><g id="crosslinks"></g></svg>
+    </div>
+
+    <div class="blockswrap" id="blocksview" hidden>
+      <p class="blocksintro" id="blocksintro"></p>
+      <div class="blockscols">
+        <div class="blocktree" id="blocktree" role="tree"
+             aria-label="Composition: blocks reached from this product"></div>
+        <div class="blockdetail" id="blockdetail"></div>
+      </div>
+    </div>
+
+    <div class="narrowonly" id="narrowview">
+      <p class="narrownote">Both views need about 1000px to stay legible &mdash; below that the
+        lanes and the wheel would shrink their labels to around 6px, which only looks like it
+        works. The products on this rail are listed instead; choosing one shows the same detail.</p>
+      <ul class="narrowlist" id="narrowlist"></ul>
+    </div>
+
+    <p class="hint" id="hint">Hover or focus a product on the rim. Arrow keys move around the rim;
+      Enter pins a product; Escape unpins.</p>
+
+    <div class="statbar" id="statbar"></div>
+  </section>
+
+  <aside class="panel" id="panel" aria-live="polite">
+    <div class="empty" id="panelEmpty">
+      <h2>Pick a product</h2>
+      <p id="panelIntro">Choosing a leaf shows how all five standards describe it &mdash; and where
+         they have nothing to say.</p>
+      <p class="muted">Every line carries a citation into <code>refs/</code>. Nothing here is inferred
+         at view time; the page is data plus layout.</p>
+    </div>
+    <div id="panelBody" hidden></div>
+  </aside>
+</main>
+
+  <section class="playground" id="playground">
+    <h2>Playground &mdash; classify a trade</h2>
+    <p class="pgintro">Fill in the terms of a trade, paste an FpML document, or type a CFI
+       code. The answer says which rule decided it and what is still missing. The rules are
+       the ones in <code>model.js</code>: the same tables the lanes are built from, run here
+       instead of at build time.</p>
+
+    <nav class="pgmodes" id="pgmodes" aria-label="Input"></nav>
+
+    <div class="pgpanel" id="pgterms">
+      <div class="pgrow">
+        <label>Asset class <select id="pgAsset"></select></label>
+        <label>Instrument type <select id="pgType"></select></label>
+      </div>
+      <div class="pgattrs" id="pgAttrs"></div>
+    </div>
+
+    <div class="pgpanel" id="pgfpml" hidden>
+      <label for="pgXml">Paste an FpML document</label>
+      <textarea id="pgXml" rows="7" spellcheck="false"
+        placeholder="&lt;dataDocument ...&gt; ... &lt;swaption&gt; ... &lt;/dataDocument&gt;"></textarea>
+      <p class="muted">Only the product element is read. Nothing is sent anywhere &mdash;
+         there is nowhere for it to be sent.</p>
+    </div>
+
+    <div class="pgpanel" id="pgcfi" hidden>
+      <label for="pgCode">CFI code <input id="pgCode" maxlength="6" size="8"
+        placeholder="ESVUFR" spellcheck="false"></label>
+      <p class="muted">A listed or cash instrument is classified by its ISO 10962 code; the
+         first two characters name the leaf.</p>
+    </div>
+
+    <div class="pgresult" id="pgResult"></div>
+
+    <details class="pgcases">
+      <summary id="pgCasesSummary">Worked cases</summary>
+      <div id="pgCases"></div>
+    </details>
+  </section>
+
+<section class="gaps" id="gaps"></section>
+
+<footer>
+  <div id="sources"></div>
+  <p class="muted small">Generated by <code>night-run/build/build_model.py</code> from the vendored
+     standards in <code>refs/</code>. Static and offline: no network resources of any kind.</p>
+</footer>
+
+<script>window.__aboutOpenedUrl = window.location.href;</script>
+<script src="data/model.js"></script>
+<script src="assets/app.js"></script>
+<script src="../assets/about.js"></script>
+<!-- Read by ../tools/check-about.cjs, not by the page. "describes" holds the sha256 of each file
+     the About text was last reviewed against; "mentions" lists controls the About text names. -->
+<script type="application/json" id="about-manifest">{
+  "reviewed": "2026-11-05",
+  "describes": {
+    "data/model.js": "92c0d9819c043d0ed99a5bf5f2f842a23a78be0f7bc7507db9132e3e97fdb74a",
+    "assets/app.js": "b692af4e03383de041f8018454b05f86c856ce76f48c1aee3b8a923869bba635",
+    "assets/styles.css": "db06fe5a797a95f254e3e852151048f27ee52cbbac516f67ed43daf96701010b"
+  },
+  "mentions": [
+    {
+      "selector": "#views button",
+      "text": "Wheel"
+    },
+    {
+      "selector": "#views button",
+      "text": "Lanes"
+    },
+    {
+      "selector": "#views button",
+      "text": "Blocks"
+    },
+    {
+      "selector": "#classes button",
+      "text": "Foreign exchange"
+    },
+    {
+      "selector": "#classes button",
+      "text": "Rates"
+    },
+    {
+      "selector": "#classes button",
+      "text": "Credit"
+    },
+    {
+      "selector": "#classes button",
+      "text": "Equity"
+    },
+    {
+      "selector": "#classes button",
+      "text": "Commodities"
+    },
+    {
+      "selector": "#classes button",
+      "text": "Other"
+    },
+    {
+      "selector": "#classes button",
+      "text": "Listed"
+    },
+    {
+      "selector": "#playground h2",
+      "text": "Playground"
+    },
+    {
+      "selector": "#pgmodes button",
+      "text": "FpML"
+    },
+    {
+      "selector": "#pgmodes button",
+      "text": "CFI"
+    },
+    {
+      "selector": "#narrowview",
+      "text": "listed instead"
+    }
+  ]
+}</script>
+</body>
+</html>

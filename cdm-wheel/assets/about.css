@@ -66,6 +66,9 @@
 .about .legend .dot.editorial { background: var(--accent); }
 .about .legend .dot.broader { background: var(--opt); }
 .about .legend .dot.absent { border: 1.5px solid var(--none); }
+.about .legend .dot.narrower { border: 1.5px solid var(--fwd); }
+.about .legend .dot.not-applicable { background: var(--line-strong); }
+.about .legend .dot.evidenced-sample { background: var(--swp); opacity: 0.65; }
 .about .legend .name { font-family: var(--mono); font-size: 12.5px; }
 @media (max-width: 560px) {
   .about .legend li { grid-template-columns: 22px 1fr; }
@@ -97,5 +100,17 @@
   display: grid; gap: 8px;
 }
 
+/* Anything that could not be read from the data shows as "?" and fails the drift check. */
+.about .missing { color: #b3261e; font-weight: 700; }
+
+.about table.cov { border-collapse: collapse; font-size: 14px; min-width: min(100%, 520px); }
+.about table.cov th, .about table.cov td { text-align: left; padding: 6px 12px 6px 0; border-top: 1px solid var(--line); }
+.about table.cov th { font-weight: 600; color: var(--ink-soft); font-size: 12.5px; }
+.about table.cov td:not(:first-child) { font-variant-numeric: tabular-nums; }
+.about .scrollx { overflow-x: auto; max-width: 100%; }
+.about .small { font-size: 12.5px; color: var(--ink-faint); }
+.about a { color: var(--accent); }
+
 /* While About is open, the explorer underneath is out of the way. */
-body.about-open main, body.about-open #gaps, body.about-open .lenses { display: none !important; }
+body.about-open main, body.about-open #gaps, body.about-open #playground,
+body.about-open .lenses, body.about-open .classes { display: none !important; }

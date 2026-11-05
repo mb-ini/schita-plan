@@ -1,0 +1,624 @@
+/* night-wheel prototype. Offline: system fonts only, no @font-face, no remote assets. */
+
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --ink: #1d1c1a;
+  --ink-soft: #5c5952;
+  --ink-faint: #8a867d;
+  --line: #e0ddd6;
+  --line-strong: #c9c5bb;
+  --accent: #2f5d8a;
+  --accent-soft: #e8eff6;
+
+  --fwd: #3f7d8c;
+  --opt: #9a5b35;
+  --swp: #5c6b3f;
+  --none: #a9a49a;
+
+  --ring0: #ece9e2;
+  --ring1: #e2ded5;
+
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+:root:not([data-theme="light"]) {
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171a;
+    --surface: #1f1f23;
+    --ink: #ecebe8;
+    --ink-soft: #a9a6a0;
+    --ink-faint: #78756f;
+    --line: #32323a;
+    --line-strong: #474750;
+    --accent: #7fb0dd;
+    --accent-soft: #23303d;
+
+    --fwd: #6fb3c4;
+    --opt: #d08c5e;
+    --swp: #9ab06b;
+    --none: #5e5b56;
+
+    --ring0: #26262b;
+    --ring1: #2d2d33;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #17171a;
+  --surface: #1f1f23;
+  --ink: #ecebe8;
+  --ink-soft: #a9a6a0;
+  --ink-faint: #78756f;
+  --line: #32323a;
+  --line-strong: #474750;
+  --accent: #7fb0dd;
+  --accent-soft: #23303d;
+  --fwd: #6fb3c4;
+  --opt: #d08c5e;
+  --swp: #9ab06b;
+  --none: #5e5b56;
+  --ring0: #26262b;
+  --ring1: #2d2d33;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding-block: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.5 var(--sans);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+h1 { margin: 0 0 4px; font-size: 19px; font-weight: 620; letter-spacing: -0.01em; }
+.sub { margin: 0; color: var(--ink-soft); max-width: 62ch; font-size: 13px; }
+
+.lenses { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.lensbtn {
+  font: inherit;
+  font-size: 12.5px;
+  padding: 7px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.lensbtn:hover { border-color: var(--accent); color: var(--ink); }
+.lensbtn[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 560;
+}
+:root:not([data-theme="light"]) .lensbtn[aria-pressed="true"] { color: #10161c; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .lensbtn[aria-pressed="true"] { color: #fff; }
+}
+
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  gap: 0;
+  align-items: start;
+}
+
+.wheelpane { padding: 16px 20px 24px; min-width: 0; }
+
+.lensnote {
+  font-size: 13px;
+  color: var(--ink-soft);
+  max-width: 70ch;
+  margin-bottom: 10px;
+  min-height: 3em;
+}
+.lensnote strong { color: var(--ink); font-weight: 600; }
+.lensnote em { color: var(--ink-faint); font-style: normal; display: block; margin-top: 4px; font-size: 12.5px; }
+
+/* Drawn 1:1 with the viewBox (808 user units in 808px). At 660px the wheel was
+   scaled to 0.82, so a nominal 10.5px rim label actually rendered at ~8.6px --
+   a legibility defect the rotation/clipping probe could not see. */
+.wheelwrap { max-width: 808px; margin: 0 auto; }
+svg#wheel { width: 100%; height: auto; display: block; overflow: visible; }
+
+.seg { stroke: var(--bg); stroke-width: 1.2; cursor: pointer; }
+.seg.r0 { fill: var(--ring0); }
+.seg.r1 { fill: var(--ring1); }
+.seg.unmapped { fill: var(--none); fill-opacity: 0.30; }
+.seg.dim { opacity: 0.28; }
+.seg.lit { stroke: var(--ink); stroke-width: 1.8; }
+
+.leaf { stroke: var(--bg); stroke-width: 1.2; cursor: pointer; outline: none; }
+.leaf.t-Forward { fill: var(--fwd); }
+.leaf.t-Option  { fill: var(--opt); }
+.leaf.t-Swap    { fill: var(--swp); }
+.leaf.dim { opacity: 0.25; }
+.leaf.lit { stroke: var(--ink); stroke-width: 2.2; }
+.leaf:focus-visible { stroke: var(--accent); stroke-width: 3; }
+
+.spoke { stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 3; opacity: 0; }
+.spoke.lit { opacity: 0.55; }
+
+text { font-family: var(--sans); fill: var(--ink-soft); }
+.leaflabel { font-size: 10.5px; }
+.leaflabel.lit { fill: var(--ink); font-weight: 620; }
+.leaflabel.dim { opacity: 0.3; }
+.seglabel.radial { font-size: 13px; font-weight: 640; fill: var(--ink); }
+.seglabel { font-size: 10px; fill: var(--ink-soft); pointer-events: none; font-weight: 560; }
+.seglabel.dim { opacity: 0.3; }
+.hublabel { font-size: 12px; fill: var(--ink); font-weight: 620; }
+/* 9.5px was exactly the probe's floor, so any scaling at all put it under. 10.5px
+   leaves a margin, and the hub has the room. */
+.hubsub { font-size: 10.5px; fill: var(--ink-faint); }
+
+.hint { text-align: center; color: var(--ink-faint); font-size: 12px; margin: 10px 0 0; }
+
+.statbar {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
+}
+.stat {
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px;
+  background: var(--surface); min-width: 108px;
+}
+.stat b { display: block; font-size: 17px; font-weight: 640; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 11px; color: var(--ink-faint); }
+
+.panel {
+  border-left: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px 20px 28px;
+  /* 70vh was chosen when the page ended at the panel. With the playground below it, a
+     short rail leaves 700px of empty surface between the lanes and the next section.
+     Enough to look deliberate, not enough to look abandoned. */
+  min-height: 260px;
+  min-width: 0;
+}
+.panel h2 { margin: 0 0 8px; font-size: 16px; font-weight: 620; }
+.panel .empty p { color: var(--ink-soft); font-size: 13px; max-width: 46ch; }
+
+.prodhead { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 14px; }
+.prodhead .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); }
+.prodhead h2 { margin: 3px 0 6px; font-size: 18px; }
+.prodhead code { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); word-break: break-all; }
+
+.std { border: 1px solid var(--line); border-radius: 9px; margin-bottom: 11px; overflow: hidden; }
+.std > h3 {
+  margin: 0; padding: 8px 11px; font-size: 12px; font-weight: 620;
+  background: var(--accent-soft); color: var(--ink);
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+}
+.std > div { padding: 10px 11px; }
+.std p { margin: 0 0 7px; font-size: 12.5px; }
+.std p:last-child { margin-bottom: 0; }
+
+.badge {
+  font-size: 10px; font-weight: 620; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line-strong);
+  color: var(--ink-soft); background: var(--surface); white-space: nowrap;
+}
+.badge.exact { border-color: var(--swp); color: var(--swp); }
+.badge.broader { border-color: var(--opt); color: var(--opt); }
+.badge.absent { border-color: var(--none); color: var(--ink-faint); }
+.badge.editorial { border-color: var(--accent); color: var(--accent); }
+.badge.evidenced-name { border-color: var(--fwd); color: var(--fwd); }
+
+.cfimask {
+  font-family: var(--mono); font-size: 25px; letter-spacing: 0.16em;
+  margin: 2px 0 10px; color: var(--ink); font-weight: 600;
+}
+.cfimask .free { color: var(--ink-faint); }
+
+table.pos { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.pos th, table.pos td { text-align: left; padding: 5px 7px; border-top: 1px solid var(--line); vertical-align: top; }
+table.pos th { color: var(--ink-faint); font-weight: 560; font-size: 11px; }
+table.pos tr:first-child th { border-top: none; }
+table.pos code { font-family: var(--mono); font-size: 11.5px; }
+.letters { font-family: var(--mono); font-weight: 620; }
+
+.chain { font-size: 11.5px; margin: 0 0 5px; padding-left: 12px; text-indent: -12px; color: var(--ink-soft); }
+.chain code { font-family: var(--mono); font-size: 11px; }
+.chain .dangle { color: var(--ink-faint); font-style: italic; }
+
+ul.cond { margin: 5px 0 0; padding-left: 16px; font-size: 11.5px; color: var(--ink-soft); }
+ul.cond li { margin-bottom: 3px; font-family: var(--mono); }
+
+.cites { margin-top: 7px; font-size: 10.5px; color: var(--ink-faint); }
+.cites code { font-family: var(--mono); font-size: 10.5px; }
+.cites div { margin-bottom: 2px; }
+
+.note { font-size: 12px; color: var(--ink-soft); background: var(--bg); border-left: 2px solid var(--line-strong); padding: 6px 9px; margin: 7px 0 0; }
+
+.gaps { padding: 24px 20px; border-top: 1px solid var(--line); }
+.gaps h2 { margin: 0 0 4px; font-size: 16px; font-weight: 620; }
+.gaps > p { margin: 0 0 14px; color: var(--ink-soft); font-size: 13px; max-width: 70ch; }
+.gapgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 11px; }
+.gap { border: 1px solid var(--line); border-left: 3px solid var(--opt); border-radius: 8px; padding: 11px 13px; background: var(--surface); }
+.gap h3 { margin: 0 0 5px; font-size: 13px; font-weight: 620; }
+.gap p { margin: 0; font-size: 12.5px; color: var(--ink-soft); }
+
+footer { padding: 18px 20px 30px; border-top: 1px solid var(--line); color: var(--ink-soft); }
+footer table { border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
+footer th, footer td { text-align: left; padding: 4px 12px 4px 0; border-top: 1px solid var(--line); }
+footer th { color: var(--ink-faint); font-weight: 560; }
+footer code { font-family: var(--mono); font-size: 11px; }
+.muted { color: var(--ink-faint); }
+.small { font-size: 11.5px; }
+
+@media (max-width: 980px) {
+  main { grid-template-columns: minmax(0, 1fr); }
+  .panel { border-left: none; border-top: 1px solid var(--line); min-height: 0; }
+}
+
+/* ---- view switch + lanes ---- */
+.switches { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
+.views { display: flex; gap: 6px; }
+.viewbtn {
+  font: inherit; font-size: 12.5px; font-weight: 560;
+  padding: 6px 14px; border: 1px solid var(--line-strong); border-radius: 7px;
+  background: transparent; color: var(--ink-soft); cursor: pointer;
+}
+.viewbtn:hover { border-color: var(--ink-soft); color: var(--ink); }
+.viewbtn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+
+/* Lane viewBox width is RAIL_W + 5*(LANE_W+LANE_GAP) = 168 + 5*126 = 798, which
+   renders 1:1 inside a 1280 viewport's content column. */
+.laneswrap { max-width: 798px; margin: 0 auto; }
+svg#lanes { width: 100%; height: auto; display: block; overflow: visible; }
+
+.lanehead { font-size: 12px; font-weight: 640; fill: var(--ink); }
+.lanesub { font-size: 10px; fill: var(--ink-faint); }
+.lanestat { font-size: 9.5px; fill: var(--ink-faint); }
+
+.railrow { fill: transparent; }
+.railrow.lit { fill: var(--accent-soft); }
+.raillabel { font-size: 11.5px; fill: var(--ink-soft); }
+.raillabel.lit { fill: var(--ink); font-weight: 640; }
+/* Replaced by .railbracket: the per-row tag rendered at ~8.1px at 1280. */
+.railbracket { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+.railbracketlabel { font-size: 10.5px; fill: var(--ink-faint); letter-spacing: 0.08em; }
+
+.block { stroke: var(--bg); stroke-width: 1.5; fill: var(--ring1); }
+.block.lit { stroke: var(--ink); stroke-width: 2; }
+.block.dim { opacity: 0.35; }
+.blocklabel { font-size: 10px; fill: var(--ink-soft); pointer-events: none; }
+.blocklabel.lit { fill: var(--ink); font-weight: 620; }
+.blocklabel.dim { opacity: 0.35; }
+
+.mark { stroke-width: 0; }
+.mark.exact { fill: var(--swp); }
+.mark.broader { fill: var(--opt); }
+.mark.editorial { fill: var(--accent); }
+.mark.evidenced-name { fill: var(--fwd); }
+.mark.absent { fill: none; stroke: var(--none); stroke-width: 1.2; }
+.mark.dim { opacity: 0.3; }
+
+.lanelegend { display: flex; flex-wrap: wrap; gap: 14px; margin: 14px 0 0; font-size: 11.5px; color: var(--ink-soft); }
+.lanelegend span { display: inline-flex; align-items: center; gap: 6px; }
+.lanelegend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.lanelegend i.exact { background: var(--swp); }
+.lanelegend i.broader { background: var(--opt); }
+.lanelegend i.editorial { background: var(--accent); }
+.lanelegend i.evidenced { background: var(--fwd); }
+.lanelegend i.absent { background: transparent; border: 1px solid var(--none); }
+
+/* The row background is the hit target for the whole row: selecting a product and
+   reading it across all five lanes is the point of this view. The block rects and
+   markers are drawn on top of it, so they must not swallow the pointer. Their
+   content is not lost — the detail panel carries the full, untruncated version. */
+.block, .blocklabel, .mark { pointer-events: none; }
+.railrow { cursor: pointer; }
+
+/* ---- fragmentation at rest ---- */
+.fraglink { stroke: var(--ink-faint); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.55; }
+.fragdot { fill: var(--ink-faint); opacity: 0.8; }
+
+/* ---- cross-lane links: line style carries the relation type ----
+   exact          solid, heaviest      the standards agree outright
+   evidenced-name solid, lighter       joined by a name the data itself states
+   broader        long dash            this standard only has a more general thing
+   editorial      dotted               our judgement call, not the data's
+   absent         short stub + stop    this standard has nothing here            */
+.xlink { fill: none; }
+.xlink.exact          { stroke: var(--swp);  stroke-width: 2.4; }
+.xlink.evidenced-name { stroke: var(--fwd);  stroke-width: 1.8; }
+.xlink.broader        { stroke: var(--opt);  stroke-width: 1.8; stroke-dasharray: 7 4; }
+.xlink.editorial      { stroke: var(--accent); stroke-width: 1.8; stroke-dasharray: 1.5 3.5; }
+.xlink.absent         { stroke: var(--none); stroke-width: 1.4; stroke-dasharray: 2 3; }
+.xstop { fill: none; stroke: var(--none); stroke-width: 1.4; }
+.xnode { stroke: var(--bg); stroke-width: 1; }
+.xnode.exact          { fill: var(--swp); }
+.xnode.evidenced-name { fill: var(--fwd); }
+.xnode.broader        { fill: var(--opt); }
+.xnode.editorial      { fill: var(--accent); }
+.xnode.absent         { fill: none; stroke: var(--none); }
+
+/* ---- below ~1000px: replace the views, do not shrink them ----
+   At 900px the lanes render their labels at about 6.6px and at 400px it is worse.
+   A diagram nobody can read is worse than an honest list, so both views and the
+   view/lens switches are hidden and the products are listed instead. */
+.narrowonly { display: none; }
+
+@media (max-width: 1000px) {
+  .wheelwrap, .laneswrap, .hint { display: none !important; }
+  .views, .lenses, .lensnote { display: none !important; }
+  .narrowonly { display: block; }
+}
+
+.narrownote {
+  font-size: 13px; color: var(--ink-soft); max-width: 60ch;
+  border-left: 2px solid var(--line-strong); padding: 8px 12px; margin: 0 0 14px;
+  background: var(--surface);
+}
+.narrowlist { list-style: none; margin: 0; padding: 0; }
+.narrowlist li { margin-bottom: 6px; }
+.narrowitem {
+  width: 100%; text-align: left; font: inherit; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 12px; color: var(--ink); display: block;
+}
+.narrowitem:hover, .narrowitem:focus-visible { border-color: var(--accent); }
+.narrowitem b { display: block; font-size: 14px; font-weight: 620; margin-bottom: 2px; }
+.narrowitem .meta { font-size: 11.5px; color: var(--ink-faint); }
+.narrowchips { margin-top: 7px; display: flex; flex-wrap: wrap; gap: 5px; }
+.nchip {
+  font-size: 10.5px; padding: 2px 7px; border-radius: 999px;
+  border: 1px solid var(--line-strong); color: var(--ink-soft); white-space: nowrap;
+}
+.nchip.exact { border-color: var(--swp); color: var(--swp); }
+.nchip.broader { border-color: var(--opt); color: var(--opt); }
+.nchip.editorial { border-color: var(--accent); color: var(--accent); }
+.nchip.evidenced-name { border-color: var(--fwd); color: var(--fwd); }
+.nchip.absent { border-style: dashed; color: var(--ink-faint); }
+
+/* ---- never scroll the page sideways ----
+   Long identifiers (FIBO IRIs, refs/ citation paths, FpML element names) have no
+   spaces, so at narrow widths they pushed the body wider than the viewport. Wide
+   things get their own scroller instead of dragging the whole page with them. */
+code, .cites, .chain { overflow-wrap: anywhere; word-break: break-word; }
+table.pos { table-layout: fixed; width: 100%; }
+footer table { display: block; max-width: 100%; overflow-x: auto; }
+.statbar { max-width: 100%; }
+body { overflow-x: hidden; }
+
+/* ---- asset-class switch ----
+   Seven rails: six DSB OTC asset classes and the listed/cash CFI groups. The count on
+   each button is the rail's leaf count, so the shape of the landscape is visible before
+   anything is clicked - Equity has 34 products, Other has 5, and that asymmetry is a
+   fact about the standards worth seeing. */
+.classes { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.classbtn {
+  font: inherit; font-size: 12.5px; cursor: pointer;
+  background: var(--surface); color: var(--ink-soft);
+  border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px;
+  display: inline-flex; align-items: baseline; gap: 6px;
+}
+.classbtn span {
+  font-size: 10.5px; color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.classbtn:hover, .classbtn:focus-visible { border-color: var(--accent); color: var(--ink); }
+.classbtn[aria-pressed="true"] {
+  border-color: var(--accent); color: var(--ink); background: var(--surface-2, var(--surface));
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.classbtn.listed { border-style: dashed; }
+
+/* ---- two more mapping strengths ----
+   `narrower` is the mirror of `broader`: the standard's term says MORE than the product,
+   so several usually qualify at once. `not-applicable` is not a gap at all - ISO 4914
+   assigns no UPI to a listed bond - and must not look like one, so it is drawn flat and
+   pale rather than as a stub with a stop. */
+.badge.narrower { border-color: var(--fwd); color: var(--fwd); }
+.badge.not-applicable { border-color: var(--line); color: var(--ink-faint); }
+.mark.narrower { fill: none; stroke: var(--fwd); stroke-width: 1.4; }
+.mark.not-applicable { fill: var(--line); }
+.lanelegend i.narrower { background: transparent; border: 1px solid var(--fwd); }
+.lanelegend i.not-applicable { background: var(--line); }
+.xlink.narrower { stroke: var(--fwd); stroke-width: 1.6; stroke-dasharray: 3 3; }
+.xlink.not-applicable { stroke: var(--line); stroke-width: 1; }
+.xnode.narrower { fill: none; stroke: var(--fwd); }
+.xnode.not-applicable { fill: var(--line); }
+.nchip.narrower { border-color: var(--fwd); color: var(--fwd); border-style: dotted; }
+.nchip.not-applicable { border-color: var(--line); color: var(--ink-faint); opacity: 0.75; }
+
+/* ---- playground ----
+   The rules that build the lanes, run at view time instead of at build time. Laid out as
+   a form rather than a diagram: the question here is "what is this trade", which is
+   answered by narrowing, and narrowing is a list of choices and a list of what is still
+   missing. */
+.playground {
+  border-top: 1px solid var(--line);
+  padding: 22px 0 8px;
+  margin-top: 26px;
+}
+.playground h2 { margin: 0 0 6px; font-size: 17px; }
+.pgintro { max-width: 70ch; color: var(--ink-soft); font-size: 13px; margin: 0 0 14px; }
+.pgmodes { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.pgmode {
+  font: inherit; font-size: 12.5px; cursor: pointer; padding: 5px 11px;
+  background: var(--surface); color: var(--ink-soft);
+  border: 1px solid var(--line); border-radius: 999px;
+}
+.pgmode[aria-pressed="true"] {
+  border-color: var(--accent); color: var(--ink); box-shadow: inset 0 0 0 1px var(--accent);
+}
+.pgpanel { margin-bottom: 14px; }
+.pgrow { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.pgattrs { display: flex; gap: 10px 16px; flex-wrap: wrap; }
+.playground label {
+  font-size: 12px; color: var(--ink-soft);
+  display: inline-flex; gap: 6px; align-items: center;
+}
+.playground select, .playground input, .playground textarea {
+  font: inherit; font-size: 12.5px; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 6px; padding: 4px 7px; max-width: 320px;
+}
+.playground textarea { width: 100%; max-width: 70ch; display: block; margin-top: 6px; }
+.pgresult {
+  border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+  background: var(--surface); min-height: 64px;
+}
+.pgresult h3 { margin: 10px 0 6px; font-size: 14px; }
+.pgrule { font-size: 12px; color: var(--ink-faint); }
+.pgmatches, .pgpinned, .pgstandards ul, .pgmissing ul { margin: 4px 0; padding-left: 18px; }
+.pgmatches li, .pgpinned li, .pgstandards li, .pgmissing li { font-size: 12.5px; margin: 2px 0; }
+.pgcfi { margin-top: 8px; font-size: 13px; }
+.pgmissing { margin-top: 10px; }
+.pgmissing b { font-size: 12.5px; }
+.pgnote { font-size: 12.5px; color: var(--ink-soft); margin: 8px 0 0; max-width: 70ch; }
+.pgstandards { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+.pgcases { margin-top: 14px; font-size: 12.5px; color: var(--ink-soft); }
+.pgcases summary { cursor: pointer; }
+.pgcaselist { list-style: none; padding: 0; margin: 10px 0 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
+.pgcaselist li { margin: 0; }
+.pgcase {
+  font: inherit; font-size: 12.5px; text-align: left; cursor: pointer;
+  background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline;
+}
+
+/* ---- blocks view ----
+   The composition graph is a tree on the left and a field table on the right, rather than
+   a node-link diagram: the interesting content is the fields and their citations, and a
+   graph drawing would spend all its space on edges that say only "contains". */
+.blockswrap { padding-top: 2px; }
+.blocksintro { font-size: 13px; color: var(--ink-soft); max-width: 78ch; margin: 0 0 14px; }
+.blockscols {
+  display: grid; grid-template-columns: minmax(200px, 270px) minmax(0, 1fr); gap: 18px;
+  align-items: start;
+}
+.btree { list-style: none; margin: 0; padding: 0; }
+.btreeitem { margin: 0 0 2px; }
+.btreeitem.d1 { padding-left: 14px; }
+.btreeitem.d2 { padding-left: 28px; }
+.btreeitem.d3 { padding-left: 42px; }
+.bnode {
+  font: inherit; text-align: left; cursor: pointer; width: 100%;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 7px;
+  padding: 5px 9px; color: var(--ink); display: block;
+}
+.bnode:hover, .bnode:focus-visible { border-color: var(--accent); }
+.btreeitem.open > .bnode { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.bname { display: block; font-size: 12.5px; font-weight: 600; }
+.bmeta { display: block; font-size: 10.5px; color: var(--ink-faint); margin-top: 1px; }
+.blockdetail h3 { margin: 0 0 6px; font-size: 15px; }
+.bdoc { font-size: 12.5px; color: var(--ink-soft); max-width: 80ch; margin: 0 0 8px; }
+.bcite { font-size: 11.5px; color: var(--ink-faint); margin: 3px 0; }
+.bfields { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+.bfields th {
+  text-align: left; font-weight: 600; color: var(--ink-faint); font-size: 11px;
+  border-bottom: 1px solid var(--line-strong); padding: 4px 8px 5px;
+}
+.bfields td { border-bottom: 1px solid var(--line); padding: 6px 8px; vertical-align: top; }
+.bfields code { font-size: 11.5px; }
+.fdoc { font-size: 11px; color: var(--ink-faint); max-width: 46ch; margin-top: 2px; }
+.blink {
+  font: inherit; font-size: 11.5px; cursor: pointer; background: none; border: 0;
+  padding: 0; color: var(--accent); text-decoration: underline;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (max-width: 1000px) {
+  .blockswrap { display: none !important; }
+}
+.fiboprops { display: inline-block; margin-top: 6px; font-size: 12px; color: var(--ink-soft); }
+.pgvalid { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; font-size: 12.5px; }
+.pgerr { color: var(--opt); }
+.pgok { color: var(--swp); }
+
+/* `evidenced-sample`: a tie between two plausible elements broken by a real vendored
+   document rather than by sort order. Stronger than a name match, weaker than a citation
+   read by hand, so it sits between them. */
+.badge.evidenced-sample { border-color: var(--swp); color: var(--swp); border-style: dashed; }
+.mark.evidenced-sample { fill: var(--swp); fill-opacity: 0.65; }
+.lanelegend i.evidenced-sample { background: var(--swp); opacity: 0.65; }
+.xlink.evidenced-sample { stroke: var(--swp); stroke-width: 2; stroke-dasharray: 6 3; }
+.xnode.evidenced-sample { fill: var(--swp); fill-opacity: 0.65; }
+.nchip.evidenced-sample { border-color: var(--swp); color: var(--swp); border-style: dashed; }
+
+/* ---- P7: the canonical layer in the panel ------------------------------------
+   The authored layer is given the accent border, because it is the one thing on the
+   page that is ours; every other section is evidence for it. */
+.std.canon { border-color: var(--accent); }
+.std.canon > h3 { color: var(--accent); }
+.badge.close { border-color: var(--opt); color: var(--opt); }
+.badge.related { border-color: var(--line-strong); color: var(--ink-soft); }
+.badge.cdm-payout-conditions { border-color: var(--swp); color: var(--swp); }
+.badge.editorial-instrument-type { border-color: var(--accent); color: var(--accent); }
+.canonclass {
+  border: 1px solid var(--line); border-radius: 7px;
+  padding: 8px 9px; margin-top: 9px; background: var(--bg);
+}
+.canonclass.lit { border-color: var(--accent); }
+.canonname { font-size: 13px; margin-bottom: 4px; }
+.canonname strong { font-family: var(--mono); font-size: 12.5px; }
+.canonrole {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-faint); border: 1px solid var(--line); border-radius: 3px;
+  padding: 1px 4px; margin-left: 4px;
+}
+.canonmaps { margin: 5px 0 0 !important; line-height: 1.9; }
+.mapchip {
+  display: inline-block; font-size: 10.5px; border: 1px solid var(--line);
+  border-radius: 3px; padding: 1px 5px; margin-right: 3px; white-space: nowrap;
+  max-width: 100%; overflow-wrap: anywhere; white-space: normal;
+}
+.mapchip b { font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.mapchip.exact { border-color: var(--swp); } .mapchip.exact b { color: var(--swp); }
+.mapchip.close { border-color: var(--opt); } .mapchip.close b { color: var(--opt); }
+.mapchip.related b { color: var(--ink-faint); }
+.mapchip code { font-size: 10.5px; }
+/* Why this strength and not a stronger one. It sits under the chip it explains, which is
+   the only placement that keeps "close" and the reason for "close" together. */
+.mapwhy {
+  display: block; font-size: 11px; color: var(--ink-soft);
+  margin: 3px 0 6px 2px; padding-left: 7px; border-left: 1px solid var(--line);
+}
+table.canonslots { margin-top: 7px; }
+/* The panel is ~330px wide and .pos is table-layout:fixed, so a bordered chip in the
+   third column is wider than its cell and spills over the second. Inside the slot table
+   the mapping drops its box and becomes two lines of text, which wraps instead. */
+table.canonslots td:nth-child(1) { width: 38%; }
+table.canonslots td:nth-child(2) { width: 26%; }
+table.canonslots td:nth-child(3) { width: 36%; }
+table.canonslots .mapchip {
+  display: block; border: none; padding: 0; margin: 0 0 4px; max-width: none;
+}
+table.canonslots .mapchip b { display: block; font-size: 9.5px; }
+/* .pos is table-layout:fixed, so a nowrap first cell overflows into the Range column
+   and the two read as one word. The slot name wraps, and "required" gets its own line. */
+table.canonslots td:first-child { overflow-wrap: anywhere; }
+table.canonslots td:first-child code { overflow-wrap: anywhere; }
+.req {
+  display: block; margin-top: 2px;
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--accent);
+}
+a.canonlink {
+  color: var(--accent); font-family: var(--mono); font-size: 11.5px;
+  /* A class name is one unbroken token and the Range column is ~90px wide, so it has to
+     be allowed to break mid-word or it hangs over the next column. */
+  display: inline-block; max-width: 100%; overflow-wrap: anywhere;
+}
+.canonwalk { margin-left: 11px; border-left: 2px solid var(--accent); padding-left: 7px; }

@@ -28,14 +28,16 @@
     <h2>One product, five standards, and where they disagree</h2>
     <p class="lede">Banks trade hundreds of kinds of financial products, and every system that touches
       one describes it in its own way. Five international standards try to bring order, and they do
-      not agree with each other. This page takes the 17 foreign-exchange (FX) derivative products
+      not agree with each other. This page takes the <span data-fact="products">17</span> foreign-exchange (FX) derivative products
       that the official registry knows about and shows, product by product, what each standard
       says about it, and where it says nothing.</p>
-    <div class="meta"><span>Research prototype from a personal project</span><span>Snapshot of 31 October 2026, 02:01</span><span>17 products &middot; 5 standards</span><span>Static page, no tracking, no network calls</span></div>
+    <div class="meta"><span>Research prototype from a personal project</span><span>Snapshot of 31 October 2026, 02:01</span><span><span data-fact="products">17</span> products &middot; <span data-fact="standards">5</span> standards</span><span>Static page, no tracking, no network calls</span></div>
     <div class="cta">
       <button class="ctabtn" type="button" data-go="lanes">Open the comparison (Lanes) &rarr;</button>
       <button class="ctabtn secondary" type="button" data-go="wheel">Open the wheel</button>
     </div>
+    <p>This is the first version. The full version, with all 169 products, is at
+      <a href="full/">full/</a>.</p>
   </section>
 
   <section>
@@ -82,13 +84,7 @@
       in this version, 5,410 checks over 224 citations. A citation that nobody opens is decoration.</p>
     <p>Not every link is equally strong, so each one is labelled. These are the colours used in the
       Lanes view:</p>
-    <ul class="legend">
-      <li><span class="dot exact"></span><span class="name">exact</span><span>the standard says the same thing, confirmed against the cited line</span></li>
-      <li><span class="dot evidenced-name"></span><span class="name">evidenced-name</span><span>the two names are made of the same words</span></li>
-      <li><span class="dot editorial"></span><span class="name">editorial</span><span>a judgement call, with a citation and a written reason</span></li>
-      <li><span class="dot broader"></span><span class="name">broader</span><span>the standard&rsquo;s term is true but says less than the product</span></li>
-      <li><span class="dot absent"></span><span class="name">absent</span><span>the standard could have answered and does not</span></li>
-    </ul>
+    <ul class="legend" data-legend></ul>
     <div class="callout">
       <p><strong>Honest note on this version.</strong> In this first snapshot the links were written
         by hand, each with its citation. Later the same morning they were replaced by links derived
@@ -104,7 +100,7 @@
       <li><div class="num">1</div><div class="body"><div class="when">30 October, 23:07</div><h3>A wheel</h3><p>The starting point was a demo in which an AI model sorted the plants of an old botany book onto a wheel, from family to species. The first attempt did the same for 17 FX products: products on the rim, inner rings switchable between UPI, CFI and CDM.</p></div></li>
       <li><div class="num">2</div><div class="body"><div class="when">31 October, 01:13 to 01:35</div><h3>The wheel hid the disagreement</h3><p>On the wheel you see one standard at a time and have to remember the others. The lanes put all five side by side on the same product rows, so the differences become visible at a glance. Lanes became the main view; the wheel stayed as the overview.</p></div></li>
       <li><div class="num">3</div><div class="body"><div class="when">31 October, 02:01</div><h3>This page</h3><p>Labels made readable at real screen sizes, both colour themes checked, and a plain list for narrow screens. This is the snapshot you are looking at.</p></div></li>
-      <li class="later"><div class="num">4</div><div class="body"><div class="when">31 October, later that day</div><h3>The whole landscape (not on this page)</h3><p>The list grew to 169 products: every over-the-counter template the registry publishes plus 59 groups of listed and cash instruments. Then came a playground that classifies a trade you type in, the building blocks of each product read from FpML and from ESMA&rsquo;s FIRDS register, four audits that found and fixed real errors, a first canonical model of the project&rsquo;s own, and a front-office page that books a test trade through it.</p></div></li>
+      <li class="later"><div class="num">4</div><div class="body"><div class="when">31 October, later that day</div><h3>The whole landscape (<a href="full/">the full version</a>)</h3><p>The list grew to 169 products: every over-the-counter template the registry publishes plus 59 groups of listed and cash instruments. Then came a playground that classifies a trade you type in, the building blocks of each product read from FpML and from ESMA&rsquo;s FIRDS register, four audits that found and fixed real errors, a first canonical model of the project&rsquo;s own, and a front-office page that books a test trade through it.</p></div></li>
     </ol>
   </section>
 
@@ -198,8 +194,49 @@
      standards in <code>refs/</code>. Static and offline: no network resources of any kind.</p>
 </footer>
 
+<script>window.__aboutOpenedUrl = window.location.href;</script>
 <script src="data/model.js"></script>
 <script src="assets/app.js"></script>
 <script src="assets/about.js"></script>
+<!-- Read by tools/check-about.cjs, not by the page. "describes" holds the sha256 of each file
+     the About text was last reviewed against; "mentions" lists controls the About text names. -->
+<script type="application/json" id="about-manifest">{
+  "reviewed": "2026-11-05",
+  "describes": {
+    "data/model.js": "5e9a660e7a1b88d006cdd1e8547167c2ccd5f20ecd78a7e76e1e8c61fa9d2b2a",
+    "assets/app.js": "d635342dddc9a7de57321304f2021eb76f51f8d4b16e0a027b4d24b8bf9cb26b",
+    "assets/styles.css": "11f3d3d2c05368728397a082d2acdef2a9a33776426159851c527e0df8ddaf42"
+  },
+  "mentions": [
+    {
+      "selector": "#views button",
+      "text": "Wheel"
+    },
+    {
+      "selector": "#views button",
+      "text": "Lanes"
+    },
+    {
+      "selector": "#lenses button",
+      "text": "UPI"
+    },
+    {
+      "selector": "#lenses button",
+      "text": "CFI"
+    },
+    {
+      "selector": "#lenses button",
+      "text": "CDM"
+    },
+    {
+      "selector": "#gaps h2",
+      "text": "Where the standards do not line up"
+    },
+    {
+      "selector": "#narrowview",
+      "text": "listed instead"
+    }
+  ]
+}</script>
 </body>
 </html>

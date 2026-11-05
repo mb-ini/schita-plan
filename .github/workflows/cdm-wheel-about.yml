@@ -1,0 +1,23 @@
+# Keeps the "About this page" tabs of cdm-wheel/ in step with the pages they describe.
+# Fails when a described file changed without About being reviewed, when About names a
+# control the page does not have, or when the data uses a link strength About does not explain.
+name: cdm-wheel About check
+on:
+  push:
+    paths: ['cdm-wheel/**', '.github/workflows/cdm-wheel-about.yml']
+  pull_request:
+    paths: ['cdm-wheel/**', '.github/workflows/cdm-wheel-about.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  about:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install --no-save --no-package-lock playwright@1.63.0
+      - run: npx playwright install --with-deps chromium
+      - run: node cdm-wheel/tools/check-about.cjs
