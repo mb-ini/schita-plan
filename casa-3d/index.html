@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Apartamentul în 3D, din planul refăcut: pereți, uși, ferestre, balcoane, grinzi, prize și mobila de pe plan, văzute de sus, în perspectivă sau la nivelul ochilor.">
+<meta property="og:title" content="Apartament 3D">
+<meta property="og:description" content="Apartamentul în 3D, din planul refăcut: pereți, uși, ferestre, balcoane, grinzi, prize și mobila de pe plan, văzute de sus, în perspectivă sau la nivelul ochilor.">
+<meta property="og:type" content="website">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Apartament 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: the flat as a model on the left, a sheet on the right with rooms, layers and what is measured; stacked on a phone. */
+:root {
+  --bg: #eef0ec; --sheet: #fbfbf9; --ink: #1b2220; --muted: #5d6965; --line: #d7dbd6;
+  --accent: #0e7a68; --accent-ink: #ffffff; --chip: #eef1ee; --scene: #e3e6e1;
+  --ok: #1d7f45; --ok-bg: #e2f2e7; --warn: #a8670a; --warn-bg: #fbefd9;
+  --f-display: "Archivo", "Inter", system-ui, sans-serif;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121615; --sheet: #191e1c; --ink: #e5ebe8; --muted: #9aa8a3; --line: #2c3532;
+    --accent: #3bbfa5; --accent-ink: #062621; --chip: #222a27; --scene: #1a1f1d;
+    --ok: #5fd08d; --ok-bg: #173323; --warn: #f2b65a; --warn-bg: #3a2b12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121615; --sheet: #191e1c; --ink: #e5ebe8; --muted: #9aa8a3; --line: #2c3532;
+  --accent: #3bbfa5; --accent-ink: #062621; --chip: #222a27; --scene: #1a1f1d;
+  --ok: #5fd08d; --ok-bg: #173323; --warn: #f2b65a; --warn-bg: #3a2b12; color-scheme: dark;
+}
+html, body { height: 100%; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--f-body); }
+* { box-sizing: border-box; }
+button, input { font: inherit; color: inherit; }
+#app { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); background: var(--sheet); }
+.top h1 { font: 700 19px/1.1 var(--f-display); margin: 0; }
+.top .sub { color: var(--muted); font-size: 12.5px; }
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 380px; min-height: 0; }
+.view { position: relative; min-width: 0; min-height: 0; background: var(--scene); overflow: hidden; }
+#c { display: block; width: 100%; height: 100%; touch-action: none; }
+.cams { position: absolute; left: 12px; top: 12px; display: flex; gap: 6px; flex-wrap: wrap; z-index: 3; margin-left: env(safe-area-inset-left, 0px); }
+.seg { display: inline-flex; background: var(--sheet); border: 1px solid var(--line); border-radius: 9px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 12.5px; font-weight: 500; color: var(--muted); min-height: 30px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+.seg button:focus-visible, .chip:focus-visible, .tog input:focus-visible, .x:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.labels { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.lbl { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font-size: 12px; font-weight: 600; line-height: 1.2; text-align: center;
+  background: color-mix(in srgb, var(--sheet) 90%, transparent); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; color: var(--ink); }
+.lbl small { display: block; color: var(--muted); font-size: 10.5px; font-weight: 500; font-family: var(--f-mono); }
+.labels.compact .lbl { font-size: 11px; padding: 2px 6px; }
+.labels.compact .lbl small { display: none; }
+.labels.compact .lbl.on small { display: block; }
+.lbl.on { border-color: var(--accent); }
+.info { position: absolute; left: 12px; bottom: 12px; z-index: 4; max-width: min(380px, calc(100% - 24px)); background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  margin-left: env(safe-area-inset-left, 0px); margin-bottom: env(safe-area-inset-bottom, 0px); }
+.info b { font-family: var(--f-display); font-size: 14px; }
+.info p { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); }
+.info .x { position: absolute; right: 6px; top: 4px; border: 0; background: transparent; font-size: 18px; cursor: pointer; color: var(--muted); padding: 2px 6px; }
+.tag { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 2px 6px; border-radius: 999px; margin-left: 6px; vertical-align: 1px; }
+.tag.ok { color: var(--ok); background: var(--ok-bg); } .tag.warn { color: var(--warn); background: var(--warn-bg); }
+.panel { overflow-y: auto; min-width: 0; background: var(--sheet); border-left: 1px solid var(--line); padding-block: 14px 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.panel section { padding-block: 14px; border-bottom: 1px solid var(--line); }
+.panel section:first-child { padding-top: 0; }
+.panel h2 { font: 600 14.5px/1.2 var(--f-display); margin: 0 0 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 5px 11px; cursor: pointer; font-size: 12.5px; font-weight: 500; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.card { margin-top: 12px; padding: 10px 12px; border-radius: 9px; background: var(--chip); }
+.card h3 { margin: 0 0 6px; font: 600 15px var(--f-display); }
+.facts { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 12px; margin: 0; font-size: 12.5px; }
+.facts dt { color: var(--muted); } .facts dd { margin: 0; font-family: var(--f-mono); text-align: right; font-variant-numeric: tabular-nums; }
+.card p { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+.togs { display: grid; gap: 6px; }
+.tog { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+.tog input { width: 16px; height: 16px; accent-color: var(--accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; border: 1px solid rgba(0,0,0,.25); }
+ul.lst { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.5; }
+ul.lst li { margin-bottom: 3px; }
+h4 { margin: 10px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 600; }
+.note { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+@media (max-width: 900px) {
+  #app { height: auto; display: block; }
+  .stage { display: block; }
+  .view { height: 62vh; min-height: 360px; }
+  .panel { border-left: 0; overflow: visible; }
+  .top .sub { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header class="top">
+    <h1>Apartament 3D</h1>
+    <span class="sub">din planul refăcut și măsurătorile din octombrie–noiembrie 2026 · tavane între 202,8 și 278,6</span>
+  </header>
+  <div class="stage">
+    <div class="view" id="view">
+      <canvas id="c" aria-label="Apartamentul în 3D. Atinge o cameră ca s-o vezi de aproape."></canvas>
+      <div class="labels" id="labels"></div>
+      <div class="cams">
+        <div class="seg" role="group" aria-label="Unghiul camerei">
+          <button type="button" data-cam="iso" aria-pressed="true">În perspectivă</button>
+          <button type="button" data-cam="top" aria-pressed="false">De sus</button>
+          <button type="button" data-cam="eye" aria-pressed="false" title="La 163 cm, cât ochii unui om de 1,75">La nivelul ochilor</button>
+        </div>
+      </div>
+      <div class="info" id="info" hidden></div>
+    </div>
+
+    <aside class="panel">
+      <section>
+        <h2>Camere</h2>
+        <div class="chips" id="rooms"></div>
+        <div class="card" id="roomCard"></div>
+      </section>
+      <section>
+        <h2>Ce se vede</h2>
+        <div class="togs">
+          <label class="tog"><input type="checkbox" id="lMob" checked> Mobila desenată pe plan</label>
+          <label class="tog"><input type="checkbox" id="lPts" checked> Prize, doze și întrerupătoare</label>
+          <label class="tog"><input type="checkbox" id="lLbl" checked> Numele camerelor</label>
+          <label class="tog"><input type="checkbox" id="lCut"> Pereții tăiați la 1 m, ca un plan</label>
+          <label class="tog"><input type="checkbox" id="lCeil"> Tavanele</label>
+        </div>
+        <div class="legend">
+          <span><i style="background:#ffffff"></i>priză</span><span><i style="background:#3b7dd8"></i>TV / date</span><span><i style="background:#9aa3a8"></i>doză</span>
+          <span><i style="background:#f2c14e"></i>întrerupător</span><span><i style="background:#2b2f33"></i>interfon</span>
+        </div>
+        <p class="note">Pereții dintre tine și camera la care te uiți devin transparenți. Atinge o cameră, un obiect, o priză sau un gol de ușă ca să vezi ce e.</p>
+      </section>
+      <section>
+        <h2>Ce e măsurat și ce e presupus</h2>
+        <h4>Măsurat</h4><ul class="lst" id="fKnown"></ul>
+        <h4>Presupus</h4><ul class="lst" id="fGuess"></ul>
+        <h4>Lipsește</h4><ul class="lst" id="fMiss"></ul>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(() => {
+'use strict';
+const H = {"rooms":[{"id":"bucatarie","name":"Bucătărie","poly":[[81.0,45.3],[81.0,186.3],[115.7,186.3],[115.7,216.3],[92.2,216.3],[92.2,460.6],[117.2,460.6],[117.2,555.3],[259.2,555.3],[259.2,537.0],[286.7,537.0],[286.7,570.0],[286.7,587.8],[286.7,604.7],[361.6,604.7],[361.6,596.0],[361.6,587.8],[361.6,464.0],[386.6,464.0],[386.6,216.3],[320.6,216.3],[320.6,186.3],[346.0,186.3],[346.0,45.3]],"floor":"gresie","label":[248.4,346.8],"area":14.43,"ceil":275.9,"note":"Tavanul: 275,9 cm în mijlocul bucătăriei, 272,7 cm pe balcon. Sub grinda de deasupra parapeților (golul care rămâne după demolare): 206 cm."},{"id":"baie","name":"Baie","poly":[[115.1,604.7],[115.1,656.7],[90.1,656.7],[90.1,900.4],[260.7,900.4],[260.7,717.0],[266.1,717.0],[266.1,646.0],[260.7,646.0],[260.7,625.6],[237.5,625.6],[237.5,604.7]],"floor":"gresie","label":[177.8,798.7],"area":4.9,"ceil":276.4,"note":"Tavanul: 276,4 cm (o citire anterioară a dat 275,8 cm). Stâlpul de pe peretele cu oglinda, opus ușii spre hol, în colțul dinspre bucătărie: 52 cm pe lungime, de-a lungul peretelui, și iese 25 cm (17.10.2026)."},{"id":"hol","name":"Hol","poly":[[271.7,646.0],[266.1,646.0],[266.1,717.0],[271.7,717.0],[271.7,900.4],[331.4,900.4],[331.4,933.4],[401.4,933.4],[401.4,913.8],[431.2,913.8],[431.2,1030.3],[425.9,1030.3],[425.9,1108.3],[431.2,1108.3],[431.2,1150.9],[579.3,1150.9],[579.3,1132.3],[587.6,1132.3],[587.6,1038.8],[579.3,1038.8],[579.3,1035.5],[549.1,1035.5],[549.1,807.2],[521.0,807.2],[521.0,763.2],[549.1,763.2],[549.1,604.7],[543.6,604.7],[543.6,596.7],[452.6,596.7],[452.6,604.7],[271.7,604.7]],"floor":"gresie","label":[400.9,799.2],"area":11.88,"ceil":274.8,"note":"Tavanul: 274,8 cm, între grindă și baie. Sub grinda de deasupra trecerii spre intrare: 241,8 cm."},{"id":"debara","name":"Debara","poly":[[351.8,952.9],[351.8,966.9],[337.8,966.9],[337.8,1131.6],[418.8,1131.6],[418.8,1108.3],[425.9,1108.3],[425.9,1030.3],[418.8,1030.3],[418.8,952.9]],"floor":"gresie","label":[379.9,1059.2],"area":1.49,"ceil":202.8,"note":"Tavanul: 202,8 cm. Remăsurată pe 21.11.2026 (cotele Debara 1–8); conturul de pe plan e refăcut după ele."},{"id":"dormitor1","name":"Dormitor 1","poly":[[401.9,216.3],[401.9,588.8],[452.6,588.8],[452.6,596.7],[543.6,596.7],[543.6,588.8],[696.6,588.8],[696.6,562.3],[757.9,562.3],[757.9,216.3]],"floor":"parchet","label":[570.2,350.5],"area":13.17,"ceil":277.1,"note":"277,1 cm, măsurat în mijlocul camerei (17.10.2026); înlocuiește valoarea de 2,27 m notată greșit."},{"id":"dormitor2","name":"Dormitor 2","poly":[[771.5,216.3],[771.5,563.3],[868.5,563.3],[868.5,588.8],[957.9,588.8],[957.9,604.7],[1095.1,604.7],[1095.1,588.8],[1193.0,588.8],[1193.0,216.3]],"floor":"parchet","label":[915.3,350.5],"area":15.67,"ceil":277.3,"note":"277,3 cm, măsurat în mijlocul camerei (17.10.2026)."},{"id":"living","name":"Living","poly":[[567.0,801.7],[549.1,801.7],[549.1,972.2],[579.3,972.2],[579.3,997.7],[1105.0,997.7],[1105.0,951.7],[1135.0,951.7],[1135.0,954.4],[1246.4,954.4],[1246.4,951.7],[1272.0,951.7],[1272.0,617.6],[1135.0,617.6],[1135.0,623.3],[1105.0,623.3],[1105.0,604.7],[567.0,604.7]],"floor":"parchet","label":[909.7,799.2],"area":27.01,"ceil":275.4,"note":"Tavanul: 275,4 cm în living și 274,0 cm într-un al doilea punct; 278,6 cm pe fostul balcon (17.10.2026)."}],"zones":[{"room":"bucatarie","poly":[[81,45.3],[346,45.3],[346,186.3],[81,186.3]],"h":272.7,"name":"balconul bucătăriei"},{"room":"living","poly":[[1135,617.6],[1272,617.6],[1272,910],[1245.1,954.4],[1135,954.4]],"h":278.6,"name":"fostul balcon"}],"walls":[{"o":[[81.0,123.3],[51.7,123.3],[51.7,150.0],[81.0,150.0]],"h":[]},{"o":[[92.2,300.0],[92.2,186.3],[81.0,186.3],[81.0,150.0],[51.7,150.0],[51.7,300.0]],"h":[]},{"o":[[92.2,300.0],[51.7,300.0],[51.7,450.0],[92.2,450.0]],"h":[]},{"o":[[117.2,555.3],[117.2,460.6],[92.2,460.6],[92.2,450.0],[51.7,450.0],[51.7,600.0],[150.0,600.0],[150.0,555.3]],"h":[]},{"o":[[90.1,657.6],[114.9,657.6],[114.9,656.7],[115.1,656.7],[115.1,604.7],[150.0,604.7],[150.0,600.0],[51.7,600.0],[51.7,750.0],[90.1,750.0]],"h":[]},{"o":[[90.1,750.0],[51.7,750.0],[51.7,900.0],[90.1,900.0]],"h":[]},{"o":[[117.1,933.0],[117.1,900.4],[90.1,900.4],[90.1,900.0],[51.7,900.0],[51.7,933.0]],"h":[]},{"o":[[286.7,537.0],[270.7,537.0],[270.7,536.3],[259.2,536.3],[259.2,555.3],[150.0,555.3],[150.0,600.0],[286.7,600.0]],"h":[]},{"o":[[237.5,604.7],[237.5,625.6],[260.7,625.6],[260.7,646.0],[271.7,646.0],[271.7,604.7],[286.7,604.7],[286.7,600.0],[150.0,600.0],[150.0,604.7]],"h":[]},{"o":[[386.6,150.0],[386.6,124.3],[346.0,124.3],[346.0,150.0]],"h":[]},{"o":[[386.6,186.3],[386.6,150.0],[346.0,150.0],[346.0,186.3]],"h":[]},{"o":[[386.6,186.3],[386.6,300.0],[401.9,300.0],[401.9,216.3],[450.0,216.3],[450.0,186.3]],"h":[]},{"o":[[386.6,450.0],[401.9,450.0],[401.9,300.0],[386.6,300.0]],"h":[]},{"o":[[386.6,464.0],[361.6,464.0],[361.6,600.0],[450.0,600.0],[450.0,588.8],[401.9,588.8],[401.9,450.0],[386.6,450.0]],"h":[]},{"o":[[361.6,604.7],[450.0,604.7],[450.0,600.0],[361.6,600.0]],"h":[]},{"o":[[488.3,186.3],[450.0,186.3],[450.0,216.3],[488.3,216.3]],"h":[]},{"o":[[452.6,600.0],[452.6,588.8],[450.0,588.8],[450.0,600.0]],"h":[]},{"o":[[452.6,604.7],[452.6,600.0],[450.0,600.0],[450.0,604.7]],"h":[]},{"o":[[271.7,717.0],[260.7,717.0],[260.7,750.0],[271.7,750.0]],"h":[]},{"o":[[271.7,750.0],[260.7,750.0],[260.7,900.0],[271.7,900.0]],"h":[]},{"o":[[271.7,900.4],[271.7,900.0],[260.7,900.0],[260.7,900.4],[235.9,900.4],[235.9,933.0],[300.0,933.0],[300.0,900.4]],"h":[]},{"o":[[331.4,900.4],[300.0,900.4],[300.0,933.0],[312.2,933.0],[312.2,1027.5],[338.4,1027.5],[338.4,967.9],[337.8,967.9],[337.8,966.9],[351.8,966.9],[351.8,952.9],[418.8,952.9],[418.8,1030.3],[431.2,1030.3],[431.2,913.8],[401.4,913.8],[401.4,933.4],[331.4,933.4]],"h":[]},{"o":[[729.4,186.3],[729.4,216.3],[750.0,216.3],[750.0,186.3]],"h":[]},{"o":[[855.3,216.3],[855.3,186.3],[750.0,186.3],[750.0,216.3],[757.9,216.3],[757.9,300.0],[771.5,300.0],[771.5,216.3]],"h":[]},{"o":[[757.9,450.0],[771.5,450.0],[771.5,300.0],[757.9,300.0]],"h":[]},{"o":[[757.9,450.0],[757.9,548.7],[771.5,548.7],[771.5,450.0]],"h":[]},{"o":[[1091.5,186.3],[1091.5,216.3],[1193.0,216.3],[1193.0,300.0],[1200.0,300.0],[1200.0,186.3]],"h":[]},{"o":[[1193.0,450.0],[1200.0,450.0],[1200.0,300.0],[1193.0,300.0]],"h":[]},{"o":[[1193.0,588.8],[1095.1,588.8],[1095.1,600.0],[1200.0,600.0],[1200.0,450.0],[1193.0,450.0]],"h":[]},{"o":[[1095.1,604.7],[1105.0,604.7],[1105.0,623.3],[1135.0,623.3],[1135.0,617.6],[1200.0,617.6],[1200.0,600.0],[1095.1,600.0]],"h":[]},{"o":[[1200.0,186.3],[1200.0,300.0],[1226.2,300.0],[1226.2,186.3]],"h":[]},{"o":[[1226.2,300.0],[1200.0,300.0],[1200.0,450.0],[1226.2,450.0]],"h":[]},{"o":[[1226.2,450.0],[1200.0,450.0],[1200.0,600.0],[1226.2,600.0]],"h":[]},{"o":[[1226.2,617.6],[1226.2,600.0],[1200.0,600.0],[1200.0,617.6]],"h":[]},{"o":[[543.6,588.8],[543.6,600.0],[600.0,600.0],[600.0,588.8]],"h":[]},{"o":[[543.6,604.7],[549.1,604.7],[549.1,750.0],[567.0,750.0],[567.0,604.7],[600.0,604.7],[600.0,600.0],[543.6,600.0]],"h":[]},{"o":[[549.1,763.2],[521.0,763.2],[521.0,807.2],[549.1,807.2],[549.1,834.0],[567.0,834.0],[567.0,750.0],[549.1,750.0]],"h":[]},{"o":[[600.0,588.8],[600.0,600.0],[750.0,600.0],[750.0,588.8]],"h":[]},{"o":[[750.0,604.7],[750.0,600.0],[600.0,600.0],[600.0,604.7]],"h":[]},{"o":[[757.9,548.8],[757.9,588.8],[750.0,588.8],[750.0,600.0],[900.0,600.0],[900.0,588.8],[771.5,588.8],[771.5,548.8]],"h":[]},{"o":[[900.0,604.7],[900.0,600.0],[750.0,600.0],[750.0,604.7]],"h":[]},{"o":[[957.9,600.0],[957.9,588.8],[900.0,588.8],[900.0,600.0]],"h":[]},{"o":[[957.9,604.7],[957.9,600.0],[900.0,600.0],[900.0,604.7]],"h":[]},{"o":[[579.3,997.7],[579.3,972.2],[549.1,972.2],[549.1,1035.5],[579.3,1035.5],[579.3,1038.8],[595.9,1038.8],[595.9,1022.2],[600.0,1022.2],[600.0,997.7]],"h":[]},{"o":[[600.0,997.7],[600.0,1022.2],[750.0,1022.2],[750.0,997.7]],"h":[]},{"o":[[750.0,997.7],[750.0,1022.2],[900.0,1022.2],[900.0,997.7]],"h":[]},{"o":[[900.0,997.7],[900.0,1022.2],[1050.0,1022.2],[1050.0,997.7]],"h":[]},{"o":[[1135.0,951.7],[1105.0,951.7],[1105.0,997.7],[1050.0,997.7],[1050.0,1022.2],[1135.0,1022.2]],"h":[]},{"o":[[431.2,1108.3],[418.8,1108.3],[418.8,1131.6],[338.4,1131.6],[338.4,1077.6],[312.2,1077.6],[312.2,1168.5],[450.0,1168.5],[450.0,1150.9],[431.2,1150.9]],"h":[]},{"o":[[595.9,1168.5],[595.9,1132.3],[579.3,1132.3],[579.3,1150.9],[450.0,1150.9],[450.0,1168.5]],"h":[]}],"wallH":277.3,"ops":[{"a":[286.7,545.7],"b":[361.6,545.7],"n":[-0.0,1.0],"d":59.0,"rooms":["bucatarie","hol"],"w":74.9,"kind":"door","head":205,"est":true,"name":"Ușa bucătăriei"},{"a":[117.1,900.4],"b":[235.9,900.4],"n":[-0.0,1.0],"d":33.0,"rooms":["baie",null],"w":118.8,"kind":"window","sill":150,"head":210,"est":true,"name":"Golul din peretele băii","doubt":true},{"a":[261.1,717.0],"b":[261.1,646.0],"n":[1.0,0.0],"d":10.0,"rooms":["baie","hol"],"w":71.0,"kind":"door","head":205,"est":true,"name":"Ușa băii"},{"a":[430.9,1030.3],"b":[430.9,1108.3],"n":[-1.0,0.0],"d":12.0,"rooms":["hol","debara"],"w":78.0,"kind":"door","head":200,"est":true,"name":"Ușa debaralei","known":"golul 78 lățime; înălțimea pusă la 200, sub tavanul de 202,8"},{"a":[587.6,1132.3],"b":[587.6,1038.8],"n":[1.0,0.0],"d":9.0,"rooms":["hol",null],"w":93.5,"kind":"entry","head":205,"est":true,"name":"Ușa de intrare"},{"a":[549.1,972.2],"b":[549.1,834.0],"n":[1.0,0.0],"d":17.0,"rooms":["hol","living"],"w":138.2,"kind":"door","head":205,"est":true,"name":"Arcada spre living"},{"a":[543.5,603.7],"b":[452.6,603.7],"n":[-0.0,-1.0],"d":14.0,"rooms":["hol","dormitor1"],"w":90.9,"kind":"door","head":205,"est":true,"name":"Ușa dormitorului 1"},{"a":[337.8,1027.5],"b":[337.8,1077.6],"n":[-1.0,0.0],"d":26.0,"rooms":["debara",null],"w":50.1,"kind":"window","sill":134.1,"head":184.1,"est":true,"name":"Geamul debaralei","known":"marginea de jos la 134,1; golul 50 lățime"},{"a":[729.4,216.3],"b":[488.3,216.3],"n":[-0.0,-1.0],"d":30.0,"rooms":["dormitor1",null],"w":241.1,"kind":"window","sill":90,"head":220,"est":true,"name":"Fereastra dormitorului 1"},{"a":[957.9,589.7],"b":[1095.1,589.7],"n":[-0.0,1.0],"d":15.0,"rooms":["dormitor2","living"],"w":137.2,"kind":"door","head":205,"est":true,"name":"Ușa dormitorului 2 (dublă)"},{"a":[1091.5,216.3],"b":[855.3,216.3],"n":[-0.0,-1.0],"d":30.0,"rooms":["dormitor2",null],"w":236.2,"kind":"window","sill":90,"head":220,"est":true,"name":"Fereastra dormitorului 2"}],"bal":{"kitchen":{"hp":86,"glazH":186,"parapets":[{"b":[51.7,381.7,20.4,45.3]},{"b":[51.7,81,45.3,123.3]},{"b":[346,381.7,45.3,124.3]}],"glaz":[{"p0":[70.7,35.3],"p1":[365.5,35.3],"n":[0,1],"k":3},{"p0":[70.7,35.3],"p1":[70.7,123.3],"n":[1,0],"k":1},{"p0":[365.5,35.3],"p1":[365.5,124.3],"n":[-1,0],"k":1}]},"living":{"hp":86.6,"glazH":192,"parapets":[{"b":[1226.2,1297,592.6,617.6]},{"b":[1272,1297,617.6,917]},{"poly":[[1272,910],[1297,917],[1259.2,979.4],[1245.1,954.4]]},{"b":[1135,1259.2,954.4,979.4]}],"glaz":[{"p0":[1226.2,607.6],"p1":[1282,607.6],"n":[0,1],"k":1},{"p0":[1282,607.6],"p1":[1282,912.8],"n":[-1,0],"k":3},{"p0":[1282,912.8],"p1":[1250.7,964.4],"n":[-0.855,-0.518],"k":1},{"p0":[1250.7,964.4],"p1":[1135,964.4],"n":[0,-1],"k":1}]}},"stubs":[{"b":[92.2,115.7,186.3,216.3],"h":90,"name":"Cap de parapet (23,5)"},{"b":[320.6,386.6,186.3,216.3],"h":90,"name":"Cap de parapet (66)"}],"beams":[{"b":[92.2,386.6,186.3,216.3],"y0":206,"top":275.9,"name":"Grinda de deasupra fostului parapet","known":true},{"b":[116.8,259.2,536.3,555.3],"y0":235,"top":275.9,"name":"Grindă lângă ușa bucătăriei","known":true}],"rads":[{"b":[117,310,45.3,59.3],"y0":15,"y1":75,"along":"x","name":"Calorifer, balconul bucătăriei","est":"înălțimea"},{"b":[1255,1265.7,659.1,850.6],"y0":15,"y1":75,"along":"y","name":"Calorifer, fostul balcon","est":"poziția și înălțimea"}],"items":[{"id":"id12b01","type":"priza","label":"Priză","kind":"Priză","x":757.9,"y":527.3,"h":25,"n":[-1.0,-0.0],"room":"dormitor1","meas":false,"variant":"Dublă"},{"id":"imvdun2vns9830","type":"priza","label":"Priză","kind":"Priză","x":386.6,"y":389.3,"h":33,"n":[-1.0,-0.0],"room":"bucatarie","meas":true,"variant":"Simplă"},{"id":"id14a01","type":"priza","label":"doză goală","kind":"Priză","x":401.9,"y":463.8,"h":35,"n":[1.0,-0.0],"room":"dormitor1","meas":false,"variant":""},{"id":"iliv1b01","type":"priza","label":"doză goală, lată","kind":"Priză","x":748.0,"y":604.7,"h":30,"n":[0.0,1.0],"room":"living","meas":false,"variant":"Dublă"},{"id":"imwqn65geb2wth","type":"priza","label":"Priză","kind":"Priză","x":418.8,"y":991.6,"h":134,"n":[-1.0,-0.0],"room":"debara","meas":false,"variant":"Simplă"},{"id":"iliv1c01","type":"doza","label":"doză cu fire înnădite","kind":"Doză","x":764.0,"y":604.7,"h":30,"n":[0.0,1.0],"room":"living","meas":false,"variant":""},{"id":"id12a01","type":"tvdate","label":"Priză TV / date","kind":"Priză TV / date","x":757.9,"y":507.3,"h":25,"n":[-1.0,-0.0],"room":"dormitor1","meas":false,"variant":"TV"},{"id":"iliv1e01","type":"priza","label":"Priză","kind":"Priză","x":915.0,"y":604.7,"h":30,"n":[0.0,1.0],"room":"living","meas":false,"variant":"Dublă"},{"id":"id14d01","type":"priza","label":"doză goală","kind":"Priză","x":401.9,"y":261.3,"h":35,"n":[1.0,-0.0],"room":"dormitor1","meas":false,"variant":""},{"id":"iliv5b01","type":"priza","label":"doză goală, lată","kind":"Priză","x":567.0,"y":747.7,"h":33,"n":[1.0,-0.0],"room":"living","meas":false,"variant":"Dublă"},{"id":"imvctx8xlj8kqo","type":"tvdate","label":"Priză TV / date","kind":"Priză TV / date","x":911.9,"y":588.8,"h":34,"n":[0.0,-1.0],"room":"dormitor2","meas":true,"variant":"TV"},{"id":"itvliv5a01","type":"tvdate","label":"cablu TV","kind":"Priză TV / date","x":567.0,"y":724.7,"h":33,"n":[1.0,-0.0],"room":"living","meas":false,"variant":"TV"},{"id":"ihol3b01","type":"tvdate","label":"cablu internet de afară","kind":"Priză TV / date","x":575.0,"y":1035.5,"h":155,"n":[0.0,1.0],"room":"hol","meas":false,"variant":"Rețea"},{"id":"id11a01","type":"priza","label":"doză goală","kind":"Priză","x":692.9,"y":216.3,"h":35,"n":[0.0,1.0],"room":"dormitor1","meas":false,"variant":""},{"id":"iliv1d01","type":"tvdate","label":"repartitor TV","kind":"Priză TV / date","x":777.0,"y":604.7,"h":30,"n":[0.0,1.0],"room":"living","meas":false,"variant":"TV"},{"id":"id14b01","type":"doza","label":"doză cu fire","kind":"Doză","x":401.9,"y":443.8,"h":35,"n":[1.0,-0.0],"room":"dormitor1","meas":false,"variant":""},{"id":"imvctszy03kd82","type":"priza","label":"Priză","kind":"Priză","x":1193.0,"y":253.3,"h":40,"n":[-1.0,-0.0],"room":"dormitor2","meas":true,"variant":"Simplă"},{"id":"imvctg5d0upn7g","type":"priza","label":"p1","kind":"Priză","x":771.5,"y":512.3,"h":38,"n":[1.0,-0.0],"room":"dormitor2","meas":true,"variant":"Dublă"},{"id":"imvctz0doza01","type":"doza","label":"Doză","kind":"Doză","x":893.5,"y":588.8,"h":34,"n":[0.0,-1.0],"room":"dormitor2","meas":false,"variant":""},{"id":"iliv4a01","type":"tvdate","label":"fibră Digi","kind":"Priză TV / date","x":609.3,"y":997.7,"h":20,"n":[0.0,-1.0],"room":"living","meas":false,"variant":"Rețea"},{"id":"imvcty285q3usq","type":"intrerupator","label":"Întrerupător","kind":"Întrerupător","x":924.5,"y":588.8,"h":147,"n":[0.0,-1.0],"room":"dormitor2","meas":true,"variant":"Dublu"},{"id":"id14c01","type":"tvdate","label":"Priză TV / date","kind":"Priză TV / date","x":401.9,"y":413.8,"h":35,"n":[1.0,-0.0],"room":"dormitor1","meas":false,"variant":"TV"},{"id":"ihol3a01","type":"interfon","label":"interfon","kind":"Interfon","x":579.3,"y":1037.1,"h":150,"n":[-1.0,-0.0],"room":"hol","meas":false,"variant":"Interfon"},{"id":"iliv1a01","type":"priza","label":"doză goală","kind":"Priză","x":727.0,"y":604.7,"h":30,"n":[0.0,1.0],"room":"living","meas":false,"variant":""},{"id":"imvctwcnh48yeb","type":"priza","label":"Priză","kind":"Priză","x":903.5,"y":588.8,"h":34,"n":[0.0,-1.0],"room":"dormitor2","meas":true,"variant":"Dublă"},{"id":"imvctkozkj5cl0","type":"priza","label":"Priză","kind":"Priză","x":771.5,"y":277.3,"h":40,"n":[1.0,-0.0],"room":"dormitor2","meas":true,"variant":"Dublă"},{"id":"id12c01","type":"priza","label":"doză goală","kind":"Priză","x":757.9,"y":261.3,"h":33,"n":[-1.0,-0.0],"room":"dormitor1","meas":false,"variant":""},{"id":"imvctr3481fquv","type":"priza","label":"Priză","kind":"Priză","x":1193.0,"y":553.8,"h":36,"n":[-1.0,-0.0],"room":"dormitor2","meas":true,"variant":"Dublă"}],"objs":[{"id":"imw8bbvvoqb8og","name":"Dreptunghi","kind":"flat","x":326.6,"y":236.3,"w":120,"d":40,"h":null,"rot":0,"room":"bucatarie","round":false},{"id":"imw8d1jbvdsqa5","name":"Formă","kind":"flat","x":951.0,"y":719.0,"w":124,"d":62,"h":null,"rot":0,"room":"living","round":false,"pts":[-60,-31,62,-31,62,31,-62,31]},{"id":"ohol_pax_50a","name":"PAX 50","kind":"pax","x":289.2,"y":787.4,"w":50,"d":35,"h":236,"rot":270,"room":"hol","round":false},{"id":"ohol_pax_50c","name":"PAX 50","kind":"pax","x":434.7,"y":882.9,"w":50,"d":35,"h":236,"rot":180,"room":"hol","round":false},{"id":"ohol_pax_colt","name":"PAX colț (75 + 53)","kind":"pax","x":315.7,"y":856.4,"w":88,"d":88,"h":236,"rot":0,"room":"hol","round":false,"pts":[-44,44,-44,-44,-9,-44,-9,9,44,9,44,44]},{"id":"od2_pax","name":"PAX 225 (75 + 3 × 50)","kind":"pax","x":1173.0,"y":351.3,"w":225,"d":40,"h":236,"rot":90,"room":"dormitor2","round":false},{"id":"imw8bb3csrffkt","name":"Dreptunghi","kind":"flat","x":366.6,"y":346.4,"w":40,"d":180,"h":null,"rot":0,"room":"bucatarie","round":false},{"id":"imw8bcv13nyz82","name":"Dreptunghi","kind":"flat","x":293.0,"y":344.1,"w":80,"d":141,"h":null,"rot":0,"room":"bucatarie","round":false},{"id":"imwkr3vgmohknv","name":"Birou","kind":"desk","x":972.4,"y":725.4,"w":180,"d":80,"h":75,"rot":0,"room":"living","round":false},{"id":"oex_birou","name":"Birou (varianta D)","kind":"desk","x":811.5,"y":483.3,"w":160,"d":80,"h":75,"rot":90,"room":"dormitor2","round":false},{"id":"ohol_pax_50b","name":"PAX 50","kind":"pax","x":384.7,"y":882.9,"w":50,"d":35,"h":236,"rot":180,"room":"hol","round":false},{"id":"oex_coloana","name":"Mașină și uscător, coloană","kind":"washer","x":381.8,"y":996.9,"w":60,"d":60,"h":175,"rot":0,"room":"debara","round":false,"note":"Pusă ca în „Debara 3D”: spatele la 14 cm de peretele 1, la 7 cm de peretele cu ușa (priza)."},{"id":"imwp4rrpbok7jy","name":"Canapea","kind":"sofa","x":871.5,"y":316.3,"w":150,"d":95,"h":85,"rot":-90,"room":"dormitor2","round":false},{"id":"imwp4u77755v38","name":"Cerc","kind":"rug","x":1001.5,"y":317.3,"w":80,"d":80,"h":null,"rot":0,"room":"dormitor2","round":true},{"id":"imwp50j9tlr6w9","name":"Scaun","kind":"chair","x":1087.9,"y":264.3,"w":64,"d":65,"h":110,"rot":0,"room":"dormitor2","round":false}],"facts":{"known":["Tavanele din fiecare cameră (17.10.2026) și de pe balcoane","Grinda de deasupra fostului parapet din bucătărie, la 206","Golurile ușilor: lățimile din plan; la debara 78","Geamul debaralei: marginea de jos la 134,1","Balcoanele: geamurile din fișa din 2021 (înălțimi 186 și 192)"],"guess":["Înălțimea ușilor: 205 peste tot, presupus","Ușa debaralei: 200, ca să încapă sub tavanul de 202,8","Ferestrele dormitoarelor: pervaz la 90, sus la 220, presupus","Golul din peretele băii spre exterior: nu știu dacă e geam; l-am pus la 150–210","Parapetul de sub geamurile balcoanelor: 86–87, din tavan minus geam","Capetele de parapet din bucătărie: 90","Caloriferele: doar cele două de pe balcoane, din plan; înălțimea presupusă","Prizele: unde nu sunt măsurate, poziția e estimată din poze"],"missing":["Grinda din hol (241,8): nu știu exact unde trece; nu e desenată","Grinda de deasupra fostului parapet din living, dacă există","Obiectele sanitare din baie și mobila de bucătărie nu sunt pe plan","Ușile (foile) nu sunt desenate, doar golurile"]},"size":[1305,1183]};
+const $ = s => document.querySelector(s);
+const fmt = (v, d = 1) => { const r = Math.round(v * 10 ** d) / 10 ** d; return String(r).replace('.', ','); };
+const rad = d => d * Math.PI / 180;
+const EYE = 163;   // eye height for someone 1,75 tall
+const LS = 'apartament3d-v1';
+let ui = { mob: true, pts: true, lbl: true, cut: false, ceil: false };
+try { Object.assign(ui, JSON.parse(localStorage.getItem(LS) || '{}')); } catch (e) {}
+const saveUI = () => { try { localStorage.setItem(LS, JSON.stringify(ui)); } catch (e) {} };
+
+const view = $('#view'), canvas = $('#c'), labelsEl = $('#labels');
+let renderer = null;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); } catch (e) { renderer = null; }
+const ROOM = Object.fromEntries(H.rooms.map(r => [r.id, r]));
+const centroid = P => { let a = 0, cx = 0, cz = 0; for (let i = 0; i < P.length; i++) { const [x0, z0] = P[i], [x1, z1] = P[(i + 1) % P.length], f = x0 * z1 - x1 * z0; a += f; cx += (x0 + x1) * f; cz += (z0 + z1) * f; } a /= 2; return [cx / (6 * a), cz / (6 * a)]; };
+for (const r of H.rooms) { r.c = centroid(r.poly); const xs = r.poly.map(p => p[0]), zs = r.poly.map(p => p[1]); r.span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs)); }
+const NAMES = { bucatarie: 'Bucătărie', living: 'Living', hol: 'Hol', baie: 'Baie', debara: 'Debara', dormitor1: 'Dormitor 1', dormitor2: 'Dormitor 2' };
+
+/* ---------- panel ---------- */
+let focus = null;
+function renderRooms() {
+  $('#rooms').innerHTML = `<button class="chip" type="button" data-room="" aria-pressed="${!focus}">Toată casa</button>` +
+    H.rooms.map(r => `<button class="chip" type="button" data-room="${r.id}" aria-pressed="${focus === r.id}">${NAMES[r.id] || r.name}</button>`).join('');
+  const r = focus && ROOM[focus], c = $('#roomCard');
+  if (!r) {
+    const area = H.rooms.reduce((s, q) => s + (q.area || 0), 0);
+    c.innerHTML = `<h3>Toată casa</h3><dl class="facts"><dt>Camere</dt><dd>${H.rooms.length}</dd><dt>Suprafața camerelor, adunată din plan</dt><dd>${fmt(area, 2)} m²</dd><dt>Puncte de instalații pe plan</dt><dd>${H.items.length}</dd><dt>Obiecte de mobilă pe plan</dt><dd>${H.objs.length}</dd></dl>
+      <p>Atinge o cameră în 3D sau alege-o de mai sus ca să te apropii de ea.</p>`;
+    return;
+  }
+  const z = H.zones.find(q => q.room === r.id), pts = H.items.filter(i => i.room === r.id), ops = H.ops.filter(o => o.rooms.includes(r.id));
+  c.innerHTML = `<h3>${NAMES[r.id] || r.name}</h3><dl class="facts">
+    <dt>Suprafață</dt><dd>${fmt(r.area, 2)} m²</dd>
+    <dt>Tavanul</dt><dd>${fmt(r.ceil)}</dd>${z ? `<dt>Tavanul pe ${z.name}</dt><dd>${fmt(z.h)}</dd>` : ''}
+    <dt>Pardoseala</dt><dd>${r.floor === 'parchet' ? 'parchet' : 'gresie'}</dd>
+    <dt>Goluri de uși și ferestre</dt><dd>${ops.length}</dd><dt>Prize și doze</dt><dd>${pts.length}</dd></dl>${r.note ? `<p>${r.note}</p>` : ''}`;
+}
+function renderFacts() {
+  $('#fKnown').innerHTML = H.facts.known.map(t => `<li>${t}</li>`).join('');
+  $('#fGuess').innerHTML = H.facts.guess.map(t => `<li>${t}</li>`).join('');
+  $('#fMiss').innerHTML = H.facts.missing.map(t => `<li>${t}</li>`).join('');
+}
+function showInfo(title, lines, tag) {
+  const el = $('#info');
+  el.innerHTML = `<button class="x" type="button" aria-label="Închide">×</button><b>${title}</b>${tag ? `<span class="tag ${tag[0]}">${tag[1]}</span>` : ''}${lines.map(l => `<p>${l}</p>`).join('')}`;
+  el.hidden = false; el.querySelector('.x').onclick = () => { el.hidden = true; };
+}
+
+if (!renderer || !window.THREE) {
+  view.innerHTML = '<p style="padding:24px;max-width:46ch;color:var(--muted)">Vederea 3D nu poate porni în acest browser (WebGL e oprit). Lista camerelor și ce știm despre ele rămân în dreapta.</p>';
+  renderRooms(); renderFacts();
+  document.addEventListener('click', e => { const b = e.target.closest('[data-room]'); if (b) { focus = b.dataset.room || null; renderRooms(); } });
+  return;
+}
+
+/* ---------- scene ---------- */
+const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, 1, 5, 20000);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#ddd';
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+scene.background = new THREE.Color(css('--scene'));
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8b8f88, 0.74));
+const sun = new THREE.DirectionalLight(0xffffff, 0.58);
+const CX = H.size[0] / 2, CZ = H.size[1] / 2;
+sun.position.set(CX + 500, 1300, CZ + 700); sun.target.position.set(CX, 0, CZ);
+sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096);
+Object.assign(sun.shadow.camera, { left: -900, right: 900, top: 900, bottom: -900, near: 100, far: 3500 }); sun.shadow.bias = -0.0008;
+scene.add(sun, sun.target);
+
+const M = {
+  plaster: new THREE.MeshStandardMaterial({ color: 0xf0eee8, roughness: 0.95 }),
+  cut: new THREE.MeshStandardMaterial({ color: 0x4f5753, roughness: 1 }),
+  sill: new THREE.MeshStandardMaterial({ color: 0xe6e0d4, roughness: 0.6 }),
+  frame: new THREE.MeshStandardMaterial({ color: 0xfafafa, roughness: 0.4 }),
+  glass: new THREE.MeshStandardMaterial({ color: 0xa9d3ea, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.35 }),
+  rad: new THREE.MeshStandardMaterial({ color: 0xf4f4f2, roughness: 0.45 }),
+  door: new THREE.MeshStandardMaterial({ color: 0x6b5a48, roughness: 0.6 }),
+  white: new THREE.MeshStandardMaterial({ color: 0xf6f6f3, roughness: 0.45 }),
+  front: new THREE.MeshStandardMaterial({ color: 0xfafaf8, roughness: 0.4 }),
+  wood: new THREE.MeshStandardMaterial({ color: 0xb48a5e, roughness: 0.55 }),
+  metal: new THREE.MeshStandardMaterial({ color: 0x2f3437, roughness: 0.5 }),
+  chrome: new THREE.MeshStandardMaterial({ color: 0xd8dde0, roughness: 0.2, metalness: 0.9 }),
+  sofa: new THREE.MeshStandardMaterial({ color: 0x7d8a86, roughness: 0.85 }),
+  chair: new THREE.MeshStandardMaterial({ color: 0x5f6f69, roughness: 0.7 }),
+  rug: new THREE.MeshStandardMaterial({ color: 0xc9b9a0, roughness: 0.95 }),
+  flat: new THREE.MeshBasicMaterial({ color: 0x0e7a68, transparent: true, opacity: 0.18, depthWrite: false }),
+  glassD: new THREE.MeshStandardMaterial({ color: 0x24343d, roughness: 0.15, transparent: true, opacity: 0.85 }),
+  ceil: new THREE.MeshStandardMaterial({ color: 0xf3f1ea, roughness: 1, transparent: true, opacity: 0.42, side: THREE.DoubleSide, depthWrite: false }),
+  ceilEdge: new THREE.LineBasicMaterial({ color: 0x0e7a68, transparent: true, opacity: 0.55 }),
+  edge: new THREE.LineBasicMaterial({ color: 0x2f3532, transparent: true, opacity: 0.3 }),
+  sel: new THREE.LineBasicMaterial({ color: 0x0e9f86 }),
+};
+const PT_COL = { priza: 0xffffff, tvdate: 0x3b7dd8, doza: 0x9aa3a8, intrerupator: 0xf2c14e, interfon: 0x2b2f33 };
+function texTile(base, grout, size) {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const g = cv.getContext('2d');
+  g.fillStyle = base; g.fillRect(0, 0, 128, 128); g.fillStyle = grout; g.fillRect(0, 0, 128, 2); g.fillRect(0, 0, 2, 128);
+  const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; t.repeat.set(1 / size, 1 / size); return t;
+}
+function texWood() {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256; const g = cv.getContext('2d'), tones = ['#c9a77c', '#c4a074', '#cfae84', '#c19c70'];
+  for (let r = 0; r < 8; r++) { g.fillStyle = tones[r % 4]; g.fillRect(0, r * 32, 256, 32); g.fillStyle = 'rgba(80,55,30,.35)'; g.fillRect(0, r * 32, 256, 1.5); g.fillRect((r * 97) % 256, r * 32, 1.5, 32); g.fillRect((r * 97 + 128) % 256, r * 32, 1.5, 32); }
+  const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; t.repeat.set(1 / 120, 1 / 120); return t;
+}
+const TEX = { gresie: texTile('#d8d4cb', '#b9b4aa', 30), parchet: texWood() };
+
+const shapeOf = (pts, holes) => { const s = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(x, -z))); for (const h of holes || []) s.holes.push(new THREE.Path(h.map(([x, z]) => new THREE.Vector2(x, -z)))); return s; };
+function extrude(pts, holes, h, mats) {
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shapeOf(pts, holes), { depth: h, bevelEnabled: false }), mats);
+  m.rotation.x = -Math.PI / 2; m.castShadow = true; m.receiveShadow = true; return m;
+}
+function boxAt(x0, x1, y0, y1, z0, z1, mat) { const m = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, y1 - y0, z1 - z0), mat); m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2); m.castShadow = true; m.receiveShadow = true; return m; }
+// a box along a segment of the plan, of thickness th, offset sideways by off along n
+function segBox(a, b, n, off, th, y0, y1, mat) {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]), m = new THREE.Mesh(new THREE.BoxGeometry(len, y1 - y0, th), mat);
+  m.position.set((a[0] + b[0]) / 2 + n[0] * off, (y0 + y1) / 2, (a[1] + b[1]) / 2 + n[1] * off);
+  m.rotation.y = Math.atan2(-(b[1] - a[1]), b[0] - a[0]); m.castShadow = true; m.receiveShadow = true; return m;
+}
+const edges = (mesh, mat) => { mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 25), mat || M.edge)); return mesh; };
+
+// architecture pieces that fade when they stand between the camera and what you look at
+const fadeable = [];   // { mesh, c: [x, z], mats: [] }
+function addFade(mesh, c, kind) {
+  const mats = [];
+  mesh.traverse(o => { if (o.material) { o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); [].concat(o.material).forEach(m => { m.userData.base = { t: m.transparent, o: m.opacity }; mats.push(m); }); } });
+  fadeable.push({ mesh, c, mats, kind, out: false }); return mesh;
+}
+const G = { arch: new THREE.Group(), floors: new THREE.Group(), mob: new THREE.Group(), pts: new THREE.Group(), ceil: new THREE.Group(), tall: [] };
+Object.values(G).forEach(g => { if (g.isObject3D) scene.add(g); });
+
+// floors
+for (const r of H.rooms) {
+  const m = new THREE.Mesh(new THREE.ShapeGeometry(shapeOf(r.poly)), new THREE.MeshStandardMaterial({ map: TEX[r.floor] || TEX.gresie, roughness: 0.75 }));
+  m.rotation.x = -Math.PI / 2; m.receiveShadow = true; m.userData.room = r.id; G.floors.add(m);
+}
+// walls: extruded pieces, dark on top like a cut plan
+const WH = H.wallH;
+for (const w of H.walls) {
+  const m = extrude(w.o, w.h, WH, [M.cut, M.plaster]); edges(m);
+  const c = centroid(w.o); addFade(m, c, 'wall'); G.arch.add(m); G.tall.push({ mesh: m, kind: 'wall' });
+}
+// openings: lintels over doors, sills and glass for windows
+const OP_MESH = [];
+for (const o of H.ops) {
+  const g = new THREE.Group(); g.userData.op = o;
+  if (o.head < WH) { const l = segBox(o.a, o.b, o.n, o.d / 2, o.d, o.head, WH, [M.plaster, M.plaster, M.cut, M.plaster, M.plaster, M.plaster]); edges(l); g.add(l); l.userData.lintel = true; }
+  if (o.kind === 'window') {
+    const s = segBox(o.a, o.b, o.n, o.d / 2, o.d, 0, o.sill, [M.plaster, M.plaster, M.sill, M.plaster, M.plaster, M.plaster]); edges(s); s.userData.cutH = o.sill; g.add(s);
+    const gl = segBox(o.a, o.b, o.n, o.d / 2, 1.2, o.sill + 4, o.head - 4, M.glass); gl.castShadow = false; gl.userData.upper = true; g.add(gl);
+    const fb = segBox(o.a, o.b, o.n, o.d / 2, 7, o.sill, o.sill + 5, M.frame); if (o.sill + 5 > 100) fb.userData.upper = true; g.add(fb);
+    const ft = segBox(o.a, o.b, o.n, o.d / 2, 7, o.head - 5, o.head, M.frame); ft.userData.upper = true; g.add(ft);
+  } else if (o.kind === 'entry') {
+    const d = segBox(o.a, o.b, o.n, o.d * 0.7, 4, 0, o.head - 1, M.door); edges(d); d.userData.cutH = o.head - 1; g.add(d);
+  }
+  const c = [(o.a[0] + o.b[0]) / 2 + o.n[0] * o.d / 2, (o.a[1] + o.b[1]) / 2 + o.n[1] * o.d / 2];
+  addFade(g, c, 'op'); G.arch.add(g); OP_MESH.push(g);
+}
+// balconies: parapets, glazing on top of them, radiators, the kitchen stubs and beams
+for (const [k, b] of Object.entries(H.bal)) {
+  for (const p of b.parapets) {
+    const m = p.b ? boxAt(p.b[0], p.b[1], 0, b.hp, p.b[2], p.b[3], [M.plaster, M.plaster, M.sill, M.plaster, M.plaster, M.plaster]) : extrude(p.poly, [], b.hp, [M.sill, M.plaster]);
+    edges(m); const c = p.b ? [(p.b[0] + p.b[1]) / 2, (p.b[2] + p.b[3]) / 2] : centroid(p.poly); addFade(m, c, 'wall'); G.arch.add(m);
+  }
+  for (const g of b.glaz) {
+    const grp = new THREE.Group(), y0 = b.hp, y1 = b.hp + b.glazH, n = g.n;
+    grp.add(segBox(g.p0, g.p1, n, 0, 7, y0, y0 + 5, M.frame), segBox(g.p0, g.p1, n, 0, 7, y1 - 5, y1, M.frame));
+    for (let i = 0; i <= g.k; i++) { const t = i / g.k, P = [g.p0[0] + (g.p1[0] - g.p0[0]) * t, g.p0[1] + (g.p1[1] - g.p0[1]) * t]; const post = new THREE.Mesh(new THREE.BoxGeometry(6, b.glazH, 6), M.frame); post.position.set(P[0], y0 + b.glazH / 2, P[1]); post.castShadow = true; grp.add(post); }
+    const gl = segBox(g.p0, g.p1, n, 0, 1, y0 + 5, y1 - 5, M.glass); gl.castShadow = false; grp.add(gl);
+    grp.children.forEach(ch => { ch.userData.upper = true; });
+    addFade(grp, [(g.p0[0] + g.p1[0]) / 2, (g.p0[1] + g.p1[1]) / 2], 'glaz'); G.arch.add(grp);
+  }
+}
+for (const s of H.stubs) { const m = boxAt(s.b[0], s.b[1], 0, s.h, s.b[2], s.b[3], [M.plaster, M.plaster, M.sill, M.plaster, M.plaster, M.plaster]); edges(m); m.userData.info = s; addFade(m, [(s.b[0] + s.b[1]) / 2, (s.b[2] + s.b[3]) / 2], 'wall'); G.arch.add(m); }
+for (const b of H.beams) { const m = boxAt(b.b[0], b.b[1], b.y0, b.top, b.b[2], b.b[3], M.plaster); edges(m); m.userData.info = b; m.userData.upper = true; addFade(m, [(b.b[0] + b.b[1]) / 2, (b.b[2] + b.b[3]) / 2], 'beam'); G.arch.add(m); }
+for (const r of H.rads) {
+  const g = new THREE.Group(), len = r.along === 'x' ? r.b[1] - r.b[0] : r.b[3] - r.b[2], hh = r.y1 - r.y0, nRib = Math.round(len / 6);
+  for (let i = 0; i < nRib; i++) { const t = (i + 0.5) / nRib, m = new THREE.Mesh(new THREE.BoxGeometry(r.along === 'x' ? len / nRib * 0.7 : 7, hh, r.along === 'x' ? 7 : len / nRib * 0.7), M.rad);
+    if (r.along === 'x') m.position.set(r.b[0] + t * len, r.y0 + hh / 2, r.b[2] + 5); else m.position.set(r.b[0] + 4, r.y0 + hh / 2, r.b[2] + t * len); m.castShadow = true; g.add(m); }
+  g.userData.info = r; G.arch.add(g);
+}
+// ceilings, off by default
+for (const r of H.rooms) {
+  const z = H.zones.find(q => q.room === r.id);
+  const m = new THREE.Mesh(new THREE.ShapeGeometry(shapeOf(r.poly)), M.ceil); m.rotation.x = -Math.PI / 2; m.position.y = r.ceil; edges(m, M.ceilEdge); G.ceil.add(m);
+  if (z) { const mz = new THREE.Mesh(new THREE.ShapeGeometry(shapeOf(z.poly)), M.ceil); mz.rotation.x = -Math.PI / 2; mz.position.y = z.h + 0.5; edges(mz, M.ceilEdge); G.ceil.add(mz); }
+}
+
+// installation points on the walls
+for (const p of H.items) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(8, 8, 1.6), new THREE.MeshStandardMaterial({ color: PT_COL[p.type] || 0xffffff, roughness: 0.4 }));
+  m.position.set(p.x + p.n[0] * 0.9, p.h, p.y + p.n[1] * 0.9); m.rotation.y = Math.atan2(p.n[0], p.n[1]);
+  if (p.type === 'priza' || p.type === 'tvdate') for (const dx of [-1.6, 1.6]) { const h = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 8), M.metal); h.rotation.x = Math.PI / 2; h.position.set(p.type === 'tvdate' ? 0 : dx, 0, 0.6); m.add(h); if (p.type === 'tvdate') break; }
+  edges(m); m.userData.pt = p; G.pts.add(m);
+}
+
+// furniture
+function objMesh(o) {
+  const g = new THREE.Group(), w = o.w || 50, d = o.d || 50, h = o.h || 0;
+  const B3 = (bw, bh, bd, x, y, z, mat) => { const m = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bd), mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; g.add(m); return m; };
+  const CY = (r, ch, x, y, z, mat) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, ch, 14), mat); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
+  if (o.pts) {
+    const P = []; for (let i = 0; i < o.pts.length; i += 2) P.push([o.pts[i], o.pts[i + 1]]);
+    const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shapeOf(P), { depth: h || 2, bevelEnabled: false }), h ? M.white : M.flat); m.rotation.x = -Math.PI / 2; m.castShadow = !!h; g.add(m); edges(m);
+  } else if (o.kind === 'pax') {
+    edges(B3(w, h - 2, d - 2, 0, (h - 2) / 2 + 2, -1, M.white));
+    const nd = Math.max(1, Math.round(w / 50)), dw = w / nd;
+    for (let i = 0; i < nd; i++) edges(B3(dw - 0.6, h - 6, 1.6, -w / 2 + dw * (i + 0.5), h / 2 + 1, d / 2 - 0.8, M.front));
+  } else if (o.kind === 'desk') {
+    B3(w, 3, d, 0, h - 1.5, 0, M.wood);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) CY(1.8, h - 3, sx * (w / 2 - 5), (h - 3) / 2, sz * (d / 2 - 5), M.metal);
+  } else if (o.kind === 'sofa') {
+    B3(w, 42, d, 0, 21, 0, M.sofa); B3(w, h - 42, 18, 0, 42 + (h - 42) / 2, -d / 2 + 9, M.sofa);
+    for (const sx of [-1, 1]) B3(16, 20, d, sx * (w / 2 - 8), 52, 0, M.sofa);
+  } else if (o.kind === 'chair') {
+    B3(Math.min(w, 50), 6, Math.min(d, 50), 0, 46, 0, M.chair); B3(Math.min(w, 50), h - 50, 4, 0, 50 + (h - 50) / 2, -Math.min(d, 50) / 2 + 2, M.chair);
+    CY(2.5, 42, 0, 21, 0, M.metal); CY(Math.min(w, d) * 0.42, 2, 0, 1, 0, M.metal);
+  } else if (o.kind === 'washer') {
+    const half = (h - 3) / 2;
+    for (const [y0, gl] of [[0, M.glassD], [half + 3, M.glassD]]) {
+      edges(B3(w, half, d, 0, y0 + half / 2, 0, M.white));
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(Math.min(w, half) * 0.32, 2.2, 12, 40), M.chrome); ring.position.set(0, y0 + half * 0.45, d / 2 + 1.5); g.add(ring);
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(Math.min(w, half) * 0.3, 32), gl); disc.position.set(0, y0 + half * 0.45, d / 2 + 1); g.add(disc);
+    }
+  } else if (o.kind === 'rug' || o.kind === 'flat') {
+    const m = o.round ? new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, 1, 40), o.kind === 'rug' ? M.rug : M.flat) : new THREE.Mesh(new THREE.BoxGeometry(w, 1, d), M.flat);
+    m.position.y = 0.6; g.add(m); edges(m, M.sel);
+  } else edges(B3(w, h, d, 0, h / 2, 0, M.white));
+  g.position.set(o.x, 0, o.y); g.rotation.y = -rad(o.rot || 0); g.userData.obj = o;
+  return g;
+}
+for (const o of H.objs) G.mob.add(objMesh(o));
+
+/* ---------- labels ---------- */
+const LBL = H.rooms.map(r => ({ r, el: null }));
+labelsEl.innerHTML = LBL.map((l, i) => `<div class="lbl" data-i="${i}">${NAMES[l.r.id] || l.r.name}<small>${fmt(l.r.area, 2)} m² · tavan ${fmt(l.r.ceil)}</small></div>`).join('');
+LBL.forEach((l, i) => { l.el = labelsEl.querySelector(`[data-i="${i}"]`); });
+const tv = new THREE.Vector3();
+function updateLabels() {
+  labelsEl.hidden = !ui.lbl; if (!ui.lbl) return;
+  const w = canvas.clientWidth, h = canvas.clientHeight, taken = [];
+  labelsEl.classList.toggle('compact', w < 600);
+  const order = [...LBL].sort((a, b) => (b.r.id === focus) - (a.r.id === focus));
+  for (const l of order) {
+    l.el.classList.toggle('on', l.r.id === focus);
+    const [x, z] = l.r.label; tv.set(x, 30, z).project(camera);
+    let vis = tv.z < 1 && Math.abs(tv.x) < 1.05 && Math.abs(tv.y) < 1.05 && !(camMode === 'eye' && l.r.id !== focus);
+    if (vis) {
+      const sx = (tv.x + 1) / 2 * w, sy = (1 - tv.y) / 2 * h, bw = l.el.offsetWidth || 90, bh = l.el.offsetHeight || 30;
+      const box = { x0: sx - bw / 2, x1: sx + bw / 2, y0: sy - bh / 2, y1: sy + bh / 2 };
+      if (box.y0 < 50 && sx < 420) vis = false;
+      if (vis && taken.some(t => t.x0 < box.x1 && box.x0 < t.x1 && t.y0 < box.y1 && box.y0 < t.y1)) vis = false;
+      if (vis) { taken.push(box); l.el.style.left = sx + 'px'; l.el.style.top = sy + 'px'; }
+    }
+    l.el.hidden = !vis;
+  }
+}
+
+/* ---------- camera ---------- */
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = 0.12; controls.maxPolarAngle = Math.PI * 0.495; controls.minDistance = 40; controls.maxDistance = 9000;
+let need = true, camMode = 'iso', anim = null;
+controls.addEventListener('change', () => { need = true; });
+const inside = (P, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, zi] = poly[i], [xj, zj] = poly[j]; if ((zi > P[1]) !== (zj > P[1]) && P[0] < (xj - xi) * (P[1] - zi) / (zj - zi) + xi) c = !c; } return c; };
+const wallDist = (P, poly) => { let m = 1e9; for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length], dx = b[0] - a[0], dz = b[1] - a[1], L2 = dx * dx + dz * dz || 1, t = Math.max(0, Math.min(1, ((P[0] - a[0]) * dx + (P[1] - a[1]) * dz) / L2)); m = Math.min(m, Math.hypot(P[0] - a[0] - t * dx, P[1] - a[1] - t * dz)); } return m; };
+function lockEye(on) {
+  if (on) { const v = camera.position.clone().sub(controls.target), pol = Math.acos(Math.max(-1, Math.min(1, v.y / v.length()))); controls.minPolarAngle = controls.maxPolarAngle = pol; controls.screenSpacePanning = false; }
+  else { controls.minPolarAngle = 0; controls.maxPolarAngle = Math.PI * 0.495; controls.screenSpacePanning = true; }
+}
+function camFor(mode) {
+  const r = focus && ROOM[focus];
+  if (mode === 'top') { const c = r ? r.c : [CX, CZ], dist = r ? r.span * 3.4 + 300 : 3600; return { p: [c[0], dist, c[1] + 1], t: [c[0], 0, c[1]], fov: r ? 22 : 20 }; }
+  if (mode === 'eye') {
+    // stand where you come in: just past the door (or in front of it, for a small room), eyes at 163, looking across the room
+    const q = r || ROOM.living, L = q.label, small = q.span < 300;
+    const doors = H.ops.filter(o => o.kind !== 'window' && o.rooms.includes(q.id));
+    const o = doors.find(d => d.kind === 'entry') || doors.find(d => d.rooms.includes('hol') && d.rooms[0] !== d.rooms[1]) || doors[0];
+    let E, T = small ? q.c : L;
+    if (o) {
+      const dir = o.rooms[0] === q.id ? [-o.n[0], -o.n[1]] : o.n, mid = [(o.a[0] + o.b[0]) / 2 + o.n[0] * o.d / 2, (o.a[1] + o.b[1]) / 2 + o.n[1] * o.d / 2];
+      const k = small ? -(o.d / 2 + 80) : o.d / 2 + 40; E = [mid[0] + dir[0] * k, mid[1] + dir[1] * k];
+      if (small) T = [mid[0] + dir[0] * (o.d / 2 + 90), mid[1] + dir[1] * (o.d / 2 + 90)];
+      else if (Math.hypot(T[0] - E[0], T[1] - E[1]) < 160) T = [E[0] + dir[0] * 160, E[1] + dir[1] * 160];
+    } else {
+      const far = q.poly.reduce((b, p) => Math.hypot(p[0] - L[0], p[1] - L[1]) > Math.hypot(b[0] - L[0], b[1] - L[1]) ? p : b, q.poly[0]);
+      E = [L[0] + (far[0] - L[0]) * 0.6, L[1] + (far[1] - L[1]) * 0.6];
+    }
+    return { p: [E[0], EYE, E[1]], t: [T[0], EYE - 14, T[1]], fov: 66 };
+  }
+  if (r) { const d = r.span * 1.3 + 300, up = r.span < 300 ? 1.45 : 1.0, t = r.label; return { p: [t[0] + d * 0.55, d * up, t[1] + d * 0.85], t: [t[0], 40, t[1]], fov: 42 }; }
+  return { p: [CX + 950, 1500, CZ + 1350], t: [CX, 0, CZ + 40], fov: 38 };
+}
+function goCam(mode, instant) {
+  camMode = mode;
+  document.querySelectorAll('[data-cam]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cam === mode)));
+  const c = camFor(mode), p1 = new THREE.Vector3(...c.p), t1 = new THREE.Vector3(...c.t);
+  if (mode !== 'eye' && camera.aspect < 1.2) p1.sub(t1).multiplyScalar(Math.pow(1.2 / camera.aspect, 0.85)).add(t1);
+  controls.minDistance = mode === 'eye' ? 5 : 40; lockEye(false);
+  if (instant || matchMedia('(prefers-reduced-motion: reduce)').matches) { camera.position.copy(p1); controls.target.copy(t1); camera.fov = c.fov; camera.updateProjectionMatrix(); controls.update(); if (mode === 'eye') lockEye(true); need = true; return; }
+  anim = { p0: camera.position.clone(), t0: controls.target.clone(), f0: camera.fov, p1, t1, f1: c.fov, s: performance.now() };
+}
+function resize() { const w = view.clientWidth, h = view.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / Math.max(1, h); camera.updateProjectionMatrix(); need = true; }
+
+/* ---------- fading and layers ---------- */
+const tmp = new THREE.Vector3();
+function fade() {
+  const t = controls.target, v = tmp.copy(camera.position).sub(t); v.y = 0;
+  const L = v.length(), top = L < 1 || camera.position.y - t.y > L * 3.2;
+  const r = focus && ROOM[focus], lim = camMode === 'eye' ? 30 : r ? 15 : 120;
+  for (const f of fadeable) {
+    const out = !top && !ui.cut && ((f.c[0] - t.x) * v.x + (f.c[1] - t.z) * v.z) / L > lim;
+    if (out === f.out) continue; f.out = out;
+    for (const m of f.mats) {
+      if (m.isLineBasicMaterial) { m.opacity = out ? 0.05 : m.userData.base.o; continue; }
+      m.transparent = out || m.userData.base.t; m.opacity = out ? Math.min(0.12, m.userData.base.o) : m.userData.base.o; m.depthWrite = !out && !m.userData.base.t; m.needsUpdate = true;
+    }
+  }
+}
+function applyLayers() {
+  G.mob.visible = ui.mob; G.pts.visible = ui.pts; G.ceil.visible = ui.ceil;
+  const k = ui.cut ? 100 / WH : 1;
+  for (const t of G.tall) t.mesh.scale.z = k;           // extrusion runs along z before the turn
+  G.arch.traverse(o => {
+    if (o.userData.upper || o.userData.lintel) o.visible = !ui.cut;
+    const c = o.userData.cutH; if (c) { const hh = ui.cut ? Math.min(c, 100) : c; o.scale.y = hh / c; o.position.y = hh / 2; }
+  });
+  for (const f of fadeable) f.out = null;
+  ['lMob', 'lPts', 'lLbl', 'lCut', 'lCeil'].forEach((id, i) => { $('#' + id).checked = ui[['mob', 'pts', 'lbl', 'cut', 'ceil'][i]]; });
+  need = true;
+}
+
+/* ---------- picking ---------- */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let down = null;
+canvas.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY }; });
+canvas.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) { down = null; return; }
+  down = null;
+  const r = canvas.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const targets = [G.floors, G.arch]; if (ui.mob) targets.push(G.mob); if (ui.pts) targets.push(G.pts);
+  const hits = ray.intersectObjects(targets, true).filter(h => h.object.isMesh && h.object.visible && ![].concat(h.object.material).every(m => m.transparent && m.opacity < 0.2 && m !== M.flat));
+  const h = hits[0]; if (!h) return;
+  for (let o = h.object; o; o = o.parent) {
+    const u = o.userData;
+    if (u.pt) { const p = u.pt; showInfo(p.label, [`${p.kind}${p.variant ? ' ' + p.variant.toLowerCase() : ''} · ${NAMES[p.room]} · la ${fmt(p.h)} cm de la pardoseală`], p.meas ? ['ok', 'măsurată'] : ['warn', 'estimată']); return; }
+    if (u.obj) { const q = u.obj; showInfo(q.name, [`${q.round ? 'ø ' + fmt(q.w) : fmt(q.w) + ' × ' + fmt(q.d)}${q.h ? ' × ' + fmt(q.h) : ''} cm · ${NAMES[q.room] || ''}`, q.note || (q.h ? 'Pus pe plan în aplicația cu schița.' : 'Desenat pe plan fără înălțime; aici apare doar conturul.')]); return; }
+    if (u.op) { const q = u.op; showInfo(q.name, [q.kind === 'window' ? `Lățime cca ${fmt(q.w, 0)} · jos la ${fmt(q.sill)}, sus la ${fmt(q.head)}` : `Lățime cca ${fmt(q.w, 0)} · sus la ${fmt(q.head)} · zidul cca ${fmt(q.d, 0)}`, q.known || (q.doubt ? 'Nu știu dacă e geam; de confirmat.' : 'Înălțimile sunt presupuse.')], q.known ? ['ok', 'parțial măsurat'] : ['warn', 'presupus']); return; }
+    if (u.info) { const q = u.info; showInfo(q.name || 'Element', [q.y0 != null && q.top ? `De la ${fmt(q.y0)} cm până la tavan` : q.h ? `Înalt de ${fmt(q.h)} cm (presupus)` : q.est ? `Presupus: ${q.est}` : ''], q.known ? ['ok', 'măsurat'] : ['warn', 'presupus']); return; }
+    if (u.room) { setFocus(u.room); return; }
+  }
+});
+function setFocus(id) {
+  focus = id || null; renderRooms(); $('#info').hidden = true;
+  goCam(camMode === 'top' ? 'top' : camMode === 'eye' && focus ? 'eye' : 'iso');
+}
+
+/* ---------- loop ---------- */
+function loop(now) {
+  requestAnimationFrame(loop);
+  if (anim) {
+    const k = Math.min(1, (now - anim.s) / 650), e = 1 - Math.pow(1 - k, 3);
+    camera.position.lerpVectors(anim.p0, anim.p1, e); controls.target.lerpVectors(anim.t0, anim.t1, e);
+    camera.fov = anim.f0 + (anim.f1 - anim.f0) * e; camera.updateProjectionMatrix(); controls.update();
+    if (k >= 1) { anim = null; if (camMode === 'eye') lockEye(true); } need = true;
+  }
+  if (controls.update()) need = true;
+  if (!need) return; need = false;
+  fade(); renderer.render(scene, camera); updateLabels();
+}
+
+/* ---------- wiring ---------- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-room]'); if (b) setFocus(b.dataset.room);
+  const c = e.target.closest('[data-cam]'); if (c) goCam(c.dataset.cam);
+});
+[['lMob', 'mob'], ['lPts', 'pts'], ['lLbl', 'lbl'], ['lCut', 'cut'], ['lCeil', 'ceil']].forEach(([id, k]) => $('#' + id).addEventListener('change', e => { ui[k] = e.target.checked; saveUI(); applyLayers(); }));
+const retheme = () => { scene.background = new THREE.Color(css('--scene')); need = true; };
+const mq = matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener ? mq.addEventListener('change', retheme) : mq.addListener(retheme);
+new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+renderRooms(); renderFacts(); applyLayers();
+new ResizeObserver(resize).observe(view); resize();
+goCam('iso', true);
+requestAnimationFrame(loop);
+window.__apt = { camera, controls, H, setFocus, goCam, ui };
+})();
+</script>
+
+</body>
+</html>
