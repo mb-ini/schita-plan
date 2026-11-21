@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Debaraua în 3D: muți coloana mașină + uscător, schimbi dimensiunile aparatelor și vezi dacă se deschide geamul, unde rămâne priza și cât loc rămâne în față.">
-<meta property="og:title" content="Debara 3D">
-<meta property="og:description" content="Debaraua în 3D: muți coloana mașină + uscător, schimbi dimensiunile aparatelor și vezi dacă se deschide geamul, unde rămâne priza și cât loc rămâne în față.">
+<meta name="description" content="Debaraua și cele două balcoane în 3D: muți aparatele și mobila, schimbi dimensiunile și vezi dacă se deschid geamurile, cât loc rămâne și cum se trece.">
+<meta property="og:title" content="Debara și balcoane 3D">
+<meta property="og:description" content="Debaraua și cele două balcoane în 3D: muți aparatele și mobila, schimbi dimensiunile și vezi dacă se deschid geamurile, cât loc rămâne și cum se trece.">
 <meta property="og:type" content="website">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Debara 3D</title>
+<title>Debara și balcoane 3D</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +23,7 @@
   --line: #d7dbd6;
   --wall: #3b4340;       /* cut walls on the plan */
   --floor: #e7e3da;      /* tiles on the plan */
+  --wood: #eadcc4;       /* parquet on the plan */
   --accent: #0e7a68;     /* controls, the machines on the plan */
   --accent-ink: #ffffff;
   --tape: #c98d00;       /* dimension lines, a tape measure */
@@ -38,14 +39,14 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #121615; --sheet: #191e1c; --ink: #e5ebe8; --muted: #9aa8a3; --line: #2c3532; --wall: #5b6662; --floor: #2a2f2c;
+    --bg: #121615; --sheet: #191e1c; --ink: #e5ebe8; --muted: #9aa8a3; --line: #2c3532; --wall: #5b6662; --floor: #2a2f2c; --wood: #3a3227;
     --accent: #3bbfa5; --accent-ink: #062621; --tape: #f0bf45; --glass: #4f8fb1;
     --ok: #5fd08d; --ok-bg: #173323; --warn: #f2b65a; --warn-bg: #3a2b12; --bad: #ff8a80; --bad-bg: #3d1c1a;
     --scene: #1a1f1d; --chip: #222a27; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #121615; --sheet: #191e1c; --ink: #e5ebe8; --muted: #9aa8a3; --line: #2c3532; --wall: #5b6662; --floor: #2a2f2c;
+  --bg: #121615; --sheet: #191e1c; --ink: #e5ebe8; --muted: #9aa8a3; --line: #2c3532; --wall: #5b6662; --floor: #2a2f2c; --wood: #3a3227;
   --accent: #3bbfa5; --accent-ink: #062621; --tape: #f0bf45; --glass: #4f8fb1;
   --ok: #5fd08d; --ok-bg: #173323; --warn: #f2b65a; --warn-bg: #3a2b12; --bad: #ff8a80; --bad-bg: #3d1c1a;
   --scene: #1a1f1d; --chip: #222a27; color-scheme: dark;
@@ -85,6 +86,7 @@ button, input, select { font: inherit; color: inherit; }
 .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; pointer-events: auto; margin-left: auto; }
 .acts .btn { min-height: 36px; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
 .acts .btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.acts .btn:disabled { opacity: .5; cursor: default; }
 @media (max-width: 600px) { .hint span { display: none; } }
 .labels { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 .lbl { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; font-size: 11.5px; font-weight: 500; line-height: 1.25;
@@ -126,6 +128,20 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .facts dd.e::after { content: " ?"; color: var(--warn); font-weight: 600; }
 .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--sheet);
   padding: 8px 14px; border-radius: 8px; font-size: 13px; z-index: 20; }
+.spaces button { font-size: 13px; }
+.olib { display: flex; flex-wrap: wrap; gap: 6px; }
+.olib .btn { font-size: 12px; padding: 4px 9px; min-height: 30px; }
+.olist { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }
+.olist button { width: 100%; text-align: left; display: flex; justify-content: space-between; gap: 8px; border: 1px solid var(--line); background: var(--bg); border-radius: 7px; padding: 6px 9px; cursor: pointer; font-size: 13px; }
+.olist button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--bg)); }
+.dim { font-family: var(--f-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.editor { margin-top: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); display: grid; gap: 8px; }
+.editor .field input { background: var(--sheet); }
+.editor .row .btn { font-size: 12.5px; padding: 4px 9px; min-height: 32px; }
+.panes { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.panes li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; font-size: 12.5px; padding: 6px 8px; border-radius: 8px; background: var(--chip); }
+.panes select { border: 1px solid var(--line); background: var(--bg); border-radius: 6px; padding: 3px 4px; font-size: 12px; }
+@media (max-width: 520px) { .panes li { grid-template-columns: minmax(0, 1fr) auto; } .panes li select { grid-column: 2; } }
 textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 var(--f-mono); border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 8px; }
 @media (max-width: 900px) {
   #app { height: auto; display: block; }
@@ -141,15 +157,20 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
 
 <div id="app">
   <header class="top">
-    <h1>Debara 3D</h1>
-    <span class="sub">81 × 178,7 cm · tavan 202,8 · cotele din 21.11.2026 · pe plan, peretele 1 e sus</span>
+    <h1>3D</h1>
+    <div class="seg spaces" role="group" aria-label="Ce spațiu vezi">
+      <button type="button" data-space="debara" aria-pressed="true">Debara</button>
+      <button type="button" data-space="kitchen" aria-pressed="false">Balcon bucătărie</button>
+      <button type="button" data-space="living" aria-pressed="false">Balcon living</button>
+    </div>
+    <span class="sub" id="sub">81 × 178,7 cm · tavan 202,8 · cotele din 21.11.2026 · pe plan, peretele 1 e sus</span>
     <span class="sp"></span>
     <button class="btn" id="bReset" type="button">Exemplul inițial</button>
     <button class="btn primary" id="bCopy" type="button">Copiază rezumatul</button>
   </header>
   <div class="stage">
     <div class="view" id="view">
-      <canvas id="c" aria-label="Debaraua în 3D. Trage aparatele ca să le muți."></canvas>
+      <canvas id="c" aria-label="Spațiul ales, în 3D. Trage obiectele ca să le muți."></canvas>
       <div class="labels" id="labels"></div>
       <div class="cams">
         <div class="seg" role="group" aria-label="Unghiul camerei">
@@ -162,7 +183,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
           <button type="button" id="tLabels" aria-pressed="true">Etichete</button>
         </div>
       </div>
-      <div class="hint"><span>Atinge geamul, ușa sau ușa unui aparat ca s-o deschizi · trage aparatele ca să le muți · rotește și apropie cu degetele sau cu mouse-ul</span>
+      <div class="hint"><span id="hintTxt">Atinge geamul, ușa sau ușa unui aparat ca s-o deschizi · trage aparatele ca să le muți · rotește și apropie cu degetele sau cu mouse-ul</span>
         <div class="acts" role="group" aria-label="Deschide și închide">
           <button class="btn" type="button" id="aWin" aria-pressed="true">Închide geamul</button>
           <button class="btn" type="button" id="aDoor" aria-pressed="true">Închide ușa</button>
@@ -175,7 +196,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
       <section>
         <h2>Planul, de sus <span class="tag">la scară</span></h2>
         <svg id="plan" viewBox="0 0 10 10" role="img" aria-label="Planul debaralei, cu aparatele"></svg>
-        <p class="note">Poți trage aparatele și aici. Liniile galbene arată distanțele până la pereți; arcele arată cât se deschid geamul, ușa debaralei și ușile aparatelor.</p>
+        <p class="note" id="planNote">Poți trage aparatele și aici. Liniile galbene arată distanțele până la pereți; arcele arată cât se deschid geamul, ușa debaralei și ușile aparatelor.</p>
       </section>
 
       <section>
@@ -183,7 +204,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
         <ul class="checks" id="checks"></ul>
       </section>
 
-      <section>
+      <section data-only="debara">
         <h2>Aparate <span class="tag">cm</span></h2>
         <div class="seg" role="group" aria-label="Cum stau aparatele" id="segLayout">
           <button type="button" data-layout="col" aria-pressed="true">Coloană</button>
@@ -220,7 +241,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
         <p class="note">Valorile din butoane sunt doar tipice pentru aparatele de 60. Pune dimensiunile din fișa modelelor alese; adâncimea din fișă include de obicei ușa, dar nu și furtunurile din spate.</p>
       </section>
 
-      <section>
+      <section data-only="debara">
         <h2>Unde stau</h2>
         <div class="field"><label>Fața aparatelor e spre</label>
           <div class="seg" role="group" aria-label="Fața aparatelor" id="segFace">
@@ -241,7 +262,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
         <p class="note">Distanțele sunt până la marginea aparatelor, oricum ar fi întoarse. Lângă stâlp ies racordurile de apă și scurgere, așa că spatele nu poate sta lipit de peretele 1 în dreptul lor.</p>
       </section>
 
-      <section>
+      <section data-only="debara">
         <h2>Geamul</h2>
         <div class="field"><label>Balamaua, cum te uiți la geam din debara</label>
           <div class="seg" role="group" aria-label="Balamaua geamului" id="segHinge">
@@ -260,7 +281,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
         <p class="note">Golul are 50 cm lățime: 5 cm de la margine până la ramă, rama de 40, iar marginea de jos e la 134,1 cm. Înălțimea golului și cât e de retrasă rama nu sunt măsurate. Foaia geamului e luată cât toată rama, adică varianta cea mai largă.</p>
       </section>
 
-      <section>
+      <section data-only="debara">
         <h2>Ușa debaralei</h2>
         <div class="field"><label for="doorA">Cât e deschisă, spre hol</label>
           <div class="rng"><input id="doorA" type="range" min="0" max="100" step="1"><output id="doorAo" for="doorA"></output></div>
@@ -272,7 +293,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
         <p class="note">Golul are acum 78 cm, fără toc. Ușa se deschide spre hol, cu balamalele pe stânga cum intri. După montarea tocului, golul liber scade; schimbă valoarea când știi ușa.</p>
       </section>
 
-      <section>
+      <section data-only="debara">
         <h2>Ce știm despre cameră</h2>
         <dl class="facts">
           <dt>Lățimea, de la geam la peretele cu ușa</dt><dd>81</dd>
@@ -295,6 +316,30 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
           <div class="field"><label for="connOut">racorduri, cât ies</label><input id="connOut" type="number" step="1" min="0" max="30"></div>
         </div>
         <p class="note">Valorile cu semn de întrebare nu sunt măsurate. Lungimea vine din plan, nu din cotele de azi. Priza e pusă cam la jumătatea peretelui și cam la nivelul geamului, cum ai descris-o. Racordurile sunt desenate pe peretele 1, lângă stâlp, cu dimensiuni presupuse.</p>
+      </section>
+
+      <section data-only="bal" hidden>
+        <h2>Obiecte</h2>
+        <div class="olib" id="olib"></div>
+        <ul class="olist" id="olist"></ul>
+        <div class="editor" id="oedit" hidden></div>
+        <p class="note">Atinge un obiect în 3D, pe plan sau în listă ca să-l alegi, apoi trage-l ca să-l muți. Pe calculator îl poți muta și cu săgețile (cu Shift, câte 5 cm). Dimensiunile din butoane sunt doar tipice.</p>
+      </section>
+
+      <section data-only="bal" hidden>
+        <h2>Geamurile</h2>
+        <ul class="panes" id="panes"></ul>
+        <div class="grid two" style="margin-top:10px">
+          <div class="field"><label for="bHp">parapetul de sub geamuri</label><input id="bHp" type="number" step="1" min="40" max="130"></div>
+          <div class="field"><label for="bUserH">înălțimea ta, pentru bară</label><input id="bUserH" type="number" step="1" min="120" max="220"></div>
+        </div>
+        <p class="note">Nu știu care foi se deschid; am marcat una ca exemplu. Bifează-le pe cele care se deschid și alege pe ce parte au balamaua, cum te uiți la geam dinăuntru. Foile se deschid spre interior.</p>
+      </section>
+
+      <section data-only="bal" hidden>
+        <h2>Ce știm despre balcon</h2>
+        <dl class="facts" id="bFacts"></dl>
+        <p class="note">Valorile cu semn de întrebare nu sunt măsurate sau sunt luate din plan. Geamurile sunt puse după fișa de măsurători din 2021, așa că lungimea părților vitrate de pe laterale e aproximativă.</p>
       </section>
 
       <section>
@@ -538,6 +583,18 @@ function initScene() {
     dark: new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.6 }),
     shelf: new THREE.MeshStandardMaterial({ color: 0xe8e2d6, roughness: 0.8 }),
     edge: new THREE.LineBasicMaterial({ color: 0x2f3532, transparent: true, opacity: 0.32 }),
+    sill: new THREE.MeshStandardMaterial({ color: 0xe6e0d4, roughness: 0.6 }),
+    stub: new THREE.MeshStandardMaterial({ color: 0xece9e2, roughness: 0.9 }),
+    rad: new THREE.MeshStandardMaterial({ color: 0xf4f4f2, roughness: 0.45 }),
+    wood: new THREE.MeshStandardMaterial({ color: 0xb48a5e, roughness: 0.55 }),
+    chair: new THREE.MeshStandardMaterial({ color: 0x5f6f69, roughness: 0.7 }),
+    besta: new THREE.MeshStandardMaterial({ color: 0xf2f1ed, roughness: 0.5 }),
+    front: new THREE.MeshStandardMaterial({ color: 0xfafaf8, roughness: 0.4 }),
+    shelfW: new THREE.MeshStandardMaterial({ color: 0xd9cbb3, roughness: 0.7 }),
+    pot: new THREE.MeshStandardMaterial({ color: 0x8e8378, roughness: 0.8 }),
+    leafG: new THREE.MeshStandardMaterial({ color: 0x5b8a57, roughness: 0.8, flatShading: true }),
+    boxM: new THREE.MeshStandardMaterial({ color: 0xc9bfae, roughness: 0.8 }),
+    selLine: new THREE.LineBasicMaterial({ color: 0x0e9f86 }),
   };
 
   // floor tiles
@@ -546,13 +603,36 @@ function initScene() {
     g.fillStyle = base; g.fillRect(0, 0, 128, 128); g.fillStyle = grout; g.fillRect(0, 0, 128, 2); g.fillRect(0, 0, 2, 128);
     const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; return { t, size };
   };
-  const floorTex = tile('#d8d4cb', '#b9b4aa', 30), hallTex = tile('#cfc9bd', '#b3ac9f', 45);
-  const floor = (x0, x1, z0, z1, tex) => {
-    const t = tex.t.clone(); t.needsUpdate = true; t.repeat.set((x1 - x0) / tex.size, (z1 - z0) / tex.size);
-    t.offset.set(x0 / tex.size, z0 / tex.size);
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0), new THREE.MeshStandardMaterial({ map: t, roughness: 0.75 }));
-    m.rotation.x = -Math.PI / 2; m.position.set((x0 + x1) / 2, 0, (z0 + z1) / 2); m.receiveShadow = true; scene.add(m); return m;
-  };
+  // parquet: planks about 15 cm wide, joints staggered
+  const wood = (() => {
+    const cv = document.createElement('canvas'); cv.width = cv.height = 256; const g = cv.getContext('2d');
+    const tones = ['#c9a77c', '#c4a074', '#cfae84', '#c19c70'];
+    for (let r = 0; r < 8; r++) { g.fillStyle = tones[r % 4]; g.fillRect(0, r * 32, 256, 32); g.fillStyle = 'rgba(80,55,30,.35)'; g.fillRect(0, r * 32, 256, 1.5); g.fillRect(((r * 97) % 256), r * 32, 1.5, 32); g.fillRect(((r * 97 + 128) % 256), r * 32, 1.5, 32); }
+    const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; return { t, size: 120 };
+  })();
+  C.tex = { floor: tile('#d8d4cb', '#b9b4aa', 30), hall: tile('#cfc9bd', '#b3ac9f', 45), wood };
+  C.sun = sun; C.lamp = lamp;
+}
+
+// everything for the space on screen hangs from one group, rebuilt when the space changes
+function rebuildRoot() {
+  if (C.root) { scene.remove(C.root); C.root.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
+  C.root = new THREE.Group(); scene.add(C.root);
+  C.walls = []; C.parts = null; C.machGroup = null; C.sashPivot = null; C.leafPivot = null; C.sashes = {}; C.objs = null; C.glaz = null;
+  for (const k of [...tweens.keys()]) if (!String(k).startsWith('pane')) tweens.delete(k);
+  const L = SPACE === 'debara' ? [40, 90, 196] : [BAL[SPACE].light[0], BAL[SPACE].light[1], BAL[SPACE].wallH - 8];
+  C.sun.target.position.set(L[0], 0, L[1]); C.sun.position.set(L[0] + 220, 420, L[1] + 210); C.lamp.position.set(L[0], L[2], L[1]);
+  if (SPACE === 'debara') buildDebara(); else buildBalcony(SPACE);
+  need = true;
+}
+const floorRect = (x0, x1, z0, z1, tex) => {
+  const t = tex.t.clone(); t.needsUpdate = true; t.repeat.set((x1 - x0) / tex.size, (z1 - z0) / tex.size);
+  t.offset.set(x0 / tex.size, z0 / tex.size);
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0), new THREE.MeshStandardMaterial({ map: t, roughness: 0.75 }));
+  m.rotation.x = -Math.PI / 2; m.position.set((x0 + x1) / 2, 0, (z0 + z1) / 2); m.receiveShadow = true; C.root.add(m); return m;
+};
+function buildDebara() {
+  const M = C.M, floorTex = C.tex.floor, hallTex = C.tex.hall, floor = floorRect;
   floor(0, R.W, 0, R.L, floorTex);
   floor(R.W, R.W + R.tDoor, R.door.z0, R.door.z1, floorTex);
   floor(0.6, R.W, R.L, R.L + R.nicheD, floorTex);
@@ -560,7 +640,7 @@ function initScene() {
 
   // walls, each its own group so the one between the camera and the room can fade
   C.walls = [];
-  const wallGroup = (nx, nz, px, pz) => { const g = new THREE.Group(); g.userData = { n: new THREE.Vector3(nx, 0, nz), p: new THREE.Vector3(px, 0, pz), mat: M.plaster() }; scene.add(g); C.walls.push(g); return g; };
+  const wallGroup = (nx, nz, px, pz) => { const g = new THREE.Group(); g.userData = { n: new THREE.Vector3(nx, 0, nz), p: new THREE.Vector3(px, 0, pz), mat: M.plaster() }; C.root.add(g); C.walls.push(g); return g; };
   C.gW1 = wallGroup(0, -1, 40, 0);
   C.gWin = wallGroup(-1, 0, 0, 90);
   C.gDoor = wallGroup(1, 0, R.W, 90);
@@ -568,21 +648,22 @@ function initScene() {
   buildWalls();
 
   // pillar: the boxed sewer stack
-  const pil = box(0, R.P, 0, R.H, 0, R.P, M.pillar); pil.castShadow = true; scene.add(pil); edges(pil);
+  const pil = box(0, R.P, 0, R.H, 0, R.P, M.pillar); pil.castShadow = true; C.root.add(pil); edges(pil);
 
   // socket on the door wall
-  C.socket = new THREE.Group(); scene.add(C.socket);
+  C.socket = new THREE.Group(); C.root.add(C.socket);
   const plate = new THREE.Mesh(new THREE.BoxGeometry(1.2, 8.5, 8.5), M.socket); C.socket.add(plate);
   for (const dz of [-1.6, 1.6]) { const h = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 1.4, 12), M.dark); h.rotation.z = Math.PI / 2; h.position.set(-0.3, 0, dz); C.socket.add(h); }
 
   // pipes by the pillar
-  C.conn = new THREE.Group(); scene.add(C.conn);
+  C.conn = new THREE.Group(); C.root.add(C.conn);
 
   // machines, window sash, door leaf and the sweep fans are rebuilt on change
-  C.mach = new THREE.Group(); scene.add(C.mach);
-  C.sash = new THREE.Group(); scene.add(C.sash);
-  C.leaf = new THREE.Group(); scene.add(C.leaf);
-  C.fans = new THREE.Group(); scene.add(C.fans);
+  C.mach = new THREE.Group(); C.root.add(C.mach);
+  C.sash = new THREE.Group(); C.root.add(C.sash);
+  C.leaf = new THREE.Group(); C.root.add(C.leaf);
+  C.fans = new THREE.Group(); C.root.add(C.fans);
+  buildMachines(); buildSash(); buildLeaf(); buildConn(); placeSocket();
 
 }
 
@@ -594,9 +675,10 @@ function edges(mesh, mat) { const e = new THREE.LineSegments(new THREE.EdgesGeom
 function clearGroup(g) {
   for (const c of [...g.children]) { g.remove(c); c.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
 }
-function wallBox(g, x0, x1, y0, y1, z0, z1) {
+function wallBox(g, x0, x1, y0, y1, z0, z1, cutTop) {
   const mt = g.userData.mat, cut = g.userData.cut || (g.userData.cut = C.M.cut.clone());
-  const m = box(x0, x1, y0, y1, z0, z1, y1 >= R.H - 0.01 ? [mt, mt, cut, mt, mt, mt] : mt); m.castShadow = true; g.add(m); edges(m, g.userData.edgeMat || (g.userData.edgeMat = C.M.edge.clone())); return m;
+  const top = cutTop !== undefined ? cutTop : y1 >= R.H - 0.01;
+  const m = box(x0, x1, y0, y1, z0, z1, top ? [mt, mt, cut, mt, mt, mt] : mt); m.castShadow = true; g.add(m); edges(m, g.userData.edgeMat || (g.userData.edgeMat = C.M.edge.clone())); return m;
 }
 function buildWalls() {
   const { W, L, H, tWin, tW1, tDoor, nicheD, nicheBack } = R, wy0 = R.win.y0, wy1 = Math.min(R.H - 2, R.win.y0 + S.winH);
@@ -749,7 +831,7 @@ function buildConn() {
 function placeSocket() { C.socket.position.set(R.W - 0.6, S.socketH, R.socketZ); }
 
 /* labels over the 3D view */
-const LBL = [
+const LBL_DEB = [
   { id: 'pil', t: 'Stâlpul', s: 'coloana de canalizare îmbrăcată, 14 × 14', p: () => [R.P / 2, R.H - 6, R.P / 2] },
   { id: 'win', t: 'Geamul', s: () => `golul 50 · balamaua ${S.hinge === 'L' ? 'pe stânga' : 'pe dreapta'}`, p: () => [-2, R.win.y0 + S.winH + 4, (R.win.z0 + R.win.z1) / 2] },
   { id: 'mw', t: 'Mașina', s: () => `${fmt(S.wW)} × ${fmt(S.wD)} × ${fmt(S.wH)}`, p: () => machFront(0) },
@@ -762,8 +844,18 @@ function machFront(i) {
   const m = machines(S)[i] || machines(S)[0], mx = (m.x0 + m.x1) / 2, mz = (m.z0 + m.z1) / 2, y = m.y0 + m.h * 0.97;
   return S.face === 'S' ? [mx, y, m.z1 + 1] : S.face === 'N' ? [mx, y, m.z0 - 1] : S.face === 'W' ? [m.x0 - 1, y, mz] : [m.x1 + 1, y, mz];
 }
+let LBL = LBL_DEB;
+function spaceLabels() {
+  if (SPACE === 'debara') return LBL_DEB;
+  const sp = BAL[SPACE], out = sp.labels.map(l => ({ ...l, p: () => l.p }));
+  out.push({ id: 'sel', t: '', s: '', p: () => { const st = ST(), o = st.objs.find(q => q.id === st.sel); return o ? [o.x, o.y + o.h + 6, o.z] : [0, -999, 0]; },
+    hide: () => !ST().objs.some(q => q.id === ST().sel), title: () => { const o = ST().objs.find(q => q.id === ST().sel); return o ? o.name : ''; },
+    sfn: () => { const o = ST().objs.find(q => q.id === ST().sel); return o ? `${OT[o.type].round ? 'ø ' + fmt(o.w) : fmt(o.w) + ' × ' + fmt(o.d)} × ${fmt(o.h)}${o.y ? ' · la ' + fmt(o.y) : ''}` : ''; } });
+  return [out.pop(), ...out];
+}
 function buildLabels() {
-  labelsEl.innerHTML = LBL.map(l => `<div class="lbl${l.est ? ' est' : ''}" data-l="${l.id}">${l.t}<small></small></div>`).join('');
+  LBL = spaceLabels();
+  labelsEl.innerHTML = LBL.map(l => `<div class="lbl${l.est ? ' est' : ''}" data-l="${l.id}"><span class="lt">${l.t}</span><small></small></div>`).join('');
   for (const l of LBL) l.el = labelsEl.querySelector(`[data-l="${l.id}"]`);
 }
 const tmpV = renderer ? new THREE.Vector3() : null;
@@ -776,7 +868,8 @@ function updateLabels() {
     const [x, y, z] = l.p(); tmpV.set(x, y, z).project(camera);
     let vis = !(l.hide && l.hide()) && tmpV.z < 1 && tmpV.x > -1.05 && tmpV.x < 1.05 && tmpV.y > -1.05 && tmpV.y < 1.05;
     if (vis) {
-      l.el.querySelector('small').textContent = typeof l.s === 'function' ? l.s() : l.s;
+      if (l.title) l.el.querySelector('.lt').textContent = l.title();
+      l.el.querySelector('small').textContent = l.sfn ? l.sfn() : typeof l.s === 'function' ? l.s() : l.s;
       const sx = (tmpV.x + 1) / 2 * w, sy = (1 - tmpV.y) / 2 * h, bw = l.el.offsetWidth || 120, bh = l.el.offsetHeight || 32;
       const box = { x0: sx - bw / 2 - 4, x1: sx + bw / 2 + 4, y0: sy - bh - 4, y1: sy + 4 };
       if (box.y0 < 52 && sx < 380) vis = false;   // under the camera buttons
@@ -788,15 +881,16 @@ function updateLabels() {
 }
 
 /* camera views */
-const CAMS = {
+const CAMS_DEB = {
   iso: { p: [238, 330, 372], t: [38, 64, 96], fov: 40 },
   top: { p: [52, 1150, 102], t: [52, 0, 100], fov: 15 },
   door: { p: [R.W + R.tDoor + 205, 190, 150], t: [12, 88, 82], fov: 44 },
   win: { p: [58, 152, 176], t: [-6, 132, 96], fov: 58 },
 };
 let camAnim = null;
+const camsOf = () => SPACE === 'debara' ? CAMS_DEB : BAL[SPACE].cams;
 function goCam(k, instant) {
-  const c = CAMS[k]; if (!c || !controls) return;
+  const c = camsOf()[k]; if (!c || !controls) return;
   document.querySelectorAll('[data-cam]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cam === k)));
   const t1 = new THREE.Vector3(...c.t), p1 = new THREE.Vector3(...c.p);
   const sc = camera.aspect < 1.25 && k !== 'win' ? Math.pow(1.25 / camera.aspect, 1) : 1;
@@ -823,7 +917,8 @@ function fadeWalls() {
     for (const m of mats) {
       if (m.isLineBasicMaterial || m.isLineDashedMaterial) { m.opacity = out ? 0.06 : 0.32; continue; }
       if (m.userData.base === undefined) m.userData.base = { t: m.transparent, o: m.opacity };
-      m.transparent = out || m.userData.base.t; m.opacity = out ? Math.min(0.1, m.userData.base.o) : m.userData.base.o;
+      const fo = g.userData.fadeTo || 0.1;
+      m.transparent = out || m.userData.base.t; m.opacity = out ? Math.min(fo, m.userData.base.o) : m.userData.base.o;
       m.depthWrite = !out && !m.userData.base.t; m.needsUpdate = true;
     }
   }
@@ -878,6 +973,7 @@ function classify(obj) {
 }
 function setupDrag() {
   canvas.addEventListener('pointerdown', ev => {
+    if (SPACE !== 'debara') return balDown(ev);
     if (!C.machGroup) return;
     pointerHit(ev);
     // a see-through door leaf in front does not catch the tap when something solid is behind it
@@ -895,6 +991,7 @@ function setupDrag() {
   });
   canvas.addEventListener('pointermove', ev => {
     if (!tap || ev.pointerId !== tap.id) return;
+    if (tap.bal) return balMove(ev);
     if (!tap.moved && Math.hypot(ev.clientX - tap.x, ev.clientY - tap.y) > 6) tap.moved = true;
     if (tap.moved && (tap.type === 'mach' || tap.type === 'mdoor')) {
       canvas.classList.add('drag');
@@ -905,6 +1002,7 @@ function setupDrag() {
   const end = ev => {
     if (!tap || ev.pointerId !== tap.id) return;
     const t = tap; tap = null;
+    if (t.bal) return balEnd(t, ev);
     if (t.type === 'mach' || t.type === 'mdoor') { controls.enabled = true; canvas.classList.remove('drag'); try { canvas.releasePointerCapture(ev.pointerId); } catch (e) {} if (t.moved) save(); }
     if (t.moved || ev.type !== 'pointerup') return;
     if (t.type === 'win') toggleWin(); else if (t.type === 'door') toggleDoor(); else if (t.type === 'mdoor') toggleMachDoor(t.kind);
@@ -912,9 +1010,42 @@ function setupDrag() {
   canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
 }
 
+function balDown(ev) {
+  if (!C.root) return;
+  pointerHit(ev);
+  const targets = [C.objs, C.glaz].filter(Boolean);
+  for (const g of C.walls) targets.push(g);
+  const hits = ray.intersectObjects(targets, true).filter(h => h.object.isMesh && !h.object.userData.fan);
+  const faded = h => [].concat(h.object.material).every(m => m.transparent && m.opacity <= 0.32 && m !== C.M.winGlass);
+  const hit = hits.find(h => !faded(h));
+  let oid = null, pane = null;
+  if (hit) for (let o = hit.object; o; o = o.parent) { if (o.userData && o.userData.oid) { oid = o.userData.oid; break; } if (o.userData && o.userData.pane) { pane = o.userData.pane; break; } }
+  tap = { bal: true, x: ev.clientX, y: ev.clientY, id: ev.pointerId, moved: false, oid, pane };
+  if (oid) {
+    const f = floorAt(ev), o = ST().objs.find(q => q.id === oid);
+    if (f && o) { tap.dx = o.x - f.x; tap.dz = o.z - f.z; controls.enabled = false; canvas.setPointerCapture(ev.pointerId); ev.preventDefault(); }
+  }
+}
+function balMove(ev) {
+  if (!tap.moved && Math.hypot(ev.clientX - tap.x, ev.clientY - tap.y) > 6) tap.moved = true;
+  if (!tap.moved || !tap.oid || tap.dx === undefined) return;
+  canvas.classList.add('drag');
+  const f = floorAt(ev), st = ST(), o = st.objs.find(q => q.id === tap.oid); if (!f || !o) return;
+  if (st.sel !== o.id) { st.sel = o.id; buildObjects(); renderObjList(); }
+  o.x = Math.round((f.x + tap.dx) * 2) / 2; o.z = Math.round((f.z + tap.dz) * 2) / 2; snapObj(SP(), st, o);
+  updateB('pos', true);
+}
+function balEnd(t, ev) {
+  if (t.oid) { controls.enabled = true; canvas.classList.remove('drag'); try { canvas.releasePointerCapture(ev.pointerId); } catch (e) {} }
+  if (t.moved) { if (t.oid) updateB('end'); return; }
+  if (ev.type !== 'pointerup') return;
+  if (t.oid) selectObj(t.oid); else if (t.pane) togglePane(t.pane); else if (ST().sel) selectObj(null);
+}
+
 /* ---------- opening and closing ---------- */
-function lightRefresh() { if (lastCk) drawPlan(lastCk); syncMotion(); }
+function lightRefresh() { if (SPACE !== 'debara') return; if (lastCk) drawPlan(lastCk); syncMotion(); }
 function syncMotion() {
+  if (SPACE !== 'debara') return syncMotionB();
   $('#winA').value = Math.round(S.winA); $('#winAo').textContent = Math.round(S.winA) + '°';
   $('#doorA').value = Math.round(S.doorA); $('#doorAo').textContent = Math.round(S.doorA) + '°';
   $('#aWin').textContent = S.winA > 0.5 ? 'Închide geamul' : 'Deschide geamul';
@@ -924,6 +1055,7 @@ function syncMotion() {
   $('#aWin').setAttribute('aria-pressed', String(S.winA > 0.5)); $('#aDoor').setAttribute('aria-pressed', String(S.doorA > 0.5)); $('#aMach').setAttribute('aria-pressed', String(anyOpen));
 }
 function toggleWin() {
+  if (SPACE !== 'debara') return toggleAllPanes();
   const to = S.winA > 0.5 ? 0 : (S.winOpenA || 90);
   tween('win', S.winA, to, 650, v => { S.winA = v; applySash(); lightRefresh(); }, () => { S.winA = Math.round(S.winA); save(); lightRefresh(); });
 }
@@ -958,6 +1090,7 @@ function dimLine(x0, z0, x1, z1, label, side) {
     `<text x="${tx}" y="${tz + (horiz ? ((side || 1) > 0 ? 0 : 5) : 1.6)}" text-anchor="${anchor}" class="dt">${label}</text>`;
 }
 function drawPlan(ck) {
+  plan.setAttribute('viewBox', `${VB.x} ${VB.z} ${VB.w} ${VB.h}`);
   const { W, L, P, tWin, tW1, tDoor, nicheD, nicheBack } = R, r = rect(S), d = dims(S), cb = connBox(S);
   const col = st => st === 'bad' ? 'var(--bad)' : st === 'warn' ? 'var(--warn)' : 'var(--ok)';
   const wy = `<style>
@@ -1029,19 +1162,38 @@ function drawPlan(ck) {
 function setupPlanDrag() {
   let pd = null;
   const toPlan = ev => { const pt = plan.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY; const m = plan.getScreenCTM(); return m ? pt.matrixTransform(m.inverse()) : null; };
+  let bd = null;
   plan.addEventListener('click', ev => {
+    if (SPACE !== 'debara') { const tp = ev.target.closest('.tp'); if (tp) togglePane(tp.dataset.pane); return; }
     if (ev.target.closest('.tw')) toggleWin(); else if (ev.target.closest('.td')) toggleDoor();
   });
   plan.addEventListener('pointerdown', ev => {
+    if (SPACE !== 'debara') {
+      const g = ev.target.closest('.bo'); if (!g) { if (!ev.target.closest('.tp') && ST().sel) selectObj(null); return; }
+      const p = toPlan(ev), o = ST().objs.find(q => q.id === g.dataset.id); if (!p || !o) return;
+      bd = { id: ev.pointerId, oid: o.id, dx: o.x - p.x, dz: o.z - p.y, moved: false, x: ev.clientX, y: ev.clientY };
+      plan.setPointerCapture(ev.pointerId); ev.preventDefault(); return;
+    }
     if (!ev.target.closest('#pm')) return;
     const p = toPlan(ev); if (!p) return; const { cx, cz } = center(S);
     pd = { dx: cx - p.x, dz: cz - p.y, id: ev.pointerId }; plan.setPointerCapture(ev.pointerId); ev.preventDefault();
   });
   plan.addEventListener('pointermove', ev => {
+    if (bd && ev.pointerId === bd.id) {
+      if (!bd.moved && Math.hypot(ev.clientX - bd.x, ev.clientY - bd.y) > 4) bd.moved = true;
+      if (!bd.moved) return;
+      const p = toPlan(ev), st = ST(), o = st.objs.find(q => q.id === bd.oid); if (!p || !o) return;
+      if (st.sel !== o.id) { st.sel = o.id; if (renderer) buildObjects(); renderObjList(); }
+      o.x = Math.round((p.x + bd.dx) * 2) / 2; o.z = Math.round((p.y + bd.dz) * 2) / 2; snapObj(SP(), st, o);
+      updateB('pos', true); return;
+    }
     if (!pd || ev.pointerId !== pd.id) return; const p = toPlan(ev); if (!p) return;
     Object.assign(S, place(S, p.x + pd.dx, p.y + pd.dz)); update('pos');
   });
-  const end = ev => { if (!pd) return; pd = null; try { plan.releasePointerCapture(ev.pointerId); } catch (e) {} save(); };
+  const end = ev => {
+    if (bd && ev.pointerId === bd.id) { const t = bd; bd = null; try { plan.releasePointerCapture(ev.pointerId); } catch (e) {} if (t.moved) updateB('end'); else if (ev.type === 'pointerup') selectObj(t.oid); return; }
+    if (!pd) return; pd = null; try { plan.releasePointerCapture(ev.pointerId); } catch (e) {} save();
+  };
   plan.addEventListener('pointerup', end); plan.addEventListener('pointercancel', end);
 }
 
@@ -1078,10 +1230,14 @@ function summary(ck) {
 }
 let lastCk = null;
 function update(what, skip) {
+  if (SPACE !== 'debara') return updateB(what, skip);
   const ck = checks(S); lastCk = ck;
   if (renderer) {
-    if (what === 'all' || what === 'walls') buildWalls();
-    buildMachines(); buildSash(); buildLeaf(); buildConn(); placeSocket();
+    if (what === 'all') rebuildRoot();
+    else {
+      if (what === 'walls') buildWalls();
+      buildMachines(); buildSash(); buildLeaf(); buildConn(); placeSocket();
+    }
     need = true;
   }
   drawPlan(ck); renderChecks(ck); syncInputs(skip);
@@ -1115,7 +1271,7 @@ function setupPanel() {
   document.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => { Object.assign(S, P[b.dataset.p]); const c = center(S); Object.assign(S, place(S, c.cx, c.cz)); update('x'); }));
   $('#bPillar').addEventListener('click', () => { const { hx, hz } = halfs(S); const z = R.P; S.z0 = z; const c = center(S); Object.assign(S, place(S, c.cx, z + hz)); update('x'); });
   $('#bWall').addEventListener('click', () => { S.z0 = 0; const c = center(S); Object.assign(S, place(S, c.cx, halfs(S).hz)); update('x'); });
-  $('#bReset').addEventListener('click', () => { S = { ...DEF }; update('all'); toast('Am pus la loc exemplul inițial.'); });
+  $('#bReset').addEventListener('click', () => { if (SPACE === 'debara') S = { ...DEF }; else B[SPACE] = freshB(SPACE); update('all'); toast('Am pus la loc exemplul inițial.'); });
   $('#bCopy').addEventListener('click', () => {
     const t = $('#summary').value;
     const fallback = () => { const ta = $('#summary'); ta.focus(); ta.select(); toast('Textul e selectat; copiază-l din meniul telefonului.'); };
@@ -1127,15 +1283,714 @@ function setupPanel() {
   tl.addEventListener('click', () => { labelsOn = !labelsOn; tl.setAttribute('aria-pressed', String(labelsOn)); try { localStorage.setItem(LS + '-labels', labelsOn ? '1' : '0'); } catch (e) {} need = true; });
 }
 
+/* ===================== balconies ===================== */
+// x and z in cm, in each balcony's own frame; plan sizes from the measurements and the plan, as listed in "Ce știm"
+const OT = {
+  bar:    { name: 'Bară de tracțiuni', w: 100, d: 55, h: 4, y: 215, lab: { w: 'lungimea', d: 'cât iese din perete', y: 'înălțimea barei' }, noH: true },
+  ac:     { name: 'Aer condiționat', w: 80, d: 20, h: 29, y: 228, lab: { y: 'de la podea' } },
+  table:  { name: 'Masă', w: 80, d: 60, h: 75, y: 0 },
+  tableR: { name: 'Masă rotundă', w: 70, d: 70, h: 75, y: 0, round: true, lab: { w: 'diametrul' } },
+  chair:  { name: 'Scaun', w: 45, d: 50, h: 85, y: 0 },
+  besta:  { name: 'BESTÅ', w: 120, d: 42, h: 50, y: 0 },
+  shelf:  { name: 'Raft', w: 80, d: 30, h: 180, y: 0 },
+  rack:   { name: 'Uscător de rufe', w: 140, d: 55, h: 95, y: 0 },
+  plant:  { name: 'Plantă', w: 40, d: 40, h: 90, y: 0, round: true, lab: { w: 'diametrul' } },
+  box:    { name: 'Cutie', w: 50, d: 40, h: 40, y: 0 },
+};
+const LIB = [['bar', 'Bară de tracțiuni'], ['ac', 'Aer condiționat'], ['table', 'Masă'], ['tableR', 'Masă rotundă'], ['chair', 'Scaun'],
+  ['besta', 'BESTÅ 120', { w: 120 }], ['besta', 'BESTÅ 180', { w: 180 }], ['shelf', 'Raft'], ['rack', 'Uscător de rufe'], ['plant', 'Plantă'], ['box', 'Cutie']];
+
+const LIV_POLY = [[0, 0], [137, 0], [137, 292.4], [110.1, 336.8], [0, 336.8]];
+const BAL = {
+  kitchen: {
+    name: 'Balconul bucătăriei', from: 'bucătărie', fromCam: 'Din bucătărie', roomName: 'BUCĂTĂRIE', roomAt: [158, 300],
+    sub: 'balconul 265 × 140 · tavan 272,7 · grinda la 206 · golul spre bucătărie 206',
+    hp: 86, glazH: 186, wallH: 275.9,
+    ceil: [{ r: [-40, 310, -40, 141], h: 272.7 }, { r: [-40, 360, 141, 340], h: 275.9 }],
+    beams: [{ r: [11.2, 305.6, 141, 171], y0: 206, name: 'grinda', g: 'beam' }],
+    floors: [{ pts: [[0, 0], [265, 0], [265, 141], [0, 141]], tex: 'tile' }, { pts: [[11.2, 141], [305.6, 141], [305.6, 331], [11.2, 331]], tex: 'tile' }],
+    walls: [
+      { b: [-29.3, 0, 78, 141], g: 'left' }, { b: [-29.3, 11.2, 141, 331], g: 'kleft' },
+      { b: [265, 305.6, 79, 141], g: 'right' }, { b: [305.6, 345, 141, 331], g: 'kright' },
+    ],
+    parapets: [{ b: [-29.3, 300.7, -24.9, 0], g: 'front' }, { b: [-29.3, 0, 0, 78], g: 'left' }, { b: [265, 300.7, 0, 79], g: 'right' }],
+    stubs: [{ b: [11.2, 34.7, 141, 171], h: 90, name: 'capul de parapet din stânga' }, { b: [239.6, 305.6, 141, 171], h: 90, name: 'capul de parapet din dreapta' }],
+    rads: [{ b: [36, 229, 0, 14], y0: 15, y1: 75, g: 'front', along: 'x', name: 'calorifer' }],
+    glaz: [
+      { p0: [-10.3, -10], p1: [284.5, -10], n: [0, 1], k: 3, g: 'front', name: 'din față' },
+      { p0: [-10.3, -10], p1: [-10.3, 78], n: [1, 0], k: 1, g: 'left', name: 'din stânga' },
+      { p0: [284.5, -10], p1: [284.5, 79], n: [-1, 0], k: 1, g: 'right', name: 'din dreapta' },
+    ],
+    groups: { front: [0, -1, 130, 0], left: [-1, 0, 0, 60], kleft: [-1, 0, 11.2, 240], right: [1, 0, 265, 60], kright: [1, 0, 305.6, 240], beam: [0, 1, 150, 171, 0.3] },
+    passage: { axis: 'x', a: 34.7, b: 239.6, c0: 116, c1: 196, name: 'Trecerea spre balcon', total: 206 },
+    snap: { xs: [0, 265, 11.2, 305.6, 34.7, 239.6], zs: [0, 14, 141, 171, 331, 78, 79] },
+    balArea: [[0, 0], [265, 0], [265, 141], [0, 141]],
+    cams: {
+      iso: { p: [345, 345, 590], t: [140, 70, 140], fov: 40 }, top: { p: [150, 1500, 156], t: [150, 0, 155], fov: 17 },
+      door: { p: [150, 168, 480], t: [140, 112, 40], fov: 52 }, win: { p: [150, 158, 215], t: [130, 128, -40], fov: 60 },
+    },
+    light: [150, 150],
+    labels: [
+      { id: 'rad', t: 'Calorifer', s: '193 lungime, iese 14', p: [132, 84, 8] },
+      { id: 'beam', t: 'Grinda', s: 'la 206 de la podea', p: [140, 214, 156] },
+      { id: 'stubL', t: 'Cap de parapet', s: '23,5 · înălțime presupusă', est: true, p: [23, 98, 156] },
+      { id: 'stubR', t: 'Cap de parapet', s: '66 · înălțime presupusă', est: true, p: [272, 98, 156] },
+      { id: 'glz', t: 'Geamuri', s: 'înalte 186, pe parapet de cca 86', est: true, p: [140, 262, -10] },
+    ],
+    facts: [
+      ['Balconul, de la capul de parapet la peretele exterior', '140'],
+      ['Golul dintre capetele de parapet', '206'],
+      ['Capul de parapet din stânga / din dreapta', '23,5 / 66'],
+      ['Grosimea fostului parapet', '30'],
+      ['Grinda de deasupra golului, de la podea', '206'],
+      ['Tavanul pe balcon / în bucătărie', '272,7 / 275,9'],
+      ['Caloriferul: lungime / cât iese', '193 / 14'],
+      ['Lățimea balconului, din plan', '265', 1],
+      ['Geamurile (fișa din 2021): 0,88 + 2,88 + 0,89, înalte', '186'],
+      ['Parapetul de sub geamuri (272,7 − 186)', 'cca 86', 1],
+      ['Înălțimea capetelor de parapet', '90', 1],
+      ['Înălțimea caloriferului', '15–75', 1],
+      ['Care foi se deschid', 'presupus', 1],
+    ],
+    defaults: () => [
+      { type: 'ac', x: 95, z: 131, rot: 180 },
+      { type: 'bar', x: 215, z: 113.5, rot: 180 },
+      { type: 'tableR', x: 125, z: 72, w: 60, d: 60 },
+      { type: 'chair', x: 70, z: 72, rot: 90 },
+      { type: 'plant', x: 245, z: 40 },
+      { type: 'besta', x: 245.6, z: 192, rot: 0, w: 120 },
+    ],
+    panes: { '0-1': { open: true, hinge: 'L', a: 0 } },
+  },
+  living: {
+    name: 'Balconul livingului', from: 'living', fromCam: 'Din living', roomName: 'LIVING', roomAt: [-130, 190],
+    sub: 'fostul balcon 137 × 336,8 · tavan 278,6 · parapetul spre living e demolat',
+    hp: 86.6, glazH: 192, wallH: 278.6,
+    ceil: [{ r: [-30, 170, -40, 410], h: 278.6 }, { r: [-260, -30, -50, 420], h: 275.4 }],
+    beams: [],
+    floors: [{ pts: LIV_POLY, tex: 'wood' }, { pts: [[-30, 5.7], [0, 5.7], [0, 334.1], [-30, 334.1]], tex: 'wood' }, { pts: [[-230, -12.9], [-30, -12.9], [-30, 380.1], [-230, 380.1]], tex: 'wood' }],
+    walls: [
+      { b: [-240, -30, -40, -12.9], g: 'top' }, { b: [-30, 0, -28.8, 5.7], g: 'top' }, { b: [0, 91.2, -28.8, 0], g: 'top' },
+      { b: [-30, 0, 334.1, 410], g: 'bottom' }, { b: [-240, -30, 380.1, 410], g: 'bottom' },
+    ],
+    parapets: [
+      { b: [91.2, 162, -25, 0], g: 'top' }, { b: [137, 162, 0, 299.4], g: 'right' },
+      { poly: [[137, 292.4], [162, 299.4], [124.2, 361.8], [110.1, 336.8]], g: 'cham' },
+      { b: [0, 124.2, 336.8, 361.8], g: 'bottom' },
+    ],
+    stubs: [],
+    rads: [{ b: [120, 130.7, 41.5, 233], y0: 15, y1: 75, g: 'right', along: 'z', obst: [120, 137, 41.5, 233], name: 'calorifer' }],
+    glaz: [
+      { p0: [91.2, -10], p1: [147, -10], n: [0, 1], k: 1, g: 'top', name: 'de lângă dormitor' },
+      { p0: [147, -10], p1: [147, 295.2], n: [-1, 0], k: 3, g: 'right', name: 'lung' },
+      { p0: [147, 295.2], p1: [115.7, 346.8], n: [-0.855, -0.518], k: 1, g: 'cham', name: 'din colț' },
+      { p0: [115.7, 346.8], p1: [0, 346.8], n: [0, -1], k: 1, g: 'bottom', name: 'din capăt' },
+    ],
+    groups: { top: [0, -1, 50, 0], right: [1, 0, 137, 150], cham: [0.855, 0.518, 123, 315], bottom: [0, 1, 50, 336.8] },
+    passage: { axis: 'z', a: 5.7, b: 334.1, c0: -55, c1: 25, name: 'Trecerea din living', total: 328.4 },
+    snap: { xs: [0, 137, 120, -30], zs: [0, 336.8, 41.5, 233, 5.7, 334.1, -12.9, 380.1] },
+    balArea: LIV_POLY,
+    cams: {
+      iso: { p: [-360, 360, 600], t: [55, 70, 175], fov: 40 }, top: { p: [-40, 1550, 185], t: [-40, 0, 184], fov: 20 },
+      door: { p: [-270, 162, 175], t: [90, 112, 175], fov: 52 }, win: { p: [20, 155, 175], t: [170, 128, 175], fov: 62 },
+    },
+    light: [-30, 180],
+    labels: [
+      { id: 'rad', t: 'Calorifer', s: 'cca 192, poziție din plan', est: true, p: [126, 84, 137] },
+      { id: 'par', t: 'Fostul parapet', s: 'demolat; aici era limita', p: [-15, 8, 170] },
+      { id: 'glz', t: 'Geamuri', s: 'înalte 192, pe parapet de cca 87', est: true, p: [147, 268, 150] },
+    ],
+    facts: [
+      ['Adâncimea, de la fostul parapet la parapetul balconului', '137', 1],
+      ['De la peretele dormitorului la geamul din capăt', '352,8'],
+      ['De la peretele dormitorului la peretele de capăt', '336,8'],
+      ['Tavanul pe fostul balcon / în living', '278,6 / 275,4'],
+      ['Geamurile (fișa din 2021): 0,44 + 3,10 + 0,45 + 1,04, înalte', '192'],
+      ['Parapetul de sub geamuri (278,6 − 192)', 'cca 87', 1],
+      ['Caloriferul, din plan: lungime / cât iese', '192 / 11', 1],
+      ['Grindă deasupra fostului parapet', 'nemăsurată', 1],
+      ['Care foi se deschid', 'presupus', 1],
+    ],
+    defaults: () => [
+      { type: 'tableR', x: 68, z: 145, w: 70, d: 70 },
+      { type: 'chair', x: 68, z: 82, rot: 0 },
+      { type: 'chair', x: 68, z: 205, rot: 180 },
+      { type: 'plant', x: 112, z: 20 },
+      { type: 'rack', x: 55, z: 305, w: 100 },
+    ],
+    panes: { '1-1': { open: true, hinge: 'L', a: 0 } },
+  },
+};
+
+const LSB = LS + '-b';
+let B = {};
+try { const j = JSON.parse(localStorage.getItem(LSB) || 'null'); if (j && typeof j === 'object') B = j; } catch (e) {}
+const saveB = () => { try { localStorage.setItem(LSB, JSON.stringify(B)); } catch (e) {} };
+let oseq = 1;
+function uniqueName(objs, base) {
+  if (!objs.some(o => o.name === base)) return base;
+  for (let i = 2; ; i++) if (!objs.some(o => o.name === base + ' ' + i)) return base + ' ' + i;
+}
+function newObj(objs, type, extra) {
+  const t = OT[type], o = { type, w: t.w, d: t.d, h: t.h, y: t.y, x: 50, z: 50, rot: 0, ...(extra || {}), id: 'o' + Date.now().toString(36) + (oseq++) };
+  delete o.name;
+  const base = type === 'besta' ? `BESTÅ ${fmt(o.w)}` : t.name;
+  o.name = uniqueName(objs, base);
+  return o;
+}
+function freshB(id) {
+  const sp = BAL[id], objs = [];
+  for (const d of sp.defaults()) objs.push(newObj(objs, d.type, d));
+  return { objs, panes: JSON.parse(JSON.stringify(sp.panes)), hp: sp.hp, userH: 180, sel: null };
+}
+function bs(id) { if (!B[id] || !Array.isArray(B[id].objs)) B[id] = freshB(id); return B[id]; }
+const SP = () => BAL[SPACE], ST = () => bs(SPACE);
+
+/* geometry helpers */
+function toWorld(o, lx, lz) { const a = rad(o.rot || 0), c = Math.cos(a), s = Math.sin(a); return [o.x + lx * c + lz * s, o.z - lx * s + lz * c]; }
+function zoneOf(o, lx0, lx1, lz0, lz1) { return [[lx0, lz0], [lx1, lz0], [lx1, lz1], [lx0, lz1]].map(([a, b]) => toWorld(o, a, b)); }
+function fp(o) { return zoneOf(o, -o.w / 2, o.w / 2, -o.d / 2, o.d / 2); }
+const rectPoly = r => [[r[0], r[2]], [r[1], r[2]], [r[1], r[3]], [r[0], r[3]]];
+function pip(p, poly) {
+  let c = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, zi] = poly[i], [xj, zj] = poly[j];
+    if ((zi > p[1]) !== (zj > p[1]) && p[0] < (xj - xi) * (p[1] - zi) / (zj - zi) + xi) c = !c;
+  }
+  return c;
+}
+function polysOverlap(A, B2) {
+  for (const P of [A, B2]) for (let i = 0; i < P.length; i++) {
+    const [x1, z1] = P[i], [x2, z2] = P[(i + 1) % P.length], nx = z2 - z1, nz = x1 - x2, L = Math.hypot(nx, nz) || 1;
+    let a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
+    for (const [x, z] of A) { const d = (x * nx + z * nz) / L; a0 = Math.min(a0, d); a1 = Math.max(a1, d); }
+    for (const [x, z] of B2) { const d = (x * nx + z * nz) / L; b0 = Math.min(b0, d); b1 = Math.max(b1, d); }
+    if (a1 <= b0 + 0.1 || b1 <= a0 + 0.1) return false;
+  }
+  return true;
+}
+function segsCross(a, b, c, d) {
+  const o = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
+  const d1 = o(c, d, a), d2 = o(c, d, b), d3 = o(a, b, c), d4 = o(a, b, d);
+  return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0));
+}
+function segPoly(a, b, poly) {
+  if (pip(a, poly) || pip(b, poly)) return true;
+  for (let i = 0; i < poly.length; i++) if (segsCross(a, b, poly[i], poly[(i + 1) % poly.length])) return true;
+  return false;
+}
+function insideSpace(sp, poly) {
+  const cx = poly.reduce((s, p) => s + p[0], 0) / poly.length, cz = poly.reduce((s, p) => s + p[1], 0) / poly.length;
+  const pts = [];
+  for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length]; pts.push(a, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]); }
+  return pts.every(p => { const L = Math.hypot(cx - p[0], cz - p[1]) || 1, q = [p[0] + (cx - p[0]) / L * 0.6, p[1] + (cz - p[1]) / L * 0.6]; return sp.floors.some(f => pip(q, f.pts)); });
+}
+function ceilAt(sp, x, z) {
+  let h = (sp.ceil.find(c => x >= c.r[0] && x <= c.r[1] && z >= c.r[2] && z <= c.r[3]) || sp.ceil[0]).h;
+  for (const b of sp.beams) if (x > b.r[0] + 0.3 && x < b.r[1] - 0.3 && z > b.r[2] + 0.3 && z < b.r[3] - 0.3) h = Math.min(h, b.y0);
+  return h;
+}
+function ceilFor(sp, o) { const P = fp(o).map(([x, z]) => { const L = Math.hypot(o.x - x, o.z - z) || 1; return [x + (o.x - x) / L * 0.6, z + (o.z - z) / L * 0.6]; }); return Math.min(...P.concat([[o.x, o.z]]).map(([x, z]) => ceilAt(sp, x, z))); }
+function obstacles(sp) {
+  const out = [];
+  for (const s of sp.stubs) out.push({ poly: rectPoly(s.b), y0: 0, y1: s.h, name: s.name });
+  for (const r of sp.rads) out.push({ poly: rectPoly(r.obst || r.b), y0: 0, y1: r.y1, name: 'caloriferul' });
+  for (const b of sp.beams) out.push({ poly: rectPoly(b.r), y0: b.y0, y1: 400, name: 'grinda' });
+  return out;
+}
+// what stands in a zone: walls, obstacles, other objects; returns a name or ''
+function blocker(sp, st, poly, y0, y1, skip) {
+  if (!insideSpace(sp, poly)) return 'perete';
+  for (const ob of obstacles(sp)) if (y0 < ob.y1 && y1 > ob.y0 && polysOverlap(poly, ob.poly)) return ob.name;
+  for (const q of st.objs) if (q !== skip && y0 < q.y + q.h && y1 > q.y && polysOverlap(poly, fp(q))) return q.name.toLowerCase();
+  return '';
+}
+
+/* window panes */
+function panesOf(sp) {
+  const out = [];
+  sp.glaz.forEach((g, si) => {
+    for (let i = 0; i < g.k; i++) {
+      const t0 = i / g.k, t1 = (i + 1) / g.k;
+      const A = [g.p0[0] + (g.p1[0] - g.p0[0]) * t0, g.p0[1] + (g.p1[1] - g.p0[1]) * t0];
+      const Bp = [g.p0[0] + (g.p1[0] - g.p0[0]) * t1, g.p0[1] + (g.p1[1] - g.p0[1]) * t1];
+      out.push({ key: si + '-' + i, si, i, A, B: Bp, n: g.n, g: g.g, len: Math.hypot(Bp[0] - A[0], Bp[1] - A[1]), name: g.k > 1 ? `Geamul ${g.name}, foaia ${i + 1}` : `Geamul ${g.name}` });
+    }
+  });
+  return out;
+}
+function paneState(st, key) { return st.panes[key] || { open: false, hinge: 'L', a: 0 }; }
+// hinge end, unit vector along the closed sash and the inward normal
+function paneAxis(p, hinge) {
+  const left = [-p.n[1], p.n[0]], mid = [(p.A[0] + p.B[0]) / 2, (p.A[1] + p.B[1]) / 2];
+  const aLeft = (p.A[0] - mid[0]) * left[0] + (p.A[1] - mid[1]) * left[1] > 0;
+  const H = (hinge === 'L') === aLeft ? p.A : p.B, O = H === p.A ? p.B : p.A;
+  const u = [(O[0] - H[0]) / p.len, (O[1] - H[1]) / p.len];
+  return { H, u, n: p.n };
+}
+function paneMax(sp, st, p, ps) {
+  const { H, u, n } = paneAxis(p, ps.hinge), y0 = st.hp + 3, y1 = st.hp + sp.glazH - 3;
+  const solids = st.objs.filter(o => o.y < y1 && o.y + o.h > y0).map(o => ({ poly: fp(o), name: o.name.toLowerCase() }));
+  for (const ob of obstacles(sp)) if (ob.y0 < y1 && ob.y1 > y0) solids.push(ob);
+  for (let a = 0; a <= 90; a += 1) {
+    const c = Math.cos(rad(a)), s = Math.sin(rad(a)), d = [u[0] * c + n[0] * s, u[1] * c + n[1] * s];
+    const E = [H[0] + d[0] * p.len, H[1] + d[1] * p.len], hnd = [H[0] + d[0] * p.len * 0.9 + n[0] * c * 6 - u[0] * s * 6, H[1] + d[1] * p.len * 0.9 + n[1] * c * 6 - u[1] * s * 6];
+    for (const so of solids) if (segPoly(H, E, so.poly) || pip(hnd, so.poly)) return [Math.max(0, a - 1), so.name];
+  }
+  return [90, ''];
+}
+
+/* checks */
+function checksB(id) {
+  const sp = BAL[id], st = bs(id), out = [], add = (cid, s, title, detail) => out.push({ id: cid, st: s, title, detail });
+  const obst = obstacles(sp), objs = st.objs, probs = [];
+  objs.forEach((o, i) => {
+    const P = fp(o);
+    if (!insideSpace(sp, P)) probs.push([o, 'iese din spațiu sau intră în perete']);
+    for (const ob of obst) if (o.y < ob.y1 && o.y + o.h > ob.y0 && polysOverlap(P, ob.poly)) probs.push([o, `atinge ${ob.name}`]);
+    for (let j = i + 1; j < objs.length; j++) { const q = objs[j]; if (o.y < q.y + q.h && o.y + o.h > q.y && polysOverlap(P, fp(q))) probs.push([o, `se suprapune cu ${q.name.toLowerCase()}`]); }
+    const c = ceilFor(sp, o); if (o.y + o.h > c + 0.1) probs.push([o, `trece de tavan sau de grindă (${fmt(c)})`]);
+  });
+  if (!probs.length) add('fit', 'ok', 'Toate obiectele încap', objs.length ? `${objs.length} obiecte, fără suprapuneri.` : 'Nu e niciun obiect pus.');
+  else for (const [o, msg] of probs.slice(0, 6)) add('fit', 'bad', `${o.name} ${msg}`, 'Mută-l, întoarce-l sau schimbă-i dimensiunile.');
+  // windows
+  let anyOpen = false;
+  for (const p of panesOf(sp)) {
+    const ps = paneState(st, p.key); if (!ps.open) continue; anyOpen = true;
+    const [m, hit] = paneMax(sp, st, p, ps);
+    if (m >= 90) add('win', 'ok', `${p.name} se deschide de tot`, `Balamaua e pe ${ps.hinge === 'L' ? 'stânga' : 'dreapta'}, cum te uiți dinăuntru.`);
+    else add('win', m >= 45 ? 'warn' : 'bad', `${p.name} se deschide doar până la ${fmt(m, 0)}°`, `Foaia atinge ${hit}.`);
+  }
+  if (!anyOpen) add('win', 'warn', 'Nicio foaie de geam nu e marcată că se deschide', 'Bifează-le în secțiunea Geamurile ca să le verific.');
+  // pull-up bar
+  for (const o of objs.filter(q => q.type === 'bar')) {
+    const mid = toWorld(o, 0, o.d / 2), head = ceilAt(sp, mid[0], mid[1]) - o.y;
+    add('bar', head >= 45 ? 'ok' : head >= 30 ? 'warn' : 'bad', `${o.name}: deasupra rămân ${fmt(head)} cm`, head >= 45 ? 'Ai loc pentru cap când treci cu bărbia peste bară.' : 'Pentru cap e bine să rămână cca 40–45 cm până la tavan sau grindă.');
+    const feet = o.y - 1.25 * st.userH;
+    add('bar', feet >= 5 ? 'ok' : 'warn', feet >= 5 ? `Atârnat, picioarele rămân la cca ${fmt(feet, 0)} cm de podea` : 'Atârnat, cu brațele întinse, atingi podeaua',
+      feet >= 5 ? `Calculat pentru înălțimea ta de ${st.userH} cm.` : `Pentru înălțimea ta de ${st.userH} cm bara ar trebui pe la ${fmt(1.25 * st.userH + 5, 0)}; altfel tragi cu genunchii îndoiți.`);
+    const body = zoneOf(o, -27, 27, o.d / 2 - 22, o.d / 2 + 22), bl = blocker(sp, st, body, 0, o.y - 2, o);
+    add('bar', bl ? 'bad' : 'ok', bl ? `Sub bară, corpul atinge ${bl}` : 'Sub bară e loc pentru corp', 'Am lăsat cca 55 × 45 cm sub mijlocul barei.');
+  }
+  // air conditioner
+  for (const o of objs.filter(q => q.type === 'ac')) {
+    const top = ceilFor(sp, o) - (o.y + o.h);
+    add('ac', top >= 15 ? 'ok' : top >= 5 ? 'warn' : 'bad', `${o.name}: deasupra rămân ${fmt(top)} cm`, 'Manualele cer de obicei cel puțin 15 cm până la tavan.');
+    const sideL = zoneOf(o, -o.w / 2 - 15, -o.w / 2 - 0.5, -o.d / 2, o.d / 2), sideR = zoneOf(o, o.w / 2 + 0.5, o.w / 2 + 15, -o.d / 2, o.d / 2);
+    const bL = blocker(sp, st, sideL, o.y, o.y + o.h, o), bR = blocker(sp, st, sideR, o.y, o.y + o.h, o);
+    add('ac', bL || bR ? 'warn' : 'ok', bL || bR ? 'Lângă aparat nu rămân 15 cm pe o parte' : 'Pe laturi rămân cel puțin 15 cm', bL || bR ? `Se atinge de ${bL || bR}. Manualul Gree cere 15 cm.` : 'Cât cere manualul Gree.');
+    const front = zoneOf(o, -o.w / 2, o.w / 2, o.d / 2 + 0.5, o.d / 2 + 60), bF = blocker(sp, st, front, o.y - 10, o.y + o.h, o);
+    if (bF && bF !== 'perete') add('ac', 'warn', 'În fața aparatului e ceva la mai puțin de 60 cm', `Aerul suflă spre ${bF}.`);
+    if (o.y < 180) add('ac', 'warn', `${o.name} e jos, la ${fmt(o.y)} cm`, 'De obicei unitatea interioară se pune peste cca 2 m.');
+  }
+  // chairs and cabinets
+  for (const o of objs.filter(q => q.type === 'chair')) {
+    const back = zoneOf(o, -o.w / 2, o.w / 2, -o.d / 2 - 45, -o.d / 2 - 0.5), bl = blocker(sp, st, back, 0, 80, o);
+    if (bl) add('chair', 'warn', `${o.name}: în spate nu ai loc să te ridici`, `La mai puțin de 45 cm în spatele lui e ${bl}.`);
+  }
+  for (const o of objs.filter(q => q.type === 'besta')) {
+    const front = zoneOf(o, -o.w / 2, o.w / 2, o.d / 2 + 0.5, o.d / 2 + 55), bl = blocker(sp, st, front, 0, o.h, o);
+    add('besta', bl ? 'warn' : 'ok', bl ? `Ușile la ${o.name} nu se deschid de tot` : `Ușile la ${o.name} se deschid`, bl ? `În fața ei, la mai puțin de 55 cm, e ${bl}.` : 'Ușile de 60 au nevoie de cca 55 în față.');
+  }
+  // the way in
+  const pa = sp.passage, iv = [];
+  const zonePoly = pa.axis === 'x' ? rectPoly([pa.a, pa.b, pa.c0, pa.c1]) : rectPoly([pa.c0, pa.c1, pa.a, pa.b]);
+  for (const o of objs) {
+    if (o.y > 190 || !polysOverlap(fp(o), zonePoly)) continue;
+    const P = fp(o), vals = P.map(p => pa.axis === 'x' ? p[0] : p[1]);
+    iv.push([Math.max(pa.a, Math.min(...vals)), Math.min(pa.b, Math.max(...vals))]);
+  }
+  iv.sort((a, b) => a[0] - b[0]);
+  let best = 0, cur = pa.a, bestIv = [pa.a, pa.b];
+  for (const [a, b] of iv) { if (a - cur > best) { best = a - cur; bestIv = [cur, a]; } cur = Math.max(cur, b); }
+  if (pa.b - cur > best) { best = pa.b - cur; bestIv = [cur, pa.b]; }
+  st._pass = bestIv;
+  add('pass', best >= 75 ? 'ok' : best >= 55 ? 'warn' : 'bad', `${pa.name}: ${fmt(best)} cm liberi`, iv.length ? `Din ${fmt(pa.total)}; restul e ocupat de obiecte.` : `Golul de ${fmt(pa.total)} e liber.`);
+  // free floor on the balcony
+  const area = Math.abs(sp.balArea.reduce((s, p, i, a) => { const q = a[(i + 1) % a.length]; return s + p[0] * q[1] - q[0] * p[1]; }, 0) / 2);
+  const used = objs.filter(o => o.y < 30 && pip([o.x, o.z], sp.balArea)).reduce((s, o) => s + (OT[o.type].round ? Math.PI * o.w * o.w / 4 : o.w * o.d), 0);
+  add('free', 'ok', `Pe balcon rămân liberi cca ${fmt(Math.max(0, area - used) / 10000, 2)} m²`, `Din cca ${fmt(area / 10000, 2)} m² cât are balconul.`);
+  return out;
+}
+
+/* 3D */
+function floorPoly(pts, tex, parent) {
+  const sh = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(x, -z)));
+  const t = tex.t.clone(); t.needsUpdate = true; t.repeat.set(1 / tex.size, 1 / tex.size);
+  const m = new THREE.Mesh(new THREE.ShapeGeometry(sh), new THREE.MeshStandardMaterial({ map: t, roughness: 0.75 }));
+  m.rotation.x = -Math.PI / 2; m.receiveShadow = true; parent.add(m); return m;
+}
+function segBox(a, b, y0, y1, th, mat, parent, off) {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]), m = new THREE.Mesh(new THREE.BoxGeometry(len, y1 - y0, th), mat);
+  m.position.set((a[0] + b[0]) / 2 + (off ? off[0] : 0), (y0 + y1) / 2, (a[1] + b[1]) / 2 + (off ? off[1] : 0));
+  m.rotation.y = Math.atan2(-(b[1] - a[1]), b[0] - a[0]); m.castShadow = true; parent.add(m); return m;
+}
+function extrudePoly(pts, h, mat, parent) {
+  const sh = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(x, -z)));
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: h, bevelEnabled: false }), mat);
+  m.rotation.x = -Math.PI / 2; m.castShadow = true; m.receiveShadow = true; parent.add(m); return m;
+}
+function buildBalcony(id) {
+  const sp = BAL[id], st = bs(id), M = C.M, root = C.root;
+  for (const f of sp.floors) floorPoly(f.pts, f.tex === 'wood' ? C.tex.wood : C.tex.floor, root);
+  const groups = {};
+  for (const [name, v] of Object.entries(sp.groups)) {
+    const g = new THREE.Group(); g.userData = { n: new THREE.Vector3(v[0], 0, v[1]).normalize(), p: new THREE.Vector3(v[2], 0, v[3]), mat: M.plaster(), fadeTo: v[4] };
+    root.add(g); C.walls.push(g); groups[name] = g;
+  }
+  const gm = (g, k) => g === root ? M[k] : (g.userData[k] || (g.userData[k] = M[k].clone()));
+  for (const w of sp.walls) wallBox(groups[w.g], w.b[0], w.b[1], 0, sp.wallH, w.b[2], w.b[3], true);
+  for (const p of sp.parapets) {
+    const g = groups[p.g];
+    if (p.b) { const m = wallBox(g, p.b[0], p.b[1], 0, st.hp, p.b[2], p.b[3], false); const mt = g.userData.mat; m.material = [mt, mt, gm(g, 'sill'), mt, mt, mt]; }
+    else { const m = extrudePoly(p.poly, st.hp, [gm(g, 'sill'), g.userData.mat], g); edges(m, g.userData.edgeMat || (g.userData.edgeMat = C.M.edge.clone())); }
+  }
+  for (const s of sp.stubs) { const m = box(s.b[0], s.b[1], 0, s.h, s.b[2], s.b[3], [M.stub, M.stub, M.sill, M.stub, M.stub, M.stub]); m.castShadow = true; root.add(m); edges(m); }
+  for (const b of sp.beams) { const g = groups[b.g] || root; wallBox(g, b.r[0], b.r[1], b.y0, sp.wallH, b.r[2], b.r[3], true); }
+  for (const r of sp.rads) { const g = groups[r.g] || root; buildRadiator(r, g, gm(g, 'rad')); }
+  // glazing: rails and posts, glass for fixed panes, a hinged sash for the ones that open
+  C.glaz = new THREE.Group(); root.add(C.glaz); C.sashes = {};
+  const y0 = st.hp, y1 = st.hp + sp.glazH;
+  for (const g of sp.glaz) {
+    const parent = groups[g.g] || C.glaz;
+    const fr = parent === C.glaz ? M.frame : gm(parent, 'frame');
+    segBox(g.p0, g.p1, y0, y0 + 5, 7, fr, parent); segBox(g.p0, g.p1, y1 - 5, y1, 7, fr, parent);
+  }
+  for (const p of panesOf(sp)) {
+    const parent = groups[p.g] || C.glaz, ps = paneState(st, p.key);
+    const fr = parent === C.glaz ? M.frame : gm(parent, 'frame');
+    const post = (P) => { const m = new THREE.Mesh(new THREE.BoxGeometry(6, sp.glazH - 10, 6), fr); m.position.set(P[0], y0 + sp.glazH / 2, P[1]); m.castShadow = true; parent.add(m); };
+    post(p.A); post(p.B);
+    if (!ps.open) {
+      const gl = segBox(p.A, p.B, y0 + 5, y1 - 5, 1, parent === C.glaz ? M.winGlass : gm(parent, 'winGlass'), parent); gl.castShadow = false; gl.userData.pane = p.key;
+      continue;
+    }
+    const { H, u, n } = paneAxis(p, ps.hinge), L = p.len - 6, sh = sp.glazH - 14;
+    const pivot = new THREE.Group(); pivot.position.set(H[0], y0 + 7, H[1]); C.glaz.add(pivot);
+    const base = Math.atan2(-u[1], u[0]), s = (n[0] * u[1] - n[1] * u[0]) > 0 ? 1 : -1;
+    pivot.userData = { base, s, pane: p.key };
+    const part = (w, h, x, y, mat) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 5), mat); m.position.set(x, y, 0); m.castShadow = true; m.userData.pane = p.key; pivot.add(m); return m; };
+    part(L, 5, 3 + L / 2, 2.5, M.frame); part(L, 5, 3 + L / 2, sh - 2.5, M.frame); part(5, sh, 5.5, sh / 2, M.frame); part(5, sh, L + 0.5, sh / 2, M.frame);
+    part(L - 10, sh - 10, 3 + L / 2, sh / 2, M.winGlass).castShadow = false;
+    const hnd = new THREE.Mesh(new THREE.BoxGeometry(1.6, 12, 4), M.chrome); hnd.position.set(L - 4, sh / 2, 4.5 * s * -1); hnd.userData.pane = p.key; pivot.add(hnd);
+    C.sashes[p.key] = pivot;
+    const angU = Math.atan2(u[1], u[0]) * 180 / Math.PI, angN = Math.atan2(n[1], n[0]) * 180 / Math.PI;
+    let dA = ((angN - angU + 540) % 360) - 180;
+    const st2 = (lastCk || []).find(c => c.id === 'win' && c.title.startsWith(p.name));
+    const fan = sector(Math.min(L, 110), angU, angU + (dA > 0 ? 90 : -90), st2 ? st2.st : 'ok'); fan.position.set(H[0], y0 + 1, H[1]); C.glaz.add(fan);
+  }
+  applyPanes();
+  C.objs = new THREE.Group(); root.add(C.objs);
+  buildObjects();
+}
+function applyPanes() {
+  const st = ST();
+  for (const [k, pv] of Object.entries(C.sashes || {})) { const a = paneState(st, k).a || 0; pv.rotation.y = pv.userData.base + pv.userData.s * rad(a); }
+  need = true;
+}
+function buildRadiator(r, parent, radMat) {
+  const M = { rad: radMat || C.M.rad }, len = r.along === 'x' ? r.b[1] - r.b[0] : r.b[3] - r.b[2], h = r.y1 - r.y0;
+  const g = new THREE.Group(); parent.add(g);
+  const ribs = Math.max(6, Math.round(len / 6));
+  for (let i = 0; i < ribs; i++) {
+    const t = (i + 0.5) / ribs, m = new THREE.Mesh(new THREE.BoxGeometry(r.along === 'x' ? len / ribs * 0.7 : 7, h, r.along === 'x' ? 7 : len / ribs * 0.7), M.rad);
+    if (r.along === 'x') m.position.set(r.b[0] + t * len, r.y0 + h / 2, r.b[2] + 5); else m.position.set(r.b[0] + 4, r.y0 + h / 2, r.b[2] + t * len);
+    m.castShadow = true; g.add(m);
+  }
+  const bar = r.along === 'x' ? box(r.b[0], r.b[1], r.y0 + 2, r.y0 + 6, r.b[2] + 1, r.b[2] + 9, M.rad) : box(r.b[0], r.b[0] + 8, r.y0 + 2, r.y0 + 6, r.b[2], r.b[3], M.rad);
+  const bar2 = r.along === 'x' ? box(r.b[0], r.b[1], r.y1 - 6, r.y1 - 2, r.b[2] + 1, r.b[2] + 9, M.rad) : box(r.b[0], r.b[0] + 8, r.y1 - 6, r.y1 - 2, r.b[2], r.b[3], M.rad);
+  g.add(bar, bar2);
+}
+function objMesh(o) {
+  const M = C.M, g = new THREE.Group(), add = (m) => { m.castShadow = true; m.receiveShadow = true; g.add(m); return m; };
+  const B3 = (w, h, d, x, y, z, mat) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); return add(m); };
+  const CY = (r, h, x, y, z, mat, seg) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg || 16), mat); m.position.set(x, y, z); return add(m); };
+  const { w, d, h, y } = o;
+  if (o.type === 'bar') {
+    const bar = CY(1.6, w, 0, y, d / 2 - 2, M.chrome, 20); bar.rotation.z = Math.PI / 2;
+    for (const sx of [-1, 1]) { B3(3, 3, d - 2, sx * (w / 2 - 10), y, 0, M.panel); B3(12, 14, 1.2, sx * (w / 2 - 10), y, -d / 2 + 0.6, M.panel); }
+  } else if (o.type === 'ac') {
+    const b = B3(w, h, d, 0, y + h / 2, 0, M.body); edges(b);
+    B3(w - 10, 3, 0.6, 0, y + 4, d / 2, M.panel); B3(6, 1.4, 0.4, w * 0.3, y + h - 7, d / 2 + 0.2, M.screen);
+  } else if (o.type === 'table' || o.type === 'tableR') {
+    if (o.type === 'tableR') { CY(w / 2, 3, 0, h - 1.5, 0, M.wood, 40); CY(3, h - 6, 0, (h - 3) / 2, 0, M.panel); CY(w * 0.28, 2, 0, 1, 0, M.panel, 24); }
+    else { B3(w, 3, d, 0, h - 1.5, 0, M.wood); for (const sx of [-1, 1]) for (const sz of [-1, 1]) CY(1.8, h - 3, sx * (w / 2 - 5), (h - 3) / 2, sz * (d / 2 - 5), M.panel, 10); }
+  } else if (o.type === 'chair') {
+    const seat = 45;
+    B3(w, 4, d * 0.86, 0, seat - 2, d * 0.07, M.chair);
+    B3(w, h - seat, 3, 0, seat + (h - seat) / 2, -d / 2 + 1.5, M.chair);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) CY(1.4, seat - 4, sx * (w / 2 - 3), (seat - 4) / 2, sz * (d / 2 - 4), M.panel, 8);
+  } else if (o.type === 'besta') {
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) CY(1.5, 10, sx * (w / 2 - 4), 5, sz * (d / 2 - 5), M.chrome, 8);
+    const body = B3(w, h - 12, d - 2, 0, 10 + (h - 12) / 2, -1, M.besta); edges(body);
+    B3(w, 2, d, 0, h - 1, 0, M.besta);
+    const nd = Math.max(1, Math.round(w / 60)), dw = w / nd;
+    for (let i = 0; i < nd; i++) { const f = B3(dw - 0.5, h - 13.5, 1.6, -w / 2 + dw * (i + 0.5), 10.5 + (h - 13.5) / 2, d / 2 - 0.8, M.front); edges(f); B3(1.2, 6, 1.2, -w / 2 + dw * (i + 0.5) + (i % 2 ? -dw / 2 + 5 : dw / 2 - 5), h - 12, d / 2 + 0.6, M.chrome); }
+  } else if (o.type === 'shelf') {
+    for (const sx of [-1, 1]) B3(2, h, d, sx * (w / 2 - 1), h / 2, 0, M.shelfW);
+    const n = Math.max(3, Math.round(h / 38));
+    for (let i = 0; i < n; i++) B3(w - 4, 2, d, 0, 4 + i * (h - 6) / (n - 1), 0, M.shelfW);
+  } else if (o.type === 'rack') {
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const l = CY(0.8, h, sx * (w / 2 - 2), h / 2, sz * (d / 2 - 2), M.chrome, 8); l.rotation.z = sx * 0.05; }
+    for (const sz of [-1, 1]) { const r = CY(0.9, w, 0, h, sz * (d / 2 - 2), M.chrome, 8); r.rotation.z = Math.PI / 2; }
+    const n = Math.max(4, Math.round(d / 6));
+    for (let i = 0; i < n; i++) { const r = CY(0.5, w - 4, 0, h - 0.5, -d / 2 + 4 + i * (d - 8) / (n - 1), M.chrome, 6); r.rotation.z = Math.PI / 2; }
+  } else if (o.type === 'plant') {
+    const pr = w / 2 * 0.62, ph = Math.min(h * 0.38, 40);
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(pr, pr * 0.78, ph, 24), M.pot); pot.position.set(0, y + ph / 2, 0); add(pot);
+    const leaves = new THREE.Mesh(new THREE.IcosahedronGeometry(w / 2, 1), M.leafG); leaves.scale.set(1, Math.max(0.6, (h - ph) / w), 1); leaves.position.set(0, y + ph + (h - ph) / 2, 0); add(leaves);
+  } else {
+    const b = B3(w, h, d, 0, y + h / 2, 0, M.boxM); edges(b);
+  }
+  g.position.set(o.x, 0, o.z); g.rotation.y = rad(o.rot || 0); g.userData.oid = o.id;
+  if (ST().sel === o.id) {
+    const sel = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(w + 3, h + 3, d + 3)), M.selLine);
+    sel.position.set(0, y + h / 2, 0); g.add(sel);
+  }
+  return g;
+}
+function buildObjects() { if (!C.objs) return; clearGroup(C.objs); for (const o of ST().objs) C.objs.add(objMesh(o)); need = true; }
+function moveObjects() { if (!C.objs) return; for (const g of C.objs.children) { const o = ST().objs.find(q => q.id === g.userData.oid); if (o) { g.position.set(o.x, 0, o.z); g.rotation.y = rad(o.rot || 0); } } need = true; }
+
+/* snapping and placing */
+function snapObj(sp, st, o) {
+  if (Math.round(o.rot || 0) % 90 !== 0) return;
+  const P = fp(o), xs = P.map(p => p[0]), zs = P.map(p => p[1]), ex = [Math.min(...xs), Math.max(...xs)], ez = [Math.min(...zs), Math.max(...zs)];
+  const lx = sp.snap.xs.slice(), lz = sp.snap.zs.slice();
+  for (const q of st.objs) if (q !== o) { const Q = fp(q); lx.push(...Q.map(p => p[0])); lz.push(...Q.map(p => p[1])); }
+  const best = (lines, edges) => { let d = 0, b = 3; for (const v of lines) for (const e of edges) { const k = v - e; if (Math.abs(k) < b) { b = Math.abs(k); d = k; } } return d; };
+  o.x += best(lx, ex); o.z += best(lz, ez);
+}
+function freeSpot(sp, st, o) {
+  const pts = sp.balArea, cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cz = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+  for (let r = 0; r < 160; r += 10) for (let a = 0; a < 360; a += 30) {
+    o.x = Math.round(cx + r * Math.cos(rad(a))); o.z = Math.round(cz + r * Math.sin(rad(a)));
+    const P = fp(o);
+    if (insideSpace(sp, P) && !blocker(sp, st, P, o.y, o.y + o.h, o)) return;
+    if (r === 0) break;
+  }
+  o.x = Math.round(cx); o.z = Math.round(cz);
+}
+
+/* plan */
+function drawPlanB(ck) {
+  const sp = SP(), st = ST();
+  const allPts = [].concat(...sp.floors.map(f => f.pts), ...sp.walls.map(w => rectPoly(w.b)), ...sp.parapets.map(p => p.b ? rectPoly(p.b) : p.poly));
+  const x0 = Math.min(...allPts.map(p => p[0])) - 12, x1 = Math.max(...allPts.map(p => p[0])) + 12, z0 = Math.min(...allPts.map(p => p[1])) - 16, z1 = Math.max(...allPts.map(p => p[1])) + 12;
+  plan.setAttribute('viewBox', `${x0} ${z0} ${x1 - x0} ${z1 - z0}`);
+  const k = (x1 - x0) / 330, fs = (n) => (n * k).toFixed(2);
+  const col = s => s === 'bad' ? 'var(--bad)' : s === 'warn' ? 'var(--warn)' : 'var(--ok)';
+  const P = pts => pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  let h = `<style>.wl{fill:var(--wall)} .pp{fill:var(--wall);opacity:.6} .dl{stroke:var(--tape);stroke-width:${fs(1.1)};stroke-dasharray:${fs(3)} ${fs(2)}}
+    .dt{fill:var(--tape);font:600 ${fs(9.5)}px var(--f-mono)} .lb{fill:var(--muted);font:500 ${fs(8.5)}px var(--f-body)} .lbk{fill:var(--ink);font:600 ${fs(8.5)}px var(--f-body)}
+    .bo{cursor:grab} .bo polygon,.bo circle{fill:color-mix(in srgb,var(--accent) 20%,transparent);stroke:var(--accent);stroke-width:${fs(1.2)}}
+    .bo.sel polygon,.bo.sel circle{fill:color-mix(in srgb,var(--accent) 38%,transparent);stroke-width:${fs(2.4)}}
+    .zn{fill:none;stroke:var(--muted);stroke-width:${fs(0.8)};stroke-dasharray:${fs(2.5)} ${fs(2)}} .fan{stroke-width:${fs(1)};stroke-dasharray:${fs(2.5)} ${fs(2)}}
+    .tp{stroke:transparent;stroke-width:${fs(14)};cursor:pointer}</style>`;
+  for (const f of sp.floors) h += `<polygon points="${P(f.pts)}" fill="${f.tex === 'wood' ? 'var(--wood)' : 'var(--floor)'}"/>`;
+  for (const w of sp.walls) h += `<polygon points="${P(rectPoly(w.b))}" class="wl"/>`;
+  for (const p of sp.parapets) h += `<polygon points="${P(p.b ? rectPoly(p.b) : p.poly)}" class="pp"/>`;
+  for (const s of sp.stubs) h += `<polygon points="${P(rectPoly(s.b))}" class="wl"/>`;
+  for (const b of sp.beams) h += `<polygon points="${P(rectPoly(b.r))}" fill="none" stroke="var(--ink)" stroke-width="${fs(0.9)}" stroke-dasharray="${fs(5)} ${fs(3)}"/><text x="${(b.r[0] + b.r[1]) / 2}" y="${b.r[2] + (b.r[3] - b.r[2]) / 2 + 3 * k}" class="lb" text-anchor="middle">grinda la ${fmt(b.y0)}</text>`;
+  for (const r of sp.rads) h += `<polygon points="${P(rectPoly(r.b))}" fill="var(--chip)" stroke="var(--muted)" stroke-width="${fs(0.8)}"/>`;
+  // glazing and the sashes that open
+  for (const g of sp.glaz) h += `<line x1="${g.p0[0]}" y1="${g.p0[1]}" x2="${g.p1[0]}" y2="${g.p1[1]}" stroke="var(--glass)" stroke-width="${fs(3)}"/>`;
+  for (const p of panesOf(sp)) {
+    const ps = paneState(st, p.key);
+    h += `<circle cx="${p.A[0]}" cy="${p.A[1]}" r="${fs(2)}" fill="var(--glass)"/><circle cx="${p.B[0]}" cy="${p.B[1]}" r="${fs(2)}" fill="var(--glass)"/>`;
+    if (ps.open) {
+      const { H, u, n } = paneAxis(p, ps.hinge), c = ckB(ck, p.name), L = p.len;
+      const E0 = [H[0] + u[0] * L, H[1] + u[1] * L], E1 = [H[0] + n[0] * L, H[1] + n[1] * L];
+      const sweep = (u[0] * n[1] - u[1] * n[0]) > 0 ? 1 : 0;
+      h += `<path d="M${H[0]},${H[1]} L${E0[0]},${E0[1]} A${L},${L} 0 0 ${sweep} ${E1[0]},${E1[1]} Z" class="fan" fill="color-mix(in srgb,${col(c)} 14%,transparent)" stroke="${col(c)}"/>`;
+      const a = rad(ps.a || 0), d = [u[0] * Math.cos(a) + n[0] * Math.sin(a), u[1] * Math.cos(a) + n[1] * Math.sin(a)];
+      h += `<line x1="${H[0]}" y1="${H[1]}" x2="${H[0] + d[0] * L}" y2="${H[1] + d[1] * L}" stroke="var(--glass)" stroke-width="${fs(2.6)}" stroke-linecap="round"/>`;
+    }
+    h += `<line class="tp" data-pane="${p.key}" x1="${p.A[0]}" y1="${p.A[1]}" x2="${p.B[0]}" y2="${p.B[1]}"><title>${p.name}</title></line>`;
+  }
+  // free width of the way in
+  if (st._pass) {
+    const pa = sp.passage, [a, b] = st._pass, mid = (pa.c0 + pa.c1) / 2;
+    if (pa.axis === 'x') h += `<line x1="${a}" y1="${mid}" x2="${b}" y2="${mid}" class="dl"/><text x="${(a + b) / 2}" y="${mid - 3 * k}" class="dt" text-anchor="middle">${fmt(b - a)}</text>`;
+    else h += `<line x1="${mid}" y1="${a}" x2="${mid}" y2="${b}" class="dl"/><text x="${mid + 4 * k}" y="${(a + b) / 2}" class="dt">${fmt(b - a)}</text>`;
+  }
+  // objects, with the space they need around them
+  for (const o of st.objs) {
+    if (o.type === 'bar') h += `<polygon points="${P(zoneOf(o, -27, 27, o.d / 2 - 22, o.d / 2 + 22))}" class="zn"/>`;
+    if (o.type === 'chair') h += `<polygon points="${P(zoneOf(o, -o.w / 2, o.w / 2, -o.d / 2 - 45, -o.d / 2))}" class="zn"/>`;
+    if (o.type === 'besta') h += `<polygon points="${P(zoneOf(o, -o.w / 2, o.w / 2, o.d / 2, o.d / 2 + 55))}" class="zn"/>`;
+  }
+  for (const o of st.objs) {
+    const sel = st.sel === o.id ? ' sel' : '';
+    h += `<g class="bo${sel}" data-id="${o.id}">` + (OT[o.type].round ? `<circle cx="${o.x}" cy="${o.z}" r="${o.w / 2}"/>` : `<polygon points="${P(fp(o))}"/>`);
+    if (o.type === 'bar') { const a = toWorld(o, -o.w / 2, o.d / 2 - 2), b = toWorld(o, o.w / 2, o.d / 2 - 2); h += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--ink)" stroke-width="${fs(2.2)}"/>`; }
+    if (o.type === 'chair' || o.type === 'besta' || o.type === 'ac') { const a = toWorld(o, -o.w / 2, o.d / 2), b = toWorld(o, o.w / 2, o.d / 2); h += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--accent)" stroke-width="${fs(2.6)}"/>`; }
+    if (Math.max(o.w, o.d) > 38 || sel) h += `<text x="${o.x}" y="${o.z + 3 * k}" class="lbk" text-anchor="middle">${o.name}</text>`;
+    h += `</g>`;
+  }
+  const rn = sp.roomAt; h += `<text x="${rn[0]}" y="${rn[1]}" class="lb" text-anchor="middle">${sp.roomName}</text>`;
+  plan.innerHTML = h;
+}
+function ckB(ck, name) { const c = (ck || []).find(x => x.id === 'win' && x.title.startsWith(name)); return c ? c.st : 'ok'; }
+
+/* panel */
+function renderLib() {
+  $('#olib').innerHTML = LIB.map(([t, l], i) => `<button class="btn" type="button" data-lib="${i}">+ ${l}</button>`).join('');
+}
+function renderObjList() {
+  const st = ST();
+  $('#olist').innerHTML = st.objs.map(o => `<li><button type="button" data-oid="${o.id}" aria-pressed="${st.sel === o.id}"><span>${o.name}</span><span class="dim">${OT[o.type].round ? 'ø ' + fmt(o.w) : fmt(o.w) + ' × ' + fmt(o.d)} × ${fmt(o.h)}${o.y ? ' · la ' + fmt(o.y) : ''}</span></button></li>`).join('') || '<li class="note">Niciun obiect. Adaugă unul din butoanele de mai sus.</li>';
+  const o = st.objs.find(q => q.id === st.sel), ed = $('#oedit');
+  ed.hidden = !o; if (!o) return;
+  const t = OT[o.type], lab = Object.assign({ w: 'lățime', d: 'adâncime', h: 'înălțime', y: 'de la podea' }, t.lab || {});
+  const f = (k, step) => `<div class="field"><label for="oe_${k}">${lab[k]}</label><input id="oe_${k}" type="number" step="${step || 0.5}" value="${o[k]}"></div>`;
+  ed.innerHTML = `<div class="row" style="margin-top:0;justify-content:space-between"><b>${o.name}</b><span class="dim num">${fmt(o.x)}, ${fmt(o.z)} · ${fmt(o.rot || 0, 0)}°</span></div>
+    <div class="grid">${f('w')}${t.round ? '' : f('d')}${t.noH ? '' : f('h')}${f('y')}</div>
+    <div class="row" style="margin-top:0">
+      <button class="btn" type="button" data-oact="rl" aria-label="Rotește spre stânga cu 90 de grade">↺ 90°</button>
+      <button class="btn" type="button" data-oact="rr" aria-label="Rotește spre dreapta cu 90 de grade">↻ 90°</button>
+      <button class="btn" type="button" data-oact="r15" aria-label="Rotește cu 15 grade">↻ 15°</button>
+      <button class="btn" type="button" data-oact="dup">Duplică</button>
+      <button class="btn" type="button" data-oact="del">Șterge</button>
+    </div>`;
+  for (const k of ['w', 'd', 'h', 'y']) {
+    const el = document.getElementById('oe_' + k); if (!el) continue;
+    el.addEventListener('input', () => {
+      const v = parseFloat(String(el.value).replace(',', '.')); if (!isFinite(v) || v < 0) return;
+      o[k] = v; if (t.round && k === 'w') o.d = v;
+      if (o.type === 'besta' && k === 'w' && /^BESTÅ \d/.test(o.name)) o.name = uniqueName(st.objs.filter(q => q !== o), `BESTÅ ${fmt(v)}`);
+      updateB('obj', true);
+    });
+  }
+}
+function renderPanes() {
+  const sp = SP(), st = ST();
+  $('#panes').innerHTML = panesOf(sp).map(p => {
+    const ps = paneState(st, p.key);
+    return `<li><span>${p.name}</span>
+      <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-popen="${p.key}" ${ps.open ? 'checked' : ''}> se deschide</label>
+      <select data-phinge="${p.key}" aria-label="Balamaua" ${ps.open ? '' : 'disabled'}><option value="L" ${ps.hinge === 'L' ? 'selected' : ''}>balama stânga</option><option value="R" ${ps.hinge === 'R' ? 'selected' : ''}>balama dreapta</option></select></li>`;
+  }).join('');
+  $('#bHp').value = st.hp; $('#bUserH').value = st.userH;
+  $('#bFacts').innerHTML = sp.facts.map(([t, v, e]) => `<dt>${t}</dt><dd class="${e ? 'e' : ''}">${v}</dd>`).join('');
+}
+function syncMotionB() {
+  const sp = SP(), st = ST(), open = panesOf(sp).filter(p => paneState(st, p.key).open);
+  const any = open.some(p => (paneState(st, p.key).a || 0) > 0.5);
+  const b = $('#aWin'); b.textContent = any ? 'Închide geamurile' : 'Deschide geamurile'; b.disabled = !open.length; b.setAttribute('aria-pressed', String(any));
+}
+function togglePane(key, force) {
+  const st = ST(); if (!st.panes[key] || !st.panes[key].open) { toast('Foaia e fixă. O poți marca în secțiunea Geamurile.'); return; }
+  const ps = st.panes[key], to = force !== undefined ? force : ((ps.a || 0) > 0.5 ? 0 : 90);
+  tween('pane' + key, ps.a || 0, to, 650, v => { ps.a = v; applyPanes(); drawPlanB(lastCk); syncMotionB(); }, () => { ps.a = Math.round(ps.a); saveB(); syncMotionB(); });
+}
+function toggleAllPanes() {
+  const sp = SP(), st = ST(), open = panesOf(sp).filter(p => paneState(st, p.key).open);
+  const any = open.some(p => (paneState(st, p.key).a || 0) > 0.5);
+  for (const p of open) togglePane(p.key, any ? 0 : 90);
+}
+function summaryB(ck) {
+  const sp = SP(), st = ST();
+  const lines = [`${sp.name}, ${new Date().toLocaleDateString('ro-RO')}`, 'Obiecte:'];
+  for (const o of st.objs) lines.push(`- ${o.name}: ${OT[o.type].round ? 'ø ' + fmt(o.w) : fmt(o.w) + ' × ' + fmt(o.d)} × ${fmt(o.h)}${o.y ? `, la ${fmt(o.y)} de la podea` : ''}; centrul la x ${fmt(o.x)}, z ${fmt(o.z)}; rotit ${fmt(o.rot || 0, 0)}°`);
+  const op = panesOf(sp).filter(p => paneState(st, p.key).open).map(p => `${p.name} (balama ${paneState(st, p.key).hinge === 'L' ? 'stânga' : 'dreapta'})`);
+  lines.push('Foi care se deschid: ' + (op.join(', ') || 'niciuna'), `Parapetul de sub geamuri: ${fmt(st.hp)} (presupus); înălțimea ta: ${st.userH}`, 'Verificări:');
+  for (const c of ck) lines.push(`- [${{ ok: 'da', warn: 'atenție', bad: 'nu' }[c.st]}] ${c.title}. ${c.detail}`);
+  lines.push('x se măsoară de la stânga planului, z de sus în jos, în cm.');
+  return lines.join('\n');
+}
+function updateB(what, keepInputs) {
+  const ck = checksB(SPACE); lastCk = ck;
+  if (renderer) { if (what === 'pos') moveObjects(); else if (what !== 'x') rebuildRoot(); }
+  drawPlanB(ck); renderChecks(ck);
+  if (!keepInputs) renderObjList(); else updateEditorHead();
+  if (what === 'all' || what === 'glaz') renderPanes();
+  syncMotionB();
+  $('#summary').value = summaryB(ck);
+  if (what !== 'pos') saveB();
+}
+function updateEditorHead() { const st = ST(), o = st.objs.find(q => q.id === st.sel), hd = $('#oedit .dim'); if (o && hd) hd.textContent = `${fmt(o.x)}, ${fmt(o.z)} · ${fmt(o.rot || 0, 0)}°`;
+  const li = document.querySelector(`#olist [data-oid="${st.sel}"] .dim`); if (o && li) li.textContent = `${OT[o.type].round ? 'ø ' + fmt(o.w) : fmt(o.w) + ' × ' + fmt(o.d)} × ${fmt(o.h)}${o.y ? ' · la ' + fmt(o.y) : ''}`; }
+function selectObj(id) { const st = ST(); st.sel = id; updateB('obj'); }
+function setupBalconyPanel() {
+  renderLib();
+  $('#olib').addEventListener('click', e => {
+    const b = e.target.closest('[data-lib]'); if (!b) return;
+    const [type, , extra] = LIB[+b.dataset.lib], st = ST(), o = newObj(st.objs, type, extra);
+    freeSpot(SP(), st, o); st.objs.push(o); st.sel = o.id; updateB('obj');
+  });
+  $('#olist').addEventListener('click', e => { const b = e.target.closest('[data-oid]'); if (b) selectObj(ST().sel === b.dataset.oid ? null : b.dataset.oid); });
+  $('#oedit').addEventListener('click', e => {
+    const b = e.target.closest('[data-oact]'); if (!b) return;
+    const st = ST(), o = st.objs.find(q => q.id === st.sel); if (!o) return;
+    const act = b.dataset.oact;
+    if (act === 'rl') o.rot = ((o.rot || 0) + 90) % 360;
+    else if (act === 'rr') o.rot = ((o.rot || 0) + 270) % 360;
+    else if (act === 'r15') o.rot = ((o.rot || 0) + 345) % 360;
+    else if (act === 'dup') { const c = newObj(st.objs, o.type, { ...o }); c.name = uniqueName(st.objs, o.name.replace(/ \d+$/, '')); c.x = o.x + 15; c.z = o.z + 15; st.objs.push(c); st.sel = c.id; }
+    else if (act === 'del') { st.objs = st.objs.filter(q => q !== o); st.sel = null; }
+    if (act.startsWith('r')) snapObj(SP(), st, o);
+    updateB('obj');
+  });
+  $('#panes').addEventListener('change', e => {
+    const st = ST(), k = e.target.dataset.popen || e.target.dataset.phinge; if (!k) return;
+    const ps = st.panes[k] || (st.panes[k] = { open: false, hinge: 'L', a: 0 });
+    if (e.target.dataset.popen) { ps.open = e.target.checked; if (!ps.open) ps.a = 0; } else ps.hinge = e.target.value;
+    updateB('glaz');
+  });
+  $('#bHp').addEventListener('change', e => { const v = parseFloat(e.target.value); if (isFinite(v) && v > 30 && v < 140) { ST().hp = v; updateB('all'); } });
+  $('#bUserH').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v) && v > 100 && v < 230) { ST().userH = v; updateB('x', true); } });
+  document.addEventListener('keydown', e => {
+    if (SPACE === 'debara' || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+    const st = ST(), o = st.objs.find(q => q.id === st.sel); if (!o) return;
+    const step = e.shiftKey ? 5 : 1, mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+    if (mv) { o.x += mv[0]; o.z += mv[1]; updateB('end', true); e.preventDefault(); }
+    else if (e.key === 'Delete' || e.key === 'Backspace') { st.objs = st.objs.filter(q => q !== o); st.sel = null; updateB('obj'); e.preventDefault(); }
+  });
+}
+
+/* ---------- which space is on screen ---------- */
+const HASH = { debara: 'debara', kitchen: 'balcon-bucatarie', living: 'balcon-living' };
+let SPACE = 'debara';
+try {
+  const h = location.hash.replace('#', ''), byHash = Object.fromEntries(Object.entries(HASH).map(([k, v]) => [v, k]));
+  if (byHash[h]) SPACE = byHash[h]; else { const s0 = localStorage.getItem(LS + '-space'); if (HASH[s0]) SPACE = s0; }
+} catch (e) {}
+function setSpace(id, first) {
+  if (!HASH[id]) return;
+  SPACE = id;
+  try { localStorage.setItem(LS + '-space', id); } catch (e) {}
+  try { if (location.hash.replace('#', '') !== HASH[id]) location.hash = HASH[id]; } catch (e) {}
+  document.querySelectorAll('[data-space]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.space === id)));
+  const deb = id === 'debara';
+  document.querySelectorAll('[data-only]').forEach(el => { el.hidden = (el.dataset.only === 'debara') !== deb; });
+  $('#planNote').textContent = deb ? 'Poți trage aparatele și aici. Liniile galbene arată distanțele până la pereți; arcele arată cât se deschid geamul, ușa debaralei și ușile aparatelor.'
+    : 'Poți trage obiectele și aici, iar o foaie de geam o deschizi atingând-o. Arcele arată cât se deschid foile; liniile punctate arată locul de care e nevoie sub bară, în spatele scaunelor și în fața comodei; linia galbenă e trecerea liberă.';
+  $('#sub').textContent = deb ? '81 × 178,7 cm · tavan 202,8 · cotele din 21.11.2026 · pe plan, peretele 1 e sus' : BAL[id].sub;
+  $('#hintTxt').textContent = deb ? 'Atinge geamul, ușa sau ușa unui aparat ca s-o deschizi · trage aparatele ca să le muți · rotește și apropie cu degetele sau cu mouse-ul'
+    : 'Atinge un obiect ca să-l alegi și trage-l ca să-l muți · atinge o foaie de geam ca s-o deschizi · rotește și apropie cu degetele sau cu mouse-ul';
+  document.querySelector('[data-cam="door"]').textContent = deb ? 'Din ușă' : BAL[id].fromCam;
+  $('#aDoor').hidden = !deb; $('#aMach').hidden = !deb; $('#aWin').disabled = false;
+  plan.setAttribute('aria-label', deb ? 'Planul debaralei, cu aparatele' : `Planul: ${BAL[id].name.toLowerCase()}, cu obiectele`);
+  if (!deb) { bs(id); renderPanes(); }
+  if (renderer) { buildLabels(); if (!first) goCam('iso', true); }
+  update('all');
+  if (renderer && first) goCam('iso', true);
+}
+window.addEventListener('hashchange', () => {
+  const byHash = Object.fromEntries(Object.entries(HASH).map(([k, v]) => [v, k])), id = byHash[location.hash.replace('#', '')];
+  if (id && id !== SPACE) setSpace(id);
+});
+
 /* ---------- start ---------- */
 { const c = center(S); Object.assign(S, place(S, c.cx, c.cz)); }
-setupPanel(); setupPlanDrag();
+setupPanel(); setupPlanDrag(); setupBalconyPanel();
+document.querySelectorAll('[data-space]').forEach(b => b.addEventListener('click', () => { if (b.dataset.space !== SPACE) setSpace(b.dataset.space); }));
 if (renderer) {
-  initScene(); buildLabels(); setupDrag();
+  initScene(); setupDrag();
   controls = new THREE.OrbitControls(camera, canvas);
   controls.enableDamping = true; controls.dampingFactor = 0.12; controls.maxPolarAngle = Math.PI * 0.495; controls.minDistance = 60; controls.maxDistance = 1600;
   controls.addEventListener('change', () => { need = true; });
-  goCam('iso', true);
   new ResizeObserver(resize).observe(view); resize();
   const mq = matchMedia('(prefers-color-scheme: dark)');
   const retheme = () => { scene.background = new THREE.Color(css('--scene')); need = true; };
@@ -1145,8 +2000,8 @@ if (renderer) {
   setInterval(() => { if (controls && controls.enableDamping) { if (controls.update()) need = true; } }, 1000 / 60);
   requestAnimationFrame(loop);
 }
-update('all');
-window.__debara = { S, checks, place, rect, dims, camera, get controls() { return controls; } };
+setSpace(SPACE, true);
+window.__debara = { S, checks, place, rect, dims, camera, get controls() { return controls; }, get B() { return B; }, get space() { return SPACE; }, checksB, setSpace };
 })();
 </script>
 
