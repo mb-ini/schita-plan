@@ -1,0 +1,1154 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Debaraua în 3D: muți coloana mașină + uscător, schimbi dimensiunile aparatelor și vezi dacă se deschide geamul, unde rămâne priza și cât loc rămâne în față.">
+<meta property="og:title" content="Debara 3D">
+<meta property="og:description" content="Debaraua în 3D: muți coloana mașină + uscător, schimbi dimensiunile aparatelor și vezi dacă se deschide geamul, unde rămâne priza și cât loc rămâne în față.">
+<meta property="og:type" content="website">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Debara 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a working room model on the left (3D), a drafting sheet on the right (plan, checks, inputs); stacked on a phone. */
+:root {
+  --bg: #eef0ec;         /* page ground, a cool plaster grey */
+  --sheet: #fbfbf9;      /* the panel, like drafting paper */
+  --ink: #1b2220;
+  --muted: #5d6965;
+  --line: #d7dbd6;
+  --wall: #3b4340;       /* cut walls on the plan */
+  --floor: #e7e3da;      /* tiles on the plan */
+  --accent: #0e7a68;     /* controls, the machines on the plan */
+  --accent-ink: #ffffff;
+  --tape: #c98d00;       /* dimension lines, a tape measure */
+  --glass: #8fc3df;
+  --ok: #1d7f45; --ok-bg: #e2f2e7;
+  --warn: #a8670a; --warn-bg: #fbefd9;
+  --bad: #b8322a; --bad-bg: #f8e1df;
+  --scene: #e3e6e1;      /* 3D background */
+  --chip: #eef1ee;
+  --f-display: "Archivo", "Inter", system-ui, sans-serif;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121615; --sheet: #191e1c; --ink: #e5ebe8; --muted: #9aa8a3; --line: #2c3532; --wall: #5b6662; --floor: #2a2f2c;
+    --accent: #3bbfa5; --accent-ink: #062621; --tape: #f0bf45; --glass: #4f8fb1;
+    --ok: #5fd08d; --ok-bg: #173323; --warn: #f2b65a; --warn-bg: #3a2b12; --bad: #ff8a80; --bad-bg: #3d1c1a;
+    --scene: #1a1f1d; --chip: #222a27; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121615; --sheet: #191e1c; --ink: #e5ebe8; --muted: #9aa8a3; --line: #2c3532; --wall: #5b6662; --floor: #2a2f2c;
+  --accent: #3bbfa5; --accent-ink: #062621; --tape: #f0bf45; --glass: #4f8fb1;
+  --ok: #5fd08d; --ok-bg: #173323; --warn: #f2b65a; --warn-bg: #3a2b12; --bad: #ff8a80; --bad-bg: #3d1c1a;
+  --scene: #1a1f1d; --chip: #222a27; color-scheme: dark;
+}
+html, body { height: 100%; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--f-body); }
+* { box-sizing: border-box; }
+button, input, select { font: inherit; color: inherit; }
+#app { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.top {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  border-bottom: 1px solid var(--line); background: var(--sheet);
+}
+.top h1 { font: 700 19px/1.1 var(--f-display); margin: 0; letter-spacing: .01em; }
+.top .sub { color: var(--muted); font-size: 12.5px; }
+.top .sp { flex: 1; }
+.btn {
+  border: 1px solid var(--line); background: var(--sheet); border-radius: 8px; padding: 6px 11px; cursor: pointer;
+  font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; min-height: 34px;
+}
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn:focus-visible, .seg button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 420px; min-height: 0; }
+.view { position: relative; min-width: 0; min-height: 0; background: var(--scene); overflow: hidden; }
+#c { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+#c.drag { cursor: grabbing; }
+.cams { position: absolute; left: 12px; top: 12px; display: flex; gap: 6px; flex-wrap: wrap; z-index: 3; margin-left: env(safe-area-inset-left, 0px); }
+.seg { display: inline-flex; background: var(--sheet); border: 1px solid var(--line); border-radius: 9px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: transparent; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 12.5px; font-weight: 500; color: var(--muted); min-height: 30px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+.hint { position: absolute; left: 12px; bottom: 12px; right: 12px; z-index: 3; pointer-events: none; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  margin-left: env(safe-area-inset-left, 0px); margin-bottom: env(safe-area-inset-bottom, 0px); }
+.hint span { background: color-mix(in srgb, var(--sheet) 88%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; font-size: 12px; color: var(--muted); align-self: flex-end; max-width: 52ch; }
+.acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; pointer-events: auto; margin-left: auto; }
+.acts .btn { min-height: 36px; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.acts .btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 600px) { .hint span { display: none; } }
+.labels { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.lbl { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; font-size: 11.5px; font-weight: 500; line-height: 1.25;
+  background: color-mix(in srgb, var(--sheet) 92%, transparent); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--ink); }
+.lbl small { display: block; color: var(--muted); font-size: 10.5px; font-weight: 400; }
+.lbl.est { border-style: dashed; }
+.panel { overflow-y: auto; min-width: 0; background: var(--sheet); border-left: 1px solid var(--line);
+  padding-block: 14px 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.panel section { padding-block: 14px; border-bottom: 1px solid var(--line); }
+.panel section:first-child { padding-top: 0; }
+.panel h2 { font: 600 14.5px/1.2 var(--f-display); margin: 0 0 10px; letter-spacing: .01em; display: flex; align-items: baseline; gap: 8px; }
+.panel h2 .tag { font: 500 10.5px var(--f-body); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.note { color: var(--muted); font-size: 12px; margin: 6px 0 0; max-width: 62ch; }
+#plan { width: 100%; height: auto; display: block; touch-action: none; user-select: none; }
+#plan .mach { cursor: grab; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.checks li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: start; padding: 7px 9px; border-radius: 8px; background: var(--chip); }
+.pill { font: 600 11px/1 var(--f-body); padding: 4px 7px; border-radius: 999px; min-width: 58px; text-align: center; letter-spacing: .02em; margin-top: 1px; }
+.pill.ok { color: var(--ok); background: var(--ok-bg); } .pill.warn { color: var(--warn); background: var(--warn-bg); } .pill.bad { color: var(--bad); background: var(--bad-bg); }
+.checks b { font-weight: 600; }
+.checks .d { color: var(--muted); font-size: 12px; grid-column: 2; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.field { display: grid; gap: 3px; min-width: 0; }
+.field label { font-size: 11.5px; color: var(--muted); }
+.field input, .field select { width: 100%; min-width: 0; border: 1px solid var(--line); background: var(--bg); border-radius: 7px; padding: 6px 8px; font-family: var(--f-mono); font-size: 13px; }
+.mrow { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 8px; align-items: end; margin-top: 8px; }
+.mrow .who { font-weight: 600; font-size: 13px; padding-bottom: 7px; }
+.mrow .who small { display: block; font-weight: 400; color: var(--muted); font-size: 11px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.presets .btn { font-size: 12px; padding: 4px 9px; min-height: 30px; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.rng { display: grid; grid-template-columns: minmax(0, 1fr) 54px; gap: 10px; align-items: center; }
+.rng output { font-family: var(--f-mono); font-size: 13px; text-align: right; }
+.facts { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; font-size: 12.5px; margin: 0; }
+.facts dt { color: var(--muted); } .facts dd { margin: 0; font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; }
+.facts dd.e::after { content: " ?"; color: var(--warn); font-weight: 600; }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--sheet);
+  padding: 8px 14px; border-radius: 8px; font-size: 13px; z-index: 20; }
+textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 var(--f-mono); border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 8px; }
+@media (max-width: 900px) {
+  #app { height: auto; display: block; }
+  .stage { display: block; }
+  .view { height: 58vh; min-height: 340px; }
+  .panel { border-left: 0; overflow: visible; }
+  .top .sub { flex-basis: 100%; order: 3; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header class="top">
+    <h1>Debara 3D</h1>
+    <span class="sub">81 × 178,7 cm · tavan 202,8 · cotele din 21.11.2026 · pe plan, peretele 1 e sus</span>
+    <span class="sp"></span>
+    <button class="btn" id="bReset" type="button">Exemplul inițial</button>
+    <button class="btn primary" id="bCopy" type="button">Copiază rezumatul</button>
+  </header>
+  <div class="stage">
+    <div class="view" id="view">
+      <canvas id="c" aria-label="Debaraua în 3D. Trage aparatele ca să le muți."></canvas>
+      <div class="labels" id="labels"></div>
+      <div class="cams">
+        <div class="seg" role="group" aria-label="Unghiul camerei">
+          <button type="button" data-cam="iso" aria-pressed="true">3D</button>
+          <button type="button" data-cam="top" aria-pressed="false">De sus</button>
+          <button type="button" data-cam="door" aria-pressed="false">Din ușă</button>
+          <button type="button" data-cam="win" aria-pressed="false">Spre geam</button>
+        </div>
+        <div class="seg" role="group" aria-label="Afișare">
+          <button type="button" id="tLabels" aria-pressed="true">Etichete</button>
+        </div>
+      </div>
+      <div class="hint"><span>Atinge geamul, ușa sau ușa unui aparat ca s-o deschizi · trage aparatele ca să le muți · rotește și apropie cu degetele sau cu mouse-ul</span>
+        <div class="acts" role="group" aria-label="Deschide și închide">
+          <button class="btn" type="button" id="aWin" aria-pressed="true">Închide geamul</button>
+          <button class="btn" type="button" id="aDoor" aria-pressed="true">Închide ușa</button>
+          <button class="btn" type="button" id="aMach" aria-pressed="false">Deschide aparatele</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel" id="panel">
+      <section>
+        <h2>Planul, de sus <span class="tag">la scară</span></h2>
+        <svg id="plan" viewBox="0 0 10 10" role="img" aria-label="Planul debaralei, cu aparatele"></svg>
+        <p class="note">Poți trage aparatele și aici. Liniile galbene arată distanțele până la pereți; arcele arată cât se deschid geamul, ușa debaralei și ușile aparatelor.</p>
+      </section>
+
+      <section>
+        <h2>Verificări</h2>
+        <ul class="checks" id="checks"></ul>
+      </section>
+
+      <section>
+        <h2>Aparate <span class="tag">cm</span></h2>
+        <div class="seg" role="group" aria-label="Cum stau aparatele" id="segLayout">
+          <button type="button" data-layout="col" aria-pressed="true">Coloană</button>
+          <button type="button" data-layout="side" aria-pressed="false">Una lângă alta</button>
+          <button type="button" data-layout="one" aria-pressed="false">Doar mașina</button>
+        </div>
+        <div class="mrow"><div class="who">Mașina<small>de spălat</small></div>
+          <div class="grid">
+            <div class="field"><label for="wW">lățime</label><input id="wW" type="number" step="0.5" min="30" max="80"></div>
+            <div class="field"><label for="wD">adâncime</label><input id="wD" type="number" step="0.5" min="30" max="80"></div>
+            <div class="field"><label for="wH">înălțime</label><input id="wH" type="number" step="0.5" min="50" max="100"></div>
+          </div>
+        </div>
+        <div class="mrow" id="rowDryer"><div class="who">Uscătorul</div>
+          <div class="grid">
+            <div class="field"><label for="dW">lățime</label><input id="dW" type="number" step="0.5" min="30" max="80"></div>
+            <div class="field"><label for="dD">adâncime</label><input id="dD" type="number" step="0.5" min="30" max="80"></div>
+            <div class="field"><label for="dH">înălțime</label><input id="dH" type="number" step="0.5" min="50" max="100"></div>
+          </div>
+        </div>
+        <div class="mrow" id="rowKit"><div class="who">Kit<small>între ele</small></div>
+          <div class="grid">
+            <div class="field"><label for="kit">grosime</label><input id="kit" type="number" step="0.5" min="0" max="20"></div>
+            <div class="field"><label for="porthole">ușa aparatului</label><input id="porthole" type="number" step="1" min="30" max="60"></div>
+            <div class="field"><label for="cord">cablul</label><input id="cord" type="number" step="5" min="50" max="300"></div>
+          </div>
+        </div>
+        <div class="presets" id="presets">
+          <button class="btn" type="button" data-p="w60">Mașină 60 × 60 × 85</button>
+          <button class="btn" type="button" data-p="wSlim">Mașină îngustă 60 × 45 × 85</button>
+          <button class="btn" type="button" data-p="dHp">Uscător 60 × 64 × 85</button>
+          <button class="btn" type="button" data-p="combo">Mașină cu uscare 60 × 62 × 85</button>
+        </div>
+        <p class="note">Valorile din butoane sunt doar tipice pentru aparatele de 60. Pune dimensiunile din fișa modelelor alese; adâncimea din fișă include de obicei ușa, dar nu și furtunurile din spate.</p>
+      </section>
+
+      <section>
+        <h2>Unde stau</h2>
+        <div class="field"><label>Fața aparatelor e spre</label>
+          <div class="seg" role="group" aria-label="Fața aparatelor" id="segFace">
+            <button type="button" data-face="S" aria-pressed="true">nișă</button>
+            <button type="button" data-face="W" aria-pressed="false">geam</button>
+            <button type="button" data-face="E" aria-pressed="false">ușă</button>
+            <button type="button" data-face="N" aria-pressed="false">peretele 1</button>
+          </div>
+        </div>
+        <div class="grid two" style="margin-top:10px">
+          <div class="field"><label for="z0">de la peretele 1</label><input id="z0" type="number" step="0.5"></div>
+          <div class="field"><label for="gapDoor">de la peretele cu ușa</label><input id="gapDoor" type="number" step="0.5"></div>
+        </div>
+        <div class="row">
+          <button class="btn" type="button" id="bPillar">Spatele în linie cu stâlpul</button>
+          <button class="btn" type="button" id="bWall">Lipită de peretele 1</button>
+        </div>
+        <p class="note">Distanțele sunt până la marginea aparatelor, oricum ar fi întoarse. Lângă stâlp ies racordurile de apă și scurgere, așa că spatele nu poate sta lipit de peretele 1 în dreptul lor.</p>
+      </section>
+
+      <section>
+        <h2>Geamul</h2>
+        <div class="field"><label>Balamaua, cum te uiți la geam din debara</label>
+          <div class="seg" role="group" aria-label="Balamaua geamului" id="segHinge">
+            <button type="button" data-hinge="L" aria-pressed="true">pe stânga</button>
+            <button type="button" data-hinge="R" aria-pressed="false">pe dreapta</button>
+          </div>
+        </div>
+        <div class="field" style="margin-top:10px"><label for="winA">Cât e deschis</label>
+          <div class="rng"><input id="winA" type="range" min="0" max="90" step="1"><output id="winAo" for="winA"></output></div>
+        </div>
+        <div class="row"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="tilt"> rabatat (oscilo-batant), cu partea de sus spre cameră</label></div>
+        <div class="grid two" style="margin-top:10px">
+          <div class="field"><label for="winH">înălțimea golului</label><input id="winH" type="number" step="1" min="30" max="68"></div>
+          <div class="field"><label for="setback">rama, cât e de retrasă în zid</label><input id="setback" type="number" step="1" min="0" max="20"></div>
+        </div>
+        <p class="note">Golul are 50 cm lățime: 5 cm de la margine până la ramă, rama de 40, iar marginea de jos e la 134,1 cm. Înălțimea golului și cât e de retrasă rama nu sunt măsurate. Foaia geamului e luată cât toată rama, adică varianta cea mai largă.</p>
+      </section>
+
+      <section>
+        <h2>Ușa debaralei</h2>
+        <div class="field"><label for="doorA">Cât e deschisă, spre hol</label>
+          <div class="rng"><input id="doorA" type="range" min="0" max="100" step="1"><output id="doorAo" for="doorA"></output></div>
+        </div>
+        <div class="grid two" style="margin-top:10px">
+          <div class="field"><label for="doorLeaf">lățimea foii</label><input id="doorLeaf" type="number" step="1" min="50" max="78"></div>
+          <div class="field"><label for="doorClear">golul liber, la trecere</label><input id="doorClear" type="number" step="0.5" min="40" max="78"></div>
+        </div>
+        <p class="note">Golul are acum 78 cm, fără toc. Ușa se deschide spre hol, cu balamalele pe stânga cum intri. După montarea tocului, golul liber scade; schimbă valoarea când știi ușa.</p>
+      </section>
+
+      <section>
+        <h2>Ce știm despre cameră</h2>
+        <dl class="facts">
+          <dt>Lățimea, de la geam la peretele cu ușa</dt><dd>81</dd>
+          <dt>Lungimea, de la peretele 1 la nișă</dt><dd class="e">178,7</dd>
+          <dt>Tavanul</dt><dd>202,8</dd>
+          <dt>Stâlpul (coloana de canalizare îmbrăcată)</dt><dd>14 × 14</dd>
+          <dt>De la stâlp la peretele cu ușa</dt><dd>66,5</dd>
+          <dt>De la stâlp la marginea golului geamului</dt><dd>58,5</dd>
+          <dt>Golul geamului (5 + rama 40 + 5)</dt><dd>50</dd>
+          <dt>Marginea de jos a geamului</dt><dd>134,1</dd>
+          <dt>De la peretele 1 la golul ușii</dt><dd>78</dd>
+          <dt>Golul ușii, fără toc</dt><dd>78</dd>
+          <dt>Priza, pe peretele cu ușa, de la peretele 1</dt><dd class="e">39</dd>
+          <dt>Priza, înălțime</dt><dd class="e"><span id="socketHo">134</span></dd>
+          <dt>Nișa din peretele 3, adâncime</dt><dd class="e">19,3</dd>
+        </dl>
+        <div class="grid" style="margin-top:12px">
+          <div class="field"><label for="socketH">priza, înălțime</label><input id="socketH" type="number" step="1" min="10" max="200"></div>
+          <div class="field"><label for="connGap">racorduri, de la stâlp</label><input id="connGap" type="number" step="1" min="0" max="50"></div>
+          <div class="field"><label for="connOut">racorduri, cât ies</label><input id="connOut" type="number" step="1" min="0" max="30"></div>
+        </div>
+        <p class="note">Valorile cu semn de întrebare nu sunt măsurate. Lungimea vine din plan, nu din cotele de azi. Priza e pusă cam la jumătatea peretelui și cam la nivelul geamului, cum ai descris-o. Racordurile sunt desenate pe peretele 1, lângă stâlp, cu dimensiuni presupuse.</p>
+      </section>
+
+      <section>
+        <h2>Rezumat</h2>
+        <textarea class="copy" id="summary" readonly aria-label="Rezumatul configurației"></textarea>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(() => {
+'use strict';
+/* ---------- the room, in cm, from the 21.11.2026 measurements ----------
+   x: from the window wall (0) to the door wall (81)
+   z: from wall 1, the one with the pillar (0), to wall 3 with the niche (178,7)
+   y: up from the floor */
+const R = {
+  W: 81, L: 178.7, H: 202.8, P: 14,
+  tWin: 26, tW1: 19.5, tDoor: 12.4, nicheD: 19.3, nicheBack: 10,
+  win: { z0: 72.5, z1: 122.5, y0: 134.1 },
+  door: { z0: 78, z1: 156 },
+  socketZ: 39,
+};
+const DEF = {
+  layout: 'col', wW: 60, wD: 60, wH: 85, dW: 60, dD: 60, dH: 85, kit: 3, porthole: 50, cord: 150,
+  face: 'S', z0: 14, gapDoor: 0,
+  hinge: 'L', winA: 90, tilt: false, winH: 50, setback: 5,
+  doorA: 90, doorOpenA: 90, winOpenA: 90, doorLeaf: 70, doorClear: 78, doorH: 200,
+  socketH: 134, connGap: 2, connOut: 10, nicheH: 190,
+};
+const LS = 'debara3d-v1';
+let S = { ...DEF };
+try { const j = JSON.parse(localStorage.getItem(LS) || 'null'); if (j && typeof j === 'object') S = { ...DEF, ...j }; } catch (e) {}
+let labelsOn = true;
+try { labelsOn = localStorage.getItem(LS + '-labels') !== '0'; } catch (e) {}
+const save = () => { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} };
+
+const $ = s => document.querySelector(s);
+const fmt = (v, d = 1) => { const r = Math.round(v * 10 ** d) / 10 ** d; return String(Math.abs(r) < 1e-9 ? 0 : r).replace('.', ','); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rad = d => d * Math.PI / 180;
+
+/* ---------- footprint and checks (pure) ---------- */
+function dims(s) {
+  if (s.layout === 'col') return { fw: Math.max(s.wW, s.dW), fd: Math.max(s.wD, s.dD), h: s.wH + s.kit + s.dH };
+  if (s.layout === 'side') return { fw: s.wW + 1 + s.dW, fd: Math.max(s.wD, s.dD), h: Math.max(s.wH, s.dH) };
+  return { fw: s.wW, fd: s.wD, h: s.wH };
+}
+function halfs(s) { const d = dims(s); return (s.face === 'S' || s.face === 'N') ? { hx: d.fw / 2, hz: d.fd / 2 } : { hx: d.fd / 2, hz: d.fw / 2 }; }
+function center(s) { const { hx, hz } = halfs(s); return { cx: R.W - s.gapDoor - hx, cz: s.z0 + hz }; }
+function rect(s) { const { hx, hz } = halfs(s), { cx, cz } = center(s); return { x0: cx - hx, x1: cx + hx, z0: cz - hz, z1: cz + hz }; }
+function connBox(s) { return { x0: R.P + s.connGap, x1: R.P + s.connGap + 16, z0: 0, z1: s.connOut, y0: 20, y1: 80 }; }
+const overlap = (a0, a1, b0, b1) => Math.min(a1, b1) - Math.max(a0, b0);
+
+// keep the machines inside the room and off the pillar, snapping to faces closer than 2,5 cm
+function place(s, cx, cz, noSnap) {
+  const { hx, hz } = halfs(s);
+  cx = clamp(cx, hx, R.W - hx); cz = clamp(cz, hz, R.L - hz);
+  let x0 = cx - hx, z0 = cz - hz;
+  if (x0 < R.P && z0 < R.P) { const px = R.P - x0, pz = R.P - z0; if (px < pz) cx += px; else cz += pz; }
+  x0 = cx - hx; z0 = cz - hz; const x1 = cx + hx, z1 = cz + hz;
+  const snap = noSnap ? 0 : 2.5;
+  if (Math.abs(x1 - R.W) < snap) cx = R.W - hx;
+  else if (Math.abs(x0) < snap) cx = hx;
+  else if (z0 < R.P && Math.abs(x0 - R.P) < snap) cx = R.P + hx;
+  if (Math.abs(z0) < snap && x0 >= R.P - 0.01) cz = hz;
+  else if (Math.abs(z0 - R.P) < snap) cz = R.P + hz;
+  else if (Math.abs(z1 - R.L) < snap) cz = R.L - hz;
+  return { gapDoor: Math.round((R.W - (cx + hx)) * 10) / 10, z0: Math.round((cz - hz) * 10) / 10 };
+}
+
+// the window sash turns about a vertical hinge at the frame; returns how far it opens before touching the box (degrees)
+function sashMax(s, hingeSide, box, boxH) {
+  if (boxH <= R.win.y0 + 0.5) return 90;
+  const hx = -s.setback, hz = hingeSide === 'L' ? R.win.z1 - 5 : R.win.z0 + 5, len = 40, sgn = hingeSide === 'L' ? -1 : 1, pad = 3;
+  const b = { x0: box.x0 - pad, x1: box.x1 + pad, z0: box.z0 - pad, z1: box.z1 + pad };
+  const inBox = (x, z) => x > box.x0 - 1 && x < box.x1 + 1 && z > box.z0 - 1 && z < box.z1 + 1;
+  for (let a = 0; a <= 90; a += 0.5) {
+    const dx = Math.sin(rad(a)), dz = sgn * Math.cos(rad(a));
+    // the handle sits near the free edge and sticks out about 6 cm from the room side of the sash
+    const nx = Math.cos(rad(a)), nz = -sgn * Math.sin(rad(a));
+    if (segRect(hx, hz, hx + len * dx, hz + len * dz, b) || inBox(hx + 35 * dx + 6 * nx, hz + 35 * dz + 6 * nz)) return Math.max(0, a - 0.5);
+  }
+  return 90;
+}
+function segRect(x0, z0, x1, z1, b) {
+  // Liang-Barsky clip of the segment against the rectangle
+  let t0 = 0, t1 = 1; const dx = x1 - x0, dz = z1 - z0;
+  const p = [-dx, dx, -dz, dz], q = [x0 - b.x0, b.x1 - x0, z0 - b.z0, b.z1 - z0];
+  for (let i = 0; i < 4; i++) {
+    if (p[i] === 0) { if (q[i] < 0) return false; continue; }
+    const t = q[i] / p[i];
+    if (p[i] < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; }
+  }
+  return t0 <= t1;
+}
+function frontClear(s, r) {
+  if (s.face === 'S') return R.L - r.z1;
+  if (s.face === 'N') return r.z0;
+  if (s.face === 'W') return r.x0;
+  // facing the door wall: through the doorway the space goes on into the hall
+  if (r.z0 >= R.door.z0 && r.z1 <= R.door.z1) return R.W - r.x1 + R.tDoor + 100;
+  return R.W - r.x1;
+}
+function backGap(s, r) { return s.face === 'S' ? r.z0 : s.face === 'N' ? R.L - r.z1 : s.face === 'E' ? r.x0 : R.W - r.x1; }
+function machines(s) {
+  // each machine's own footprint and height band, in room coordinates, for the socket and doorway checks
+  const d = dims(s), out = [];
+  const list = s.layout === 'col' ? [['Mașina', s.wW, s.wD, s.wH, 0, 0], ['Uscătorul', s.dW, s.dD, s.dH, s.wH + s.kit, 0]]
+    : s.layout === 'side' ? [['Mașina', s.wW, s.wD, s.wH, 0, -d.fw / 2 + s.wW / 2], ['Uscătorul', s.dW, s.dD, s.dH, 0, d.fw / 2 - s.dW / 2]]
+    : [['Mașina', s.wW, s.wD, s.wH, 0, 0]];
+  const { cx, cz } = center(s);
+  for (const [name, w, dd, h, y0, lx] of list) {
+    const lz = -d.fd / 2 + dd / 2;   // backs in line
+    const [ox, oz] = rotLocal(s.face, lx, lz);
+    const hx = (s.face === 'S' || s.face === 'N') ? w / 2 : dd / 2, hz = (s.face === 'S' || s.face === 'N') ? dd / 2 : w / 2;
+    out.push({ name, w, d: dd, h, y0, x0: cx + ox - hx, x1: cx + ox + hx, z0: cz + oz - hz, z1: cz + oz + hz });
+  }
+  return out;
+}
+// local machine frame (front toward +z) to room offsets
+function rotLocal(face, lx, lz) {
+  if (face === 'S') return [lx, lz];
+  if (face === 'N') return [-lx, -lz];
+  if (face === 'E') return [lz, -lx];
+  return [-lz, lx];
+}
+function checks(s) {
+  const r = rect(s), d = dims(s), out = [];
+  const add = (id, st, title, detail) => out.push({ id, st, title, detail });
+  // 0. fits at all
+  if (r.x0 < -0.5 || r.x1 > R.W + 0.5 || r.z0 < -0.5 || r.z1 > R.L + 0.5) {
+    const along = (s.face === 'S' || s.face === 'N') ? 'lățimea debaralei' : 'lungimea debaralei';
+    add('fit', 'bad', 'Nu încap așa', `Au ${fmt(r.x1 - r.x0)} × ${fmt(r.z1 - r.z0)} cm, iar debaraua are 81 × 178,7. Întoarce-le sau pune-le în coloană.`);
+  }
+  // 1. pipes behind
+  const cb = connBox(s), hitConn = overlap(r.x0, r.x1, cb.x0, cb.x1) > 0 && overlap(r.z0, r.z1, cb.z0, cb.z1) > 0;
+  const bg = backGap(s, r);
+  if (hitConn) add('back', 'bad', 'Lovește racordurile', `Racordurile ies cca ${fmt(s.connOut)} cm din peretele 1, iar aparatele sunt la ${fmt(r.z0)} cm de el, chiar în dreptul lor.`);
+  else add('back', bg < 5 ? 'warn' : 'ok', `În spate rămân ${fmt(bg)} cm`, bg < 5 ? 'Pentru furtunuri și cablu e bine să rămână cel puțin 5 cm.' : 'Ajunge pentru furtunuri și cablu.');
+  // 2. window opens
+  const aMax = sashMax(s, s.hinge, r, d.h), aOther = sashMax(s, s.hinge === 'L' ? 'R' : 'L', r, d.h);
+  const other = s.hinge === 'L' ? 'pe dreapta' : 'pe stânga';
+  let tiltHit = false;
+  if (s.tilt) {
+    const topY = R.win.y0 + s.winH - 5, inward = 12 - s.setback;
+    tiltHit = d.h > topY - 15 && inward > 0 && r.x0 < inward && overlap(r.z0, r.z1, R.win.z0 + 5, R.win.z1 - 5) > 0;
+  }
+  if (tiltHit) add('win', 'bad', 'Rabatat, geamul atinge aparatele', 'Partea de sus a foii intră cca 12 cm în cameră, deasupra aparatelor.');
+  else if (aMax >= 90) add('win', 'ok', 'Geamul se deschide de tot', `Și cu balamaua ${other} s-ar deschide ${aOther >= 90 ? 'de tot' : 'doar până la ' + fmt(aOther, 0) + '°'}.`);
+  else add('win', aMax >= 45 ? 'warn' : 'bad', `Geamul se deschide doar până la ${fmt(aMax, 0)}°`, `Foaia atinge aparatele. Cu balamaua ${other}: ${aOther >= 90 ? 'de tot' : fmt(aOther, 0) + '°'}.`);
+  // 3. standing in front of the window
+  const ov = overlap(r.z0, r.z1, R.win.z0, R.win.z1), top = R.win.y0 + s.winH;
+  if (r.x0 < 30 && ov > 3 && d.h > R.win.y0) add('cover', 'warn', 'Stă în dreptul geamului', `La ${fmt(r.x0)} cm de perete, acoperă ${fmt(Math.min(ov, 50))} cm din lățimea golului și ${fmt(Math.min(d.h, top) - R.win.y0)} cm din înălțimea lui.`);
+  else add('cover', 'ok', 'Nu acoperă geamul', d.h <= R.win.y0 ? 'Aparatele sunt mai jos decât marginea de jos a geamului.' : ov > 0 && r.x0 < 30 ? `Ating doar marginea golului, pe ${fmt(ov)} cm.` : 'Aparatele nu stau în dreptul golului.');
+  // 4. socket: hidden behind the machines, and cable length
+  const sock = { x: R.W, y: s.socketH, z: R.socketZ };
+  const sideGap = R.W - r.x1, behind = sock.z > r.z0 && sock.z < r.z1 && sock.y < d.h && sideGap < 12;
+  const reach = machines(s).map(m => {
+    const px = clamp(sock.x, m.x0, m.x1), pz = clamp(sock.z, m.z0, m.z1), py = m.y0 + m.h - 10;
+    return { name: m.name, len: Math.abs(sock.x - px) + Math.abs(sock.z - pz) + Math.abs(sock.y - py) };
+  });
+  const worst = reach.reduce((a, b) => b.len > a.len ? b : a, reach[0]);
+  const cable = reach.map(x => `${x.name}: cca ${fmt(x.len, 0)} cm de cablu`).join(' · ');
+  if (behind && sideGap < 5) add('sock', 'bad', 'Priza rămâne în spatele aparatelor', `Între aparate și peretele cu ușa sunt ${fmt(sideGap)} cm, prea puțin pentru un ștecher. Lasă cel puțin 5 cm sau mută priza. ${cable}.`);
+  else if (behind) add('sock', 'warn', `Priza e în spatele aparatelor, la ${fmt(sideGap)} cm`, `Ștecherul încape, dar se ajunge greu la el. ${cable}.`);
+  else add('sock', worst.len <= s.cord - 20 ? 'ok' : worst.len <= s.cord ? 'warn' : 'bad', worst.len <= s.cord ? 'Cablul ajunge la priză' : 'Cablul nu ajunge la priză', `${cable}; cablul are ${s.cord}. Priza nu e măsurată.`);
+  // 5. machine door and room to load it
+  const fc = frontClear(s, r);
+  if (fc >= s.porthole + 2) add('front', fc >= 90 ? 'ok' : 'warn', `În față rămân ${fmt(fc)} cm`, fc >= 90 ? 'Ușa aparatului se deschide și ai loc să încarci.' : `Ușa de ${s.porthole} se deschide, dar pentru încărcat comod e bine să fie cca 90.`);
+  else add('front', 'bad', `În față rămân doar ${fmt(fc)} cm`, `Ușa aparatului are cca ${s.porthole} cm și nu se deschide de tot.`);
+  // 6. the way in from the hall
+  const inDoor = r.x1 > R.W - 45 ? overlap(r.z0, r.z1, R.door.z0, R.door.z1) : 0;
+  if (inDoor > 0) add('entry', inDoor > 30 ? 'bad' : 'warn', 'Stau în dreptul ușii', `Ocupă ${fmt(inDoor)} cm din golul de 78; la intrare rămân ${fmt(78 - inDoor)} cm.`);
+  else add('entry', 'ok', 'Intrarea rămâne liberă', 'Ușa se deschide spre hol, așa că nu atinge nimic în debara.');
+  // 7. ceiling
+  const free = R.H - d.h;
+  add('ceil', free >= 5 ? 'ok' : free >= 0 ? 'warn' : 'bad', free >= 0 ? `Sub tavan rămân ${fmt(free)} cm` : `Depășește tavanul cu ${fmt(-free)} cm`, `Înălțimea totală e ${fmt(d.h)} cm, sub tavanul de 202,8.`);
+  // 8. through the doorway
+  const thr = machines(s).map(m => ({ name: m.name, min: Math.min(m.w, m.d) }));
+  const tight = thr.reduce((a, b) => b.min > a.min ? b : a, thr[0]);
+  const gap = s.doorClear - tight.min;
+  add('thru', gap >= 3 ? 'ok' : gap >= 0 ? 'warn' : 'bad', gap >= 0 ? `Intră pe ușă cu ${fmt(gap)} cm joc` : 'Nu intră pe ușă',
+    `Partea cea mai îngustă: ${thr.map(x => `${x.name.toLowerCase()} ${fmt(x.min)}`).join(', ')}; golul liber e ${fmt(s.doorClear)}.`);
+  return out;
+}
+const ckSt = (ck, id) => (ck.find(c => c.id === id) || { st: 'ok' }).st;
+
+/* ---------- 3D ---------- */
+const view = $('#view'), canvas = $('#c'), labelsEl = $('#labels');
+let renderer = null;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); } catch (e) { renderer = null; }
+if (!renderer || !window.THREE) {
+  view.innerHTML = '<p style="padding:24px;max-width:46ch;color:var(--muted)">Vederea 3D nu poate porni în acest browser (WebGL e oprit). Planul de sus și verificările din dreapta funcționează în continuare.</p>';
+}
+const scene = renderer ? new THREE.Scene() : null;
+const camera = renderer ? new THREE.PerspectiveCamera(40, 1, 2, 5000) : null;
+const C = {};   // reusable 3D bits
+let controls = null, need = true;
+
+function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#000'; }
+
+function initScene() {
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  scene.background = new THREE.Color(css('--scene'));
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8b8f88, 0.72));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.62);
+  sun.position.set(260, 420, 300); sun.target.position.set(40, 0, 90);
+  sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -260, right: 260, top: 260, bottom: -260, near: 50, far: 1200 });
+  sun.shadow.bias = -0.0006; sun.shadow.radius = 4;
+  scene.add(sun, sun.target);
+  const lamp = new THREE.PointLight(0xfff1dc, 0.35, 420); lamp.position.set(40, 196, 90); scene.add(lamp);
+
+  const M = C.M = {
+    plaster: () => new THREE.MeshStandardMaterial({ color: 0xf0eee8, roughness: 0.95 }),
+    pillar: new THREE.MeshStandardMaterial({ color: 0xe4e0d6, roughness: 0.9 }),
+    cut: new THREE.MeshStandardMaterial({ color: 0x59615d, roughness: 1 }),
+    body: new THREE.MeshStandardMaterial({ color: 0xf6f7f7, roughness: 0.32, metalness: 0.04 }),
+    panel: new THREE.MeshStandardMaterial({ color: 0x2a3033, roughness: 0.5 }),
+    ring: new THREE.MeshStandardMaterial({ color: 0xc5cacd, roughness: 0.28, metalness: 0.65 }),
+    glassW: new THREE.MeshStandardMaterial({ color: 0x24343d, roughness: 0.15, metalness: 0.2, transparent: true, opacity: 0.85 }),
+    glassD: new THREE.MeshStandardMaterial({ color: 0x5f6d75, roughness: 0.2, metalness: 0.2, transparent: true, opacity: 0.8 }),
+    screen: new THREE.MeshBasicMaterial({ color: 0x5fd6c3 }),
+    kit: new THREE.MeshStandardMaterial({ color: 0xb9bec0, roughness: 0.5, metalness: 0.3 }),
+    frame: new THREE.MeshStandardMaterial({ color: 0xfafafa, roughness: 0.4 }),
+    winGlass: new THREE.MeshStandardMaterial({ color: 0xa9d3ea, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.35 }),
+    sky: new THREE.MeshBasicMaterial({ color: 0xdcecf6 }),
+    leaf: new THREE.MeshStandardMaterial({ color: 0xd9cfbf, roughness: 0.6 }),
+    pvc: new THREE.MeshStandardMaterial({ color: 0x9aa1a5, roughness: 0.6 }),
+    chrome: new THREE.MeshStandardMaterial({ color: 0xd8dde0, roughness: 0.2, metalness: 0.9 }),
+    knob: new THREE.MeshStandardMaterial({ color: 0xc9ced1, roughness: 0.25, metalness: 0.8 }),
+    blue: new THREE.MeshStandardMaterial({ color: 0x2f6fd6, roughness: 0.5 }),
+    socket: new THREE.MeshStandardMaterial({ color: 0xfbfbfb, roughness: 0.4 }),
+    dark: new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.6 }),
+    shelf: new THREE.MeshStandardMaterial({ color: 0xe8e2d6, roughness: 0.8 }),
+    edge: new THREE.LineBasicMaterial({ color: 0x2f3532, transparent: true, opacity: 0.32 }),
+  };
+
+  // floor tiles
+  const tile = (base, grout, size) => {
+    const cv = document.createElement('canvas'); cv.width = cv.height = 128; const g = cv.getContext('2d');
+    g.fillStyle = base; g.fillRect(0, 0, 128, 128); g.fillStyle = grout; g.fillRect(0, 0, 128, 2); g.fillRect(0, 0, 2, 128);
+    const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; return { t, size };
+  };
+  const floorTex = tile('#d8d4cb', '#b9b4aa', 30), hallTex = tile('#cfc9bd', '#b3ac9f', 45);
+  const floor = (x0, x1, z0, z1, tex) => {
+    const t = tex.t.clone(); t.needsUpdate = true; t.repeat.set((x1 - x0) / tex.size, (z1 - z0) / tex.size);
+    t.offset.set(x0 / tex.size, z0 / tex.size);
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0), new THREE.MeshStandardMaterial({ map: t, roughness: 0.75 }));
+    m.rotation.x = -Math.PI / 2; m.position.set((x0 + x1) / 2, 0, (z0 + z1) / 2); m.receiveShadow = true; scene.add(m); return m;
+  };
+  floor(0, R.W, 0, R.L, floorTex);
+  floor(R.W, R.W + R.tDoor, R.door.z0, R.door.z1, floorTex);
+  floor(0.6, R.W, R.L, R.L + R.nicheD, floorTex);
+  floor(R.W + R.tDoor, R.W + R.tDoor + 130, 30, 215, hallTex);
+
+  // walls, each its own group so the one between the camera and the room can fade
+  C.walls = [];
+  const wallGroup = (nx, nz, px, pz) => { const g = new THREE.Group(); g.userData = { n: new THREE.Vector3(nx, 0, nz), p: new THREE.Vector3(px, 0, pz), mat: M.plaster() }; scene.add(g); C.walls.push(g); return g; };
+  C.gW1 = wallGroup(0, -1, 40, 0);
+  C.gWin = wallGroup(-1, 0, 0, 90);
+  C.gDoor = wallGroup(1, 0, R.W, 90);
+  C.gW3 = wallGroup(0, 1, 40, R.L);
+  buildWalls();
+
+  // pillar: the boxed sewer stack
+  const pil = box(0, R.P, 0, R.H, 0, R.P, M.pillar); pil.castShadow = true; scene.add(pil); edges(pil);
+
+  // socket on the door wall
+  C.socket = new THREE.Group(); scene.add(C.socket);
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(1.2, 8.5, 8.5), M.socket); C.socket.add(plate);
+  for (const dz of [-1.6, 1.6]) { const h = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 1.4, 12), M.dark); h.rotation.z = Math.PI / 2; h.position.set(-0.3, 0, dz); C.socket.add(h); }
+
+  // pipes by the pillar
+  C.conn = new THREE.Group(); scene.add(C.conn);
+
+  // machines, window sash, door leaf and the sweep fans are rebuilt on change
+  C.mach = new THREE.Group(); scene.add(C.mach);
+  C.sash = new THREE.Group(); scene.add(C.sash);
+  C.leaf = new THREE.Group(); scene.add(C.leaf);
+  C.fans = new THREE.Group(); scene.add(C.fans);
+
+}
+
+function box(x0, x1, y0, y1, z0, z1, mat) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(Math.max(0.01, x1 - x0), Math.max(0.01, y1 - y0), Math.max(0.01, z1 - z0)), mat);
+  m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2); m.receiveShadow = true; return m;
+}
+function edges(mesh, mat) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 20), mat || C.M.edge); mesh.add(e); return e; }
+function clearGroup(g) {
+  for (const c of [...g.children]) { g.remove(c); c.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
+}
+function wallBox(g, x0, x1, y0, y1, z0, z1) {
+  const mt = g.userData.mat, cut = g.userData.cut || (g.userData.cut = C.M.cut.clone());
+  const m = box(x0, x1, y0, y1, z0, z1, y1 >= R.H - 0.01 ? [mt, mt, cut, mt, mt, mt] : mt); m.castShadow = true; g.add(m); edges(m, g.userData.edgeMat || (g.userData.edgeMat = C.M.edge.clone())); return m;
+}
+function buildWalls() {
+  const { W, L, H, tWin, tW1, tDoor, nicheD, nicheBack } = R, wy0 = R.win.y0, wy1 = Math.min(R.H - 2, R.win.y0 + S.winH);
+  for (const g of C.walls) { clearGroup(g); g.userData.out = undefined; }
+  // wall 1
+  wallBox(C.gW1, -tWin, W + tDoor, 0, H, -tW1, 0);
+  // window wall with the opening; behind it, a pale light so the window reads as one
+  const gw = C.gWin;
+  wallBox(gw, -tWin, 0, 0, wy0, 0, L + nicheD + nicheBack);
+  wallBox(gw, -tWin, 0, wy1, H, 0, L + nicheD + nicheBack);
+  wallBox(gw, -tWin, 0, wy0, wy1, 0, R.win.z0);
+  wallBox(gw, -tWin, 0, wy0, wy1, R.win.z1, L + nicheD + nicheBack);
+  // the 5 cm band between the opening and the frame, at the frame's depth
+  const fx0 = -S.setback - 6, fx1 = -S.setback;
+  wallBox(gw, fx0, fx1, wy0, wy0 + 5, R.win.z0, R.win.z1);
+  wallBox(gw, fx0, fx1, wy1 - 5, wy1, R.win.z0, R.win.z1);
+  wallBox(gw, fx0, fx1, wy0 + 5, wy1 - 5, R.win.z0, R.win.z0 + 5);
+  wallBox(gw, fx0, fx1, wy0 + 5, wy1 - 5, R.win.z1 - 5, R.win.z1);
+  const sky = new THREE.Mesh(new THREE.PlaneGeometry(80, 90), C.M.sky); sky.position.set(-tWin - 6, (wy0 + wy1) / 2, (R.win.z0 + R.win.z1) / 2); sky.rotation.y = Math.PI / 2; gw.add(sky);
+  // door wall with the doorway
+  const gd = C.gDoor, dh = S.doorH;
+  wallBox(gd, W, W + tDoor, 0, H, 0, R.door.z0);
+  wallBox(gd, W, W + tDoor, 0, H, R.door.z1, L + nicheD + nicheBack);
+  wallBox(gd, W, W + tDoor, dh, H, R.door.z0, R.door.z1);
+  // wall 3: the niche with shelves (its size is a guess)
+  const g3 = C.gW3, nh = Math.min(S.nicheH, H - 2);
+  wallBox(g3, -tWin, W + tDoor, nh, H, L, L + nicheD);
+  wallBox(g3, -tWin, 0.6, 0, nh, L, L + nicheD);
+  wallBox(g3, -tWin, W + tDoor, 0, H, L + nicheD, L + nicheD + nicheBack);
+  const thr = box(0.6, W, 0, 4, L, L + nicheD, C.M.shelf); g3.add(thr); edges(thr);
+  for (const y of [48, 92, 136]) { if (y > nh - 10) continue; const sh = box(0.6, W, y, y + 2, L + 1, L + nicheD, C.M.shelf); sh.castShadow = true; g3.add(sh); edges(sh); }
+}
+
+function machineMesh(w, h, d, kind) {
+  const M = C.M, g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h - 2, d), M.body); body.position.y = 2 + (h - 2) / 2; body.castShadow = body.receiveShadow = true; g.add(body); edges(body);
+  for (const fx of [-1, 1]) for (const fz of [-1, 1]) { const f = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 2, 10), M.dark); f.position.set(fx * (w / 2 - 4), 1, fz * (d / 2 - 4)); g.add(f); }
+  const ph = Math.min(12, h * 0.14), py = h - ph / 2 - 1.5, fz = d / 2;
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(w - 3, ph, 0.8), M.panel); panel.position.set(0, py, fz + 0.4); g.add(panel);
+  const knob = new THREE.Mesh(new THREE.CylinderGeometry(2.8, 2.8, 1.8, 28), M.ring); knob.rotation.x = Math.PI / 2; knob.position.set(w * 0.27, py, fz + 1.5); g.add(knob);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(Math.min(14, w * 0.25), ph * 0.42), M.screen); scr.position.set(-w * 0.06, py, fz + 0.85); g.add(scr);
+  const dr = Math.min(S.porthole / 2, (w - 6) / 2, (h - ph - 8) / 2), cy = 2 + (h - ph - 2) * 0.48;
+  // the round door turns on a hinge at its left edge, as you face the machine
+  const door = new THREE.Group(); door.position.set(-dr, cy, fz + 1.8); door.userData = { mdoor: kind }; g.add(door);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(dr - 2.6, 2.6, 18, 56), M.ring); ring.position.set(dr, 0, 0); door.add(ring);
+  const glass = new THREE.Mesh(new THREE.CircleGeometry(dr - 3.2, 48), kind === 'w' ? M.glassW : M.glassD); glass.position.set(dr, 0, -0.4); door.add(glass);
+  const back = new THREE.Mesh(new THREE.CircleGeometry(dr - 3.2, 48), M.glassD); back.rotation.y = Math.PI; back.position.set(dr, 0, -0.6); door.add(back);
+  const grip = new THREE.Mesh(new THREE.BoxGeometry(2.2, 9, 1.6), M.panel); grip.position.set(2 * dr - 1.5, 0, 0.8); door.add(grip);
+  const hole = new THREE.Mesh(new THREE.CircleGeometry(dr - 3.4, 40), M.dark); hole.position.set(0, cy, fz + 0.05); g.add(hole);
+  if (kind === 'd') { const flap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.32, 5, 0.6), M.ring); flap.position.set(w * 0.25, 7, fz + 0.3); g.add(flap); }
+  g.userData = { doorY: cy, doorR: dr, door };
+  return g;
+}
+
+function buildMachines() {
+  clearGroup(C.mach); clearGroup(C.fans);
+  const d = dims(S), { cx, cz } = center(S);
+  const g = new THREE.Group(); C.mach.add(g);
+  g.position.set(cx, 0, cz);
+  g.rotation.y = { S: 0, N: Math.PI, E: Math.PI / 2, W: -Math.PI / 2 }[S.face];
+  const parts = [];
+  const put = (kind, w, dd, h, x, y) => { const m = machineMesh(w, h, dd, kind); m.position.set(x, y, -d.fd / 2 + dd / 2); g.add(m); parts.push({ m, kind, w, dd, h, x, y }); };
+  if (S.layout === 'col') {
+    put('w', S.wW, S.wD, S.wH, 0, 0);
+    if (S.kit > 0) { const k = new THREE.Mesh(new THREE.BoxGeometry(Math.max(S.wW, S.dW), S.kit, Math.max(S.wD, S.dD) - 2), C.M.kit); k.position.set(0, S.wH + S.kit / 2, 0); k.castShadow = true; g.add(k); }
+    put('d', S.dW, S.dD, S.dH, 0, S.wH + S.kit);
+  } else if (S.layout === 'side') {
+    put('w', S.wW, S.wD, S.wH, -d.fw / 2 + S.wW / 2, 0);
+    put('d', S.dW, S.dD, S.dH, d.fw / 2 - S.dW / 2, 0);
+  } else put('w', S.wW, S.wD, S.wH, 0, 0);
+  C.parts = parts;
+
+  // machine doors: hinged on the left as you face the machine, swing toward you
+  const st = ckSt(checks(S), 'front');
+  for (const p of parts) {
+    const r = Math.min(S.porthole, 60), hx = p.x - p.m.userData.doorR, hz = -d.fd / 2 + p.dd + 2;
+    const fan = sector(r, 0, 90, st);
+    fan.position.set(hx, p.y + p.m.userData.doorY, hz); g.add(fan);
+  }
+  C.machGroup = g;
+  applyMachDoors();
+}
+C.mdoorA = { w: 0, d: 0 };
+function applyMachDoors() { for (const p of C.parts || []) { const d = p.m.userData.door; if (d) d.rotation.y = -rad(C.mdoorA[p.kind] || 0); } need = true; }
+
+// a flat fan in the xz plane, angle 0 toward +x, 90 toward +z
+function sector(r, a0, a1, st) {
+  const n = 28, pos = [0, 0, 0];
+  for (let i = 0; i <= n; i++) { const a = rad(a0 + (a1 - a0) * i / n); pos.push(r * Math.cos(a), 0, r * Math.sin(a)); }
+  const idx = []; for (let i = 1; i <= n; i++) idx.push(0, i, i + 1);
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setIndex(idx);
+  const col = st === 'bad' ? 0xd2453a : st === 'warn' ? 0xd99a1c : 0x1f9d77;
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.2, side: THREE.DoubleSide, depthWrite: false }));
+  m.userData.fan = true;
+  const arcPts = []; for (let i = 0; i <= n; i++) { const a = rad(a0 + (a1 - a0) * i / n); arcPts.push(new THREE.Vector3(r * Math.cos(a), 0, r * Math.sin(a))); }
+  const arc = new THREE.Line(new THREE.BufferGeometry().setFromPoints(arcPts), new THREE.LineDashedMaterial({ color: col, dashSize: 3, gapSize: 2.5, transparent: true, opacity: 0.9 }));
+  arc.computeLineDistances(); m.add(arc);
+  return m;
+}
+
+function buildSash() {
+  clearGroup(C.sash);
+  const hgL = S.hinge === 'L', hz = hgL ? R.win.z1 - 5 : R.win.z0 + 5, y0 = R.win.y0 + 5, sh = Math.max(10, S.winH - 10), x = -S.setback;
+  const base = new THREE.Group(); base.position.set(x, y0, hz); C.sash.add(base);
+  const pivot = new THREE.Group(); base.add(pivot);
+  const sgn = hgL ? -1 : 1, M = C.M;
+  const add = (w, h, dz, dy, mat) => { const m = new THREE.Mesh(new THREE.BoxGeometry(5.5, h, w), mat); m.position.set(2.75, dy, sgn * dz); m.castShadow = true; pivot.add(m); return m; };
+  add(40, 5, 20, 2.5, M.frame); add(40, 5, 20, sh - 2.5, M.frame); add(5, sh, 2.5, sh / 2, M.frame); add(5, sh, 37.5, sh / 2, M.frame);
+  const gl = new THREE.Mesh(new THREE.BoxGeometry(1, sh - 10, 30), M.winGlass); gl.position.set(2.75, sh / 2, sgn * 20); pivot.add(gl);
+  const handle = new THREE.Mesh(new THREE.BoxGeometry(5, 1.6, 1.6), M.chrome); handle.position.set(7.5, sh / 2, sgn * 35.5); pivot.add(handle);
+  C.sashBase = base; C.sashPivot = pivot; C.sashH = sh;
+  applySash();
+  // the sweep at sill height
+  const st = ckSt(checks(S), 'win');
+  const fan = sector(40, hgL ? -90 : 0, hgL ? 0 : 90, st); fan.position.set(x, R.win.y0 + 0.4, hz); C.sash.add(fan);
+}
+
+// open turns about the hinge; tilted turns about the bottom edge, the top coming about 12 cm into the room
+function applySash() {
+  if (!C.sashPivot) return;
+  const a = rad(S.winA);
+  if (S.tilt) { C.sashPivot.rotation.y = 0; C.sashBase.rotation.z = -Math.asin(Math.min(1, 12 / C.sashH)) * (S.winA / 90); }
+  else { C.sashBase.rotation.z = 0; C.sashPivot.rotation.y = S.hinge === 'L' ? -a : a; }
+  need = true;
+}
+function applyLeaf() { if (C.leafPivot) { C.leafPivot.rotation.y = -rad(S.doorA); need = true; } }
+
+function buildLeaf() {
+  clearGroup(C.leaf); if (C.gDoor) C.gDoor.userData.out = undefined;
+  const hx = R.W + R.tDoor, hz = R.door.z1, h = S.doorH - 4, w = S.doorLeaf;
+  const pivot = new THREE.Group(); pivot.position.set(hx, 0, hz); C.leaf.add(pivot);
+  const leaf = new THREE.Mesh(new THREE.BoxGeometry(4, h, w), C.M.leaf); leaf.position.set(2, h / 2 + 1, -w / 2); leaf.castShadow = true; pivot.add(leaf); edges(leaf);
+  const knob = new THREE.Mesh(new THREE.BoxGeometry(6, 1.6, 12), C.M.knob); knob.position.set(6, 105, -w + 6); pivot.add(knob);
+  C.leafPivot = pivot; applyLeaf();
+  const fan = sector(w, -90, 0, 'ok'); fan.position.set(hx, 0.4, hz); C.leaf.add(fan);
+}
+
+function buildConn() {
+  clearGroup(C.conn);
+  const cb = connBox(S), M = C.M, out = Math.max(1, S.connOut);
+  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.5, out, 20), M.pvc); pipe.rotation.x = Math.PI / 2; pipe.position.set(cb.x0 + 5, 42, out / 2); pipe.castShadow = true; C.conn.add(pipe);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.2, 2, 20), M.pvc); cap.rotation.x = Math.PI / 2; cap.position.set(cb.x0 + 5, 42, out); C.conn.add(cap);
+  const tap = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, Math.max(1, out - 2), 14), M.chrome); tap.rotation.x = Math.PI / 2; tap.position.set(cb.x0 + 12, 68, Math.max(1, out - 2) / 2); C.conn.add(tap);
+  const lever = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 6), M.blue); lever.position.set(cb.x0 + 12, 71, Math.max(1, out - 3)); lever.rotation.x = 0.5; C.conn.add(lever);
+  const hit = ckSt(checks(S), 'back') === 'bad';
+  const zone = box(cb.x0, cb.x1, cb.y0, cb.y1, 0, out, new THREE.MeshBasicMaterial({ color: hit ? 0xd2453a : 0x2f6fd6, transparent: true, opacity: hit ? 0.22 : 0.1, depthWrite: false }));
+  C.conn.add(zone);
+}
+
+function placeSocket() { C.socket.position.set(R.W - 0.6, S.socketH, R.socketZ); }
+
+/* labels over the 3D view */
+const LBL = [
+  { id: 'pil', t: 'Stâlpul', s: 'coloana de canalizare îmbrăcată, 14 × 14', p: () => [R.P / 2, R.H - 6, R.P / 2] },
+  { id: 'win', t: 'Geamul', s: () => `golul 50 · balamaua ${S.hinge === 'L' ? 'pe stânga' : 'pe dreapta'}`, p: () => [-2, R.win.y0 + S.winH + 4, (R.win.z0 + R.win.z1) / 2] },
+  { id: 'mw', t: 'Mașina', s: () => `${fmt(S.wW)} × ${fmt(S.wD)} × ${fmt(S.wH)}`, p: () => machFront(0) },
+  { id: 'md', t: 'Uscătorul', s: () => `${fmt(S.dW)} × ${fmt(S.dD)} × ${fmt(S.dH)}`, p: () => machFront(1), hide: () => S.layout === 'one' },
+  { id: 'soc', t: 'Priza', s: 'estimată, nemăsurată', est: true, p: () => [R.W - 2, S.socketH + 7, R.socketZ] },
+  { id: 'con', t: 'Racorduri', s: 'apă și scurgere, poziție presupusă', est: true, p: () => [connBox(S).x0 + 8, 86, 4] },
+  { id: 'door', t: 'Ușa', s: 'se deschide spre hol', p: () => [R.W + R.tDoor + 2, S.doorH + 4, (R.door.z0 + R.door.z1) / 2] },
+];
+function machFront(i) {
+  const m = machines(S)[i] || machines(S)[0], mx = (m.x0 + m.x1) / 2, mz = (m.z0 + m.z1) / 2, y = m.y0 + m.h * 0.97;
+  return S.face === 'S' ? [mx, y, m.z1 + 1] : S.face === 'N' ? [mx, y, m.z0 - 1] : S.face === 'W' ? [m.x0 - 1, y, mz] : [m.x1 + 1, y, mz];
+}
+function buildLabels() {
+  labelsEl.innerHTML = LBL.map(l => `<div class="lbl${l.est ? ' est' : ''}" data-l="${l.id}">${l.t}<small></small></div>`).join('');
+  for (const l of LBL) l.el = labelsEl.querySelector(`[data-l="${l.id}"]`);
+}
+const tmpV = renderer ? new THREE.Vector3() : null;
+function updateLabels() {
+  labelsEl.hidden = !labelsOn;
+  if (!labelsOn) return;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  const taken = [];
+  for (const l of LBL) {
+    const [x, y, z] = l.p(); tmpV.set(x, y, z).project(camera);
+    let vis = !(l.hide && l.hide()) && tmpV.z < 1 && tmpV.x > -1.05 && tmpV.x < 1.05 && tmpV.y > -1.05 && tmpV.y < 1.05;
+    if (vis) {
+      l.el.querySelector('small').textContent = typeof l.s === 'function' ? l.s() : l.s;
+      const sx = (tmpV.x + 1) / 2 * w, sy = (1 - tmpV.y) / 2 * h, bw = l.el.offsetWidth || 120, bh = l.el.offsetHeight || 32;
+      const box = { x0: sx - bw / 2 - 4, x1: sx + bw / 2 + 4, y0: sy - bh - 4, y1: sy + 4 };
+      if (box.y0 < 52 && sx < 380) vis = false;   // under the camera buttons
+      if (vis && taken.some(t => t.x0 < box.x1 && box.x0 < t.x1 && t.y0 < box.y1 && box.y0 < t.y1)) vis = false;
+      if (vis) { taken.push(box); l.el.style.left = sx + 'px'; l.el.style.top = sy + 'px'; }
+    }
+    l.el.hidden = !vis;
+  }
+}
+
+/* camera views */
+const CAMS = {
+  iso: { p: [238, 330, 372], t: [38, 64, 96], fov: 40 },
+  top: { p: [52, 1150, 102], t: [52, 0, 100], fov: 15 },
+  door: { p: [R.W + R.tDoor + 205, 190, 150], t: [12, 88, 82], fov: 44 },
+  win: { p: [58, 152, 176], t: [-6, 132, 96], fov: 58 },
+};
+let camAnim = null;
+function goCam(k, instant) {
+  const c = CAMS[k]; if (!c || !controls) return;
+  document.querySelectorAll('[data-cam]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cam === k)));
+  const t1 = new THREE.Vector3(...c.t), p1 = new THREE.Vector3(...c.p);
+  const sc = camera.aspect < 1.25 && k !== 'win' ? Math.pow(1.25 / camera.aspect, 1) : 1;
+  if (sc > 1) p1.sub(t1).multiplyScalar(sc).add(t1);
+  if (instant || matchMedia('(prefers-reduced-motion: reduce)').matches) { camera.position.copy(p1); controls.target.copy(t1); camera.fov = c.fov; camera.updateProjectionMatrix(); controls.update(); need = true; return; }
+  camAnim = { p0: camera.position.clone(), t0: controls.target.clone(), p1, t1, f0: camera.fov, f1: c.fov, s: performance.now() };
+}
+
+function resize() {
+  if (!renderer) return;
+  const w = view.clientWidth, h = view.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / Math.max(1, h); camera.updateProjectionMatrix(); need = true;
+}
+
+// a wall between the camera and the room turns see-through, with everything built into it (shelves, the door leaf)
+function fadeWalls() {
+  for (const g of C.walls) {
+    const { n, p } = g.userData;
+    const out = n.dot(tmpV.copy(camera.position).sub(p)) > 0;
+    if (g.userData.out === out) continue;
+    g.userData.out = out;
+    const mats = new Set(); g.traverse(o => { if (o.material) [].concat(o.material).forEach(m => mats.add(m)); });
+    if (g === C.gDoor) { mats.add(C.M.leaf); mats.add(C.M.knob); }
+    for (const m of mats) {
+      if (m.isLineBasicMaterial || m.isLineDashedMaterial) { m.opacity = out ? 0.06 : 0.32; continue; }
+      if (m.userData.base === undefined) m.userData.base = { t: m.transparent, o: m.opacity };
+      m.transparent = out || m.userData.base.t; m.opacity = out ? Math.min(0.1, m.userData.base.o) : m.userData.base.o;
+      m.depthWrite = !out && !m.userData.base.t; m.needsUpdate = true;
+    }
+  }
+}
+
+const tweens = new Map();
+function tween(key, from, to, dur, set, done) {
+  if (!renderer || matchMedia('(prefers-reduced-motion: reduce)').matches) { set(to); if (done) done(); return; }
+  tweens.set(key, { from, to, dur, set, done, t0: performance.now() }); need = true;
+}
+function loop(now) {
+  requestAnimationFrame(loop);
+  if (!renderer) return;
+  if (tweens.size) {
+    for (const [k, t] of [...tweens]) {
+      const q = Math.min(1, (now - t.t0) / t.dur), e = q < 0.5 ? 2 * q * q : 1 - Math.pow(-2 * q + 2, 2) / 2;
+      t.set(t.from + (t.to - t.from) * e);
+      if (q >= 1) { tweens.delete(k); if (t.done) t.done(); }
+    }
+    need = true;
+  }
+  if (camAnim) {
+    const k = Math.min(1, (now - camAnim.s) / 520), e = 1 - Math.pow(1 - k, 3);
+    camera.position.lerpVectors(camAnim.p0, camAnim.p1, e); controls.target.lerpVectors(camAnim.t0, camAnim.t1, e);
+    camera.fov = camAnim.f0 + (camAnim.f1 - camAnim.f0) * e; camera.updateProjectionMatrix(); controls.update();
+    if (k >= 1) camAnim = null; need = true;
+  }
+  if (!need) return;
+  need = false;
+  fadeWalls();
+  renderer.render(scene, camera);
+  updateLabels();
+}
+
+/* dragging in 3D */
+const ray = renderer ? new THREE.Raycaster() : null, ndc = renderer ? new THREE.Vector2() : null;
+const floorPlane = renderer ? new THREE.Plane(new THREE.Vector3(0, 1, 0), 0) : null;
+let tap = null;
+function pointerHit(ev) {
+  const r = canvas.getBoundingClientRect(); ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+}
+function floorAt(ev) { pointerHit(ev); const p = new THREE.Vector3(); return ray.ray.intersectPlane(floorPlane, p) ? p : null; }
+function classify(obj) {
+  for (let o = obj; o; o = o.parent) {
+    if (o.userData && o.userData.mdoor) return { type: 'mdoor', kind: o.userData.mdoor };
+    if (o === C.sash) return { type: 'win' };
+    if (o === C.leaf) return { type: 'door' };
+    if (o === C.machGroup) return { type: 'mach' };
+  }
+  return null;
+}
+function setupDrag() {
+  canvas.addEventListener('pointerdown', ev => {
+    if (!C.machGroup) return;
+    pointerHit(ev);
+    // a see-through door leaf in front does not catch the tap when something solid is behind it
+    const hits = ray.intersectObjects([C.machGroup, C.sash, C.leaf], true).filter(h => h.object.isMesh && !h.object.userData.fan);
+    const faded = h => [].concat(h.object.material).every(m => m.transparent && m.opacity <= 0.12);
+    const hit = hits.find(h => !faded(h)) || hits[0];
+    if (!hit) return;
+    const c = classify(hit.object); if (!c) return;
+    tap = { ...c, x: ev.clientX, y: ev.clientY, id: ev.pointerId, moved: false };
+    if (c.type === 'mach' || c.type === 'mdoor') {
+      const f = floorAt(ev); if (!f) { tap = null; return; }
+      const { cx, cz } = center(S); tap.dx = cx - f.x; tap.dz = cz - f.z;
+      controls.enabled = false; canvas.setPointerCapture(ev.pointerId); ev.preventDefault();
+    }
+  });
+  canvas.addEventListener('pointermove', ev => {
+    if (!tap || ev.pointerId !== tap.id) return;
+    if (!tap.moved && Math.hypot(ev.clientX - tap.x, ev.clientY - tap.y) > 6) tap.moved = true;
+    if (tap.moved && (tap.type === 'mach' || tap.type === 'mdoor')) {
+      canvas.classList.add('drag');
+      const f = floorAt(ev); if (!f) return;
+      Object.assign(S, place(S, f.x + tap.dx, f.z + tap.dz)); update('pos');
+    }
+  });
+  const end = ev => {
+    if (!tap || ev.pointerId !== tap.id) return;
+    const t = tap; tap = null;
+    if (t.type === 'mach' || t.type === 'mdoor') { controls.enabled = true; canvas.classList.remove('drag'); try { canvas.releasePointerCapture(ev.pointerId); } catch (e) {} if (t.moved) save(); }
+    if (t.moved || ev.type !== 'pointerup') return;
+    if (t.type === 'win') toggleWin(); else if (t.type === 'door') toggleDoor(); else if (t.type === 'mdoor') toggleMachDoor(t.kind);
+  };
+  canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
+}
+
+/* ---------- opening and closing ---------- */
+function lightRefresh() { if (lastCk) drawPlan(lastCk); syncMotion(); }
+function syncMotion() {
+  $('#winA').value = Math.round(S.winA); $('#winAo').textContent = Math.round(S.winA) + '°';
+  $('#doorA').value = Math.round(S.doorA); $('#doorAo').textContent = Math.round(S.doorA) + '°';
+  $('#aWin').textContent = S.winA > 0.5 ? 'Închide geamul' : 'Deschide geamul';
+  $('#aDoor').textContent = S.doorA > 0.5 ? 'Închide ușa' : 'Deschide ușa';
+  const anyOpen = Object.values(C.mdoorA).some(v => v > 0.5);
+  $('#aMach').textContent = anyOpen ? 'Închide aparatele' : 'Deschide aparatele';
+  $('#aWin').setAttribute('aria-pressed', String(S.winA > 0.5)); $('#aDoor').setAttribute('aria-pressed', String(S.doorA > 0.5)); $('#aMach').setAttribute('aria-pressed', String(anyOpen));
+}
+function toggleWin() {
+  const to = S.winA > 0.5 ? 0 : (S.winOpenA || 90);
+  tween('win', S.winA, to, 650, v => { S.winA = v; applySash(); lightRefresh(); }, () => { S.winA = Math.round(S.winA); save(); lightRefresh(); });
+}
+function toggleDoor() {
+  const to = S.doorA > 0.5 ? 0 : (S.doorOpenA || 90);
+  tween('door', S.doorA, to, 750, v => { S.doorA = v; applyLeaf(); lightRefresh(); }, () => { S.doorA = Math.round(S.doorA); save(); lightRefresh(); });
+}
+function toggleMachDoor(kind, force) {
+  const cur = C.mdoorA[kind] || 0, to = force !== undefined ? force : (cur > 0.5 ? 0 : 95);
+  tween('md' + kind, cur, to, 600, v => { C.mdoorA[kind] = v; applyMachDoors(); syncMotion(); }, syncMotion);
+}
+function toggleAllMach() {
+  const anyOpen = Object.values(C.mdoorA).some(v => v > 0.5), kinds = S.layout === 'one' ? ['w'] : ['w', 'd'];
+  for (const k of kinds) toggleMachDoor(k, anyOpen ? 0 : 95);
+}
+
+/* ---------- plan, drawn as SVG at scale ---------- */
+const plan = $('#plan');
+const VB = { x: -34, z: -28, w: 34 + R.W + R.tDoor + 96, h: 28 + R.L + R.nicheD + R.nicheBack + 16 };
+plan.setAttribute('viewBox', `${VB.x} ${VB.z} ${VB.w} ${VB.h}`);
+function arcPath(cx, cz, r, a0, a1) {
+  const p = a => [cx + r * Math.cos(rad(a)), cz + r * Math.sin(rad(a))];
+  const [x0, z0] = p(a0), [x1, z1] = p(a1);
+  return `M${cx},${cz} L${x0.toFixed(2)},${z0.toFixed(2)} A${r},${r} 0 0 ${a1 > a0 ? 1 : 0} ${x1.toFixed(2)},${z1.toFixed(2)} Z`;
+}
+function dimLine(x0, z0, x1, z1, label, side) {
+  const len = Math.hypot(x1 - x0, z1 - z0); if (len < 0.5) return '';
+  const mx = (x0 + x1) / 2, mz = (z0 + z1) / 2, horiz = Math.abs(x1 - x0) > Math.abs(z1 - z0);
+  const tx = horiz ? mx : mx + (side || 1) * 3, tz = horiz ? mz - 2.2 * (side || 1) : mz;
+  const anchor = horiz ? 'middle' : (side || 1) > 0 ? 'start' : 'end';
+  return `<line x1="${x0}" y1="${z0}" x2="${x1}" y2="${z1}" class="dl"/>` +
+    `<text x="${tx}" y="${tz + (horiz ? ((side || 1) > 0 ? 0 : 5) : 1.6)}" text-anchor="${anchor}" class="dt">${label}</text>`;
+}
+function drawPlan(ck) {
+  const { W, L, P, tWin, tW1, tDoor, nicheD, nicheBack } = R, r = rect(S), d = dims(S), cb = connBox(S);
+  const col = st => st === 'bad' ? 'var(--bad)' : st === 'warn' ? 'var(--warn)' : 'var(--ok)';
+  const wy = `<style>
+    .wl{fill:var(--wall)} .fl{fill:var(--floor)} .dl{stroke:var(--tape);stroke-width:.55;stroke-dasharray:1.6 1.1}
+    .dt{fill:var(--tape);font:600 4.6px var(--f-mono)} .lb{fill:var(--muted);font:500 3.9px var(--f-body)} .lbk{fill:var(--ink);font:600 4.2px var(--f-body)}
+    .mach rect{fill:color-mix(in srgb,var(--accent) 22%,transparent);stroke:var(--accent);stroke-width:.8}
+    .fan{stroke-width:.5;stroke-dasharray:1.4 1}
+  </style>`;
+  let h = wy;
+  // hall and floors
+  h += `<rect x="${W + tDoor}" y="30" width="${VB.x + VB.w - W - tDoor}" height="185" fill="var(--chip)"/>`;
+  h += `<text x="${W + tDoor + 48}" y="40" class="lb" text-anchor="middle">HOL</text>`;
+  h += `<rect x="0" y="0" width="${W}" height="${L}" class="fl"/><rect x="${W}" y="${R.door.z0}" width="${tDoor}" height="${R.door.z1 - R.door.z0}" class="fl"/>`;
+  // walls
+  h += `<rect x="${-tWin}" y="${-tW1}" width="${tWin + W + tDoor}" height="${tW1}" class="wl"/>`;
+  h += `<rect x="${-tWin}" y="0" width="${tWin}" height="${R.win.z0}" class="wl"/><rect x="${-tWin}" y="${R.win.z1}" width="${tWin}" height="${L + nicheD + nicheBack - R.win.z1}" class="wl"/>`;
+  h += `<rect x="${W}" y="0" width="${tDoor}" height="${R.door.z0}" class="wl"/><rect x="${W}" y="${R.door.z1}" width="${tDoor}" height="${L + nicheD + nicheBack - R.door.z1}" class="wl"/>`;
+  h += `<rect x="${-tWin}" y="${L + nicheD}" width="${tWin + W + tDoor}" height="${nicheBack}" class="wl"/>`;
+  // niche
+  h += `<rect x="0.6" y="${L}" width="${W - 0.6}" height="${nicheD}" fill="var(--chip)" stroke="var(--muted)" stroke-width=".4" stroke-dasharray="1.5 1"/>`;
+  h += `<text x="${W / 2}" y="${L + nicheD / 2 + 1.5}" class="lb" text-anchor="middle">nișă cu rafturi</text>`;
+  // window: opening, frame, sash sweep
+  h += `<rect x="${-tWin}" y="${R.win.z0}" width="${tWin}" height="${R.win.z1 - R.win.z0}" fill="color-mix(in srgb,var(--glass) 35%,transparent)"/>`;
+  h += `<line x1="${-S.setback}" y1="${R.win.z0 + 5}" x2="${-S.setback}" y2="${R.win.z1 - 5}" stroke="var(--glass)" stroke-width="1.6"/>`;
+  const hz = S.hinge === 'L' ? R.win.z1 - 5 : R.win.z0 + 5;
+  h += `<path d="${arcPath(-S.setback, hz, 40, S.hinge === 'L' ? -90 : 90, 0)}" class="fan" fill="color-mix(in srgb,${col(ckSt(ck, 'win'))} 16%,transparent)" stroke="${col(ckSt(ck, 'win'))}"/>`;
+  const sa = rad(S.winA), ex = -S.setback + 40 * Math.sin(sa), ez = hz + (S.hinge === 'L' ? -1 : 1) * 40 * Math.cos(sa);
+  h += `<line x1="${-S.setback}" y1="${hz}" x2="${ex}" y2="${ez}" stroke="var(--glass)" stroke-width="1.4" stroke-linecap="round"/>`;
+  h += `<rect class="tw" x="${-tWin}" y="${R.win.z0}" width="${tWin + 42}" height="${R.win.z1 - R.win.z0}" fill="transparent" style="cursor:pointer"><title>Deschide sau închide geamul</title></rect>`;
+  h += `<text x="2" y="${R.win.z1 + 5}" class="lb">geam</text>`;
+  // door: leaf into the hall
+  const lx = W + tDoor, lz = R.door.z1, da = rad(S.doorA);
+  h += `<path d="${arcPath(lx, lz, S.doorLeaf, -90, 0)}" class="fan" fill="color-mix(in srgb,var(--muted) 10%,transparent)" stroke="var(--muted)"/>`;
+  h += `<line x1="${lx}" y1="${lz}" x2="${lx + S.doorLeaf * Math.sin(da)}" y2="${lz - S.doorLeaf * Math.cos(da)}" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/>`;
+  h += `<text x="${lx + 4}" y="${R.door.z0 - 4}" class="lb">ușa spre hol</text>`;
+  h += `<rect class="td" x="${W}" y="${R.door.z0}" width="${tDoor + S.doorLeaf}" height="${R.door.z1 - R.door.z0}" fill="transparent" style="cursor:pointer"><title>Deschide sau închide ușa</title></rect>`;
+  // pillar, pipes, socket
+  h += `<rect x="0" y="0" width="${P}" height="${P}" class="wl"/><text x="${P / 2}" y="${P + 5}" class="lb" text-anchor="middle">stâlp</text>`;
+  const connHit = ckSt(ck, 'back') === 'bad';
+  h += `<rect x="${cb.x0}" y="0" width="${cb.x1 - cb.x0}" height="${Math.max(1, cb.z1)}" fill="${connHit ? 'var(--bad)' : '#2f6fd6'}" opacity=".45"/>`;
+  // machines
+  h += `<g class="mach" id="pm">`;
+  for (const m of machines(S)) h += `<rect x="${m.x0}" y="${m.z0}" width="${m.x1 - m.x0}" height="${m.z1 - m.z0}" rx=".8"/>`;
+  // front edge and machine door fans
+  const fr = { S: [r.x0, r.z1, r.x1, r.z1], N: [r.x0, r.z0, r.x1, r.z0], W: [r.x0, r.z0, r.x0, r.z1], E: [r.x1, r.z0, r.x1, r.z1] }[S.face];
+  h += `<line x1="${fr[0]}" y1="${fr[1]}" x2="${fr[2]}" y2="${fr[3]}" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>`;
+  for (const m of machines(S)) {
+    if (m.y0 > 0 && S.layout === 'col') continue;
+    const loc = { S: [m.x0 + 5, m.z1, 0], N: [m.x1 - 5, m.z0, 180], W: [m.x0, m.z0 + 5, 90], E: [m.x1, m.z1 - 5, 270] }[S.face];
+    const a0 = loc[2], pr = Math.min(S.porthole, 60);
+    h += `<path d="${arcPath(loc[0], loc[1], pr, a0, a0 + 90)}" class="fan" fill="color-mix(in srgb,${col(ckSt(ck, 'front'))} 14%,transparent)" stroke="${col(ckSt(ck, 'front'))}"/>`;
+  }
+  const lab = S.layout === 'col' ? 'coloană' : S.layout === 'side' ? 'mașină + uscător' : 'mașina';
+  h += `<text x="${(r.x0 + r.x1) / 2}" y="${(r.z0 + r.z1) / 2 + 1.5}" class="lbk" text-anchor="middle">${lab}</text>`;
+  h += `<text x="${(r.x0 + r.x1) / 2}" y="${(r.z0 + r.z1) / 2 + 6.5}" class="lb" text-anchor="middle">${fmt(d.fw)} × ${fmt(d.fd)} × ${fmt(d.h)}</text>`;
+  h += `</g>`;
+  h += `<circle cx="${W - 1.4}" cy="${R.socketZ}" r="2.2" fill="var(--sheet)" stroke="var(--ink)" stroke-width=".7"/><text x="${W + tDoor + 2}" y="${R.socketZ + 1.4}" class="lb">priză</text>`;
+  // distances to the walls
+  const midx = (r.x0 + r.x1) / 2, midz = (r.z0 + r.z1) / 2;
+  const leftWall = (r.z0 < P && r.x0 >= P - 0.01) ? P : 0;
+  h += dimLine(midx, 0, midx, r.z0, fmt(r.z0), 1);
+  h += dimLine(r.x1, midz, W, midz, fmt(W - r.x1), -1);
+  h += dimLine(leftWall, midz, r.x0, midz, fmt(r.x0 - leftWall), -1);
+  h += dimLine(midx, r.z1, midx, L, fmt(L - r.z1), 1);
+  // wall names
+  h += `<text x="${W / 2}" y="${-tW1 - 3}" class="lb" text-anchor="middle">peretele 1</text>`;
+  plan.innerHTML = h;
+}
+function setupPlanDrag() {
+  let pd = null;
+  const toPlan = ev => { const pt = plan.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY; const m = plan.getScreenCTM(); return m ? pt.matrixTransform(m.inverse()) : null; };
+  plan.addEventListener('click', ev => {
+    if (ev.target.closest('.tw')) toggleWin(); else if (ev.target.closest('.td')) toggleDoor();
+  });
+  plan.addEventListener('pointerdown', ev => {
+    if (!ev.target.closest('#pm')) return;
+    const p = toPlan(ev); if (!p) return; const { cx, cz } = center(S);
+    pd = { dx: cx - p.x, dz: cz - p.y, id: ev.pointerId }; plan.setPointerCapture(ev.pointerId); ev.preventDefault();
+  });
+  plan.addEventListener('pointermove', ev => {
+    if (!pd || ev.pointerId !== pd.id) return; const p = toPlan(ev); if (!p) return;
+    Object.assign(S, place(S, p.x + pd.dx, p.y + pd.dz)); update('pos');
+  });
+  const end = ev => { if (!pd) return; pd = null; try { plan.releasePointerCapture(ev.pointerId); } catch (e) {} save(); };
+  plan.addEventListener('pointerup', end); plan.addEventListener('pointercancel', end);
+}
+
+/* ---------- panel ---------- */
+const NUMS = ['wW', 'wD', 'wH', 'dW', 'dD', 'dH', 'kit', 'porthole', 'cord', 'z0', 'gapDoor', 'winH', 'setback', 'doorLeaf', 'doorClear', 'socketH', 'connGap', 'connOut'];
+function syncInputs(skip) {
+  for (const k of NUMS) { const el = document.getElementById(k); if (el && el !== skip) el.value = S[k]; }
+  syncMotion();
+  $('#tilt').checked = !!S.tilt; $('#socketHo').textContent = fmt(S.socketH);
+  document.querySelectorAll('[data-layout]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.layout === S.layout)));
+  document.querySelectorAll('[data-face]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.face === S.face)));
+  document.querySelectorAll('[data-hinge]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.hinge === S.hinge)));
+  $('#rowDryer').hidden = S.layout === 'one'; $('#rowKit').querySelector('.field').hidden = S.layout !== 'col';
+}
+function renderChecks(ck) {
+  const word = { ok: 'da', warn: 'atenție', bad: 'nu' };
+  $('#checks').innerHTML = ck.map(c => `<li><span class="pill ${c.st}">${word[c.st]}</span><b>${c.title}</b><span class="d">${c.detail}</span></li>`).join('');
+}
+function summary(ck) {
+  const d = dims(S), r = rect(S);
+  const lay = S.layout === 'col' ? 'coloană (uscătorul pe mașină)' : S.layout === 'side' ? 'una lângă alta' : 'doar mașina';
+  const face = { S: 'nișă', W: 'geam', E: 'ușă', N: 'peretele 1' }[S.face];
+  const lines = [
+    'Debara 3D, ' + new Date().toLocaleDateString('ro-RO'),
+    `Aparate: ${lay}`,
+    `Mașina: ${fmt(S.wW)} × ${fmt(S.wD)} × ${fmt(S.wH)}` + (S.layout !== 'one' ? `; uscătorul: ${fmt(S.dW)} × ${fmt(S.dD)} × ${fmt(S.dH)}` : '') + (S.layout === 'col' ? `; kit ${fmt(S.kit)}` : ''),
+    `Total: ${fmt(d.fw)} lățime × ${fmt(d.fd)} adâncime × ${fmt(d.h)} înălțime; fața spre ${face}`,
+    `Poziție: ${fmt(r.z0)} de la peretele 1, ${fmt(R.W - r.x1)} de la peretele cu ușa, ${fmt(r.x0)} de la peretele cu geamul, ${fmt(R.L - r.z1)} până la nișă`,
+    `Geam: balamaua ${S.hinge === 'L' ? 'pe stânga' : 'pe dreapta'}, gol ${fmt(S.winH)} înălțime (presupus), rama retrasă ${fmt(S.setback)}`,
+    'Verificări:',
+    ...ck.map(c => `- [${{ ok: 'da', warn: 'atenție', bad: 'nu' }[c.st]}] ${c.title}. ${c.detail}`),
+  ];
+  return lines.join('\n');
+}
+let lastCk = null;
+function update(what, skip) {
+  const ck = checks(S); lastCk = ck;
+  if (renderer) {
+    if (what === 'all' || what === 'walls') buildWalls();
+    buildMachines(); buildSash(); buildLeaf(); buildConn(); placeSocket();
+    need = true;
+  }
+  drawPlan(ck); renderChecks(ck); syncInputs(skip);
+  $('#summary').value = summary(ck);
+  if (what !== 'pos') save();
+}
+
+function toast(t) { const el = document.createElement('div'); el.className = 'toast'; el.textContent = t; document.body.appendChild(el); setTimeout(() => el.remove(), 1800); }
+
+function setupPanel() {
+  for (const k of NUMS) {
+    const el = document.getElementById(k); if (!el) continue;
+    el.addEventListener('input', () => {
+      const v = parseFloat(String(el.value).replace(',', '.')); if (!isFinite(v)) return;
+      S[k] = v;
+      if (['z0', 'gapDoor', 'wW', 'wD', 'dW', 'dD', 'kit'].includes(k)) { const c = center(S); Object.assign(S, place(S, c.cx, c.cz, true)); }
+      update(['winH', 'setback'].includes(k) ? 'walls' : 'x', el);
+    });
+    el.addEventListener('change', () => syncInputs());
+  }
+  $('#winA').addEventListener('input', e => { tweens.delete('win'); S.winA = +e.target.value; if (S.winA > 0) S.winOpenA = S.winA; applySash(); lightRefresh(); save(); });
+  $('#doorA').addEventListener('input', e => { tweens.delete('door'); S.doorA = +e.target.value; if (S.doorA > 0) S.doorOpenA = S.doorA; applyLeaf(); lightRefresh(); save(); });
+  $('#tilt').addEventListener('change', e => { S.tilt = e.target.checked; update('x'); });
+  document.querySelectorAll('[data-layout]').forEach(b => b.addEventListener('click', () => { S.layout = b.dataset.layout; const c = center(S); Object.assign(S, place(S, c.cx, c.cz)); update('x'); }));
+  document.querySelectorAll('[data-face]').forEach(b => b.addEventListener('click', () => { const c = center(S); S.face = b.dataset.face; Object.assign(S, place(S, c.cx, c.cz)); update('x'); }));
+  document.querySelectorAll('[data-hinge]').forEach(b => b.addEventListener('click', () => { S.hinge = b.dataset.hinge; update('x'); }));
+  const P = {
+    w60: { wW: 60, wD: 60, wH: 85 }, wSlim: { wW: 60, wD: 45, wH: 85 }, dHp: { dW: 60, dD: 64, dH: 85 },
+    combo: { layout: 'one', wW: 60, wD: 62, wH: 85 },
+  };
+  document.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => { Object.assign(S, P[b.dataset.p]); const c = center(S); Object.assign(S, place(S, c.cx, c.cz)); update('x'); }));
+  $('#bPillar').addEventListener('click', () => { const { hx, hz } = halfs(S); const z = R.P; S.z0 = z; const c = center(S); Object.assign(S, place(S, c.cx, z + hz)); update('x'); });
+  $('#bWall').addEventListener('click', () => { S.z0 = 0; const c = center(S); Object.assign(S, place(S, c.cx, halfs(S).hz)); update('x'); });
+  $('#bReset').addEventListener('click', () => { S = { ...DEF }; update('all'); toast('Am pus la loc exemplul inițial.'); });
+  $('#bCopy').addEventListener('click', () => {
+    const t = $('#summary').value;
+    const fallback = () => { const ta = $('#summary'); ta.focus(); ta.select(); toast('Textul e selectat; copiază-l din meniul telefonului.'); };
+    try { navigator.clipboard.writeText(t).then(() => toast('Am copiat rezumatul.'), fallback); } catch (e) { fallback(); }
+  });
+  document.querySelectorAll('[data-cam]').forEach(b => b.addEventListener('click', () => goCam(b.dataset.cam)));
+  $('#aWin').addEventListener('click', toggleWin); $('#aDoor').addEventListener('click', toggleDoor); $('#aMach').addEventListener('click', toggleAllMach);
+  const tl = $('#tLabels'); tl.setAttribute('aria-pressed', String(labelsOn));
+  tl.addEventListener('click', () => { labelsOn = !labelsOn; tl.setAttribute('aria-pressed', String(labelsOn)); try { localStorage.setItem(LS + '-labels', labelsOn ? '1' : '0'); } catch (e) {} need = true; });
+}
+
+/* ---------- start ---------- */
+{ const c = center(S); Object.assign(S, place(S, c.cx, c.cz)); }
+setupPanel(); setupPlanDrag();
+if (renderer) {
+  initScene(); buildLabels(); setupDrag();
+  controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true; controls.dampingFactor = 0.12; controls.maxPolarAngle = Math.PI * 0.495; controls.minDistance = 60; controls.maxDistance = 1600;
+  controls.addEventListener('change', () => { need = true; });
+  goCam('iso', true);
+  new ResizeObserver(resize).observe(view); resize();
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const retheme = () => { scene.background = new THREE.Color(css('--scene')); need = true; };
+  mq.addEventListener ? mq.addEventListener('change', retheme) : mq.addListener(retheme);
+  new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  // damping keeps moving for a moment after the finger lifts
+  setInterval(() => { if (controls && controls.enableDamping) { if (controls.update()) need = true; } }, 1000 / 60);
+  requestAnimationFrame(loop);
+}
+update('all');
+window.__debara = { S, checks, place, rect, dims, camera, get controls() { return controls; } };
+})();
+</script>
+
+</body>
+</html>
