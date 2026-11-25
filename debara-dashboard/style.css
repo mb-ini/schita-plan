@@ -162,3 +162,10 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .dd-table td a { color: var(--color-fg); text-decoration: underline; text-underline-offset: 2px; }
 .dd-filters { display: flex; flex-wrap: wrap; gap: 6px; }
 #dd-ins-contrib .dd-chart { min-height: 120px; }
+.dd-list-body { font-size: var(--cds-font-size-body); }
+.dd-toolbar > *, .dd-filters { min-width: 0; max-width: 100%; }
+.dd-filters .dash-select { min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+.dd-card { grid-template-columns: minmax(0, 1fr); }
+.dd-more { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: var(--cds-gap-sm); }
+.dd-more .dd-cap { margin: 0; }
+.dd-btn { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
