@@ -94,8 +94,19 @@
 
   <section class="dd-sec" id="dd-research">
     <h2>Ce a schimbat research-ul din 26.11</h2>
+    <p class="dd-cap">Au fost două runde: runda 2, noaptea, pe cinci unghiuri, și runda 3, ziua, care a căutat doar golurile și a încercat să dărâme concluziile din runda 2. În runda 3 am citit și eu pagini direct, în Chrome.</p>
     <div class="dd-card dd-insight" id="dd-research-verdict">
-      <div class="dd-cand-top"><h3>Pe scurt</h3><span class="dd-tag">interpretare</span></div>
+      <div class="dd-cand-top"><h3>Pe scurt, după runda 3</h3><span class="dd-tag">interpretarea mea</span></div>
+      <ul class="dd-list dd-list-body">
+        <li>B (Bosch WGG244Z5BY + WQN246D1BY + kitul WTZ27510) rămâne recomandarea, din patru motive: garanția gratuită de 5 ani, kitul confirmat oficial, prețul cu circa 260 de lei mai mic decât A după cash-back și reparabilitatea (piese de schimb 15 ani, față de 10).</li>
+        <li>Două argumente pe care le-am folosit înainte au căzut. Bosch nu e mai fiabil decât Samsung în datele pe mărci (Fnac Darty: 114 față de 118; Euroconsumers: 87 față de 88), iar condensatorul care se curăță singur nu scutește de întreținere.</li>
+        <li>Garanția de 5 ani se dă doar dacă uscătorul e cumpărat pe persoană fizică, până pe 31.12.2026, de la un partener agreat, și înregistrat în MyBosch în 30 de zile; cash-back-ul cere înregistrare în 15 zile. Pe firmă nu se aplică niciuna.</li>
+        <li>C (Bosch cu WQB246CNBY) iese din discuție: e cu circa 750 de lei mai scump, are două semnalări ale erorii E30-03 în primele luni, iar geamănul lui Siemens a lăsat des rufele umede în testul F.A.Z.</li>
+        <li>A (Samsung) are două probleme practice: kitul (SKK-DD nu se mai găsește, SKK-UDW costă 631 de lei și nu e confirmat pentru exact perechea noastră) și defectul de la 2–3 ani raportat de circa 22 de proprietari pe generațiile anterioare de uscătoare Samsung.</li>
+        <li>Lipsește încă orice notă de laborator pe uscătorul Bosch actual. Notele din contul Altroconsumo pot schimba asta.</li>
+      </ul>
+    </div>
+    <details class="dd-card dd-old"><summary>Ce scria aici după runda 2 (depășit)</summary>
       <ul class="dd-list dd-list-body">
         <li>B rămâne recomandarea, dar cu o diferență mai mică și din alte motive decât cele date întâi: garanția de 5 ani pe ambele aparate și fiabilitatea uscătoarelor Bosch în datele pe mărci.</li>
         <li>Argumentul cu condensatorul care se curăță singur e mai slab decât a fost prezentat inițial. Manualul WQN246D1BY cere încărcături regulate de peste 3 kg pentru autocurățare, iar un tehnician polonez spune că după 5–6 ani schimbătorul de căldură trebuie curățat complet la service.</li>
@@ -103,23 +114,33 @@
         <li>Pentru Samsung: kitul SKK-DD nu e confirmat pentru acest uscător, pentru că un moderator Samsung indică SKK-UDW sau SKK-DF. În schimb, mașina are rulmenți care se pot înlocui și a luat „foarte bine” la testul de durabilitate Stiftung Warentest pe două modele din aceeași familie.</li>
         <li>Nu există nicio statistică de defectare pe modelele exacte; toate cifrele sunt pe mărci, iar la uscătoarele Bosch nu e publică nicio notă de laborator pentru grija față de haine.</li>
       </ul>
-    </div>
+    </details>
     <div class="dd-two">
       <div class="dd-card"><h3>Câte constatări are fiecare unghi</h3><div class="dd-wlist dash-skeleton" data-draw="resBars" data-grup="unghi" data-source="researchStats"></div></div>
-      <div class="dd-card"><h3>Cât de verificate sunt</h3><div class="dd-wlist dash-skeleton" data-draw="resBars" data-grup="verificare" data-source="researchStats"></div><p class="dd-cap">Un al șaselea agent, care nu văzuse munca celorlalți, a redeschis un eșantion de surse, mai ales pe cele care schimbă decizia, și le-a comparat cu ce scria în raport.</p></div>
+      <div class="dd-card"><h3>Cât de verificate sunt</h3><div class="dd-wlist dash-skeleton" data-draw="resBars" data-grup="verificare" data-source="researchStats"></div><p class="dd-cap">În fiecare rundă, un agent separat, care nu văzuse munca celorlalți, a redeschis un eșantion de surse, mai ales pe cele care schimbă decizia, și le-a comparat cu ce scria în raport. Paginile citite de mine în Chrome sunt numărate separat.</p></div>
     </div>
     <h3 class="dd-h3">Rezumatul fiecărui unghi <span class="dd-tag">sinteză</span></h3>
     <div class="dd-grid dash-skeleton" data-draw="rezCards" data-source="rezumate"></div>
     <div class="dd-card" id="dd-research-table">
       <div class="dd-toolbar">
         <h3>Toate constatările din 26.11, cu link</h3>
+        <p class="dd-cap">În runda 2, semnalul arată dacă o constatare e favorabilă mărcii discutate; în runda 3, arată dacă e pentru sau contra variantelor A (Samsung) și B (Bosch cu WQN246D1BY).</p>
         <div class="dd-filters">
           <select class="dash-select" data-draw="resUnghiSel" aria-label="Unghiul" data-source="research"></select>
           <select class="dash-select" data-draw="resMarcaSel" aria-label="Marca" data-source="research"></select>
+          <select class="dash-select" id="dd-res-runda" aria-label="Runda">
+            <option value="">Ambele runde</option>
+            <option value="3">Runda 3 (ziua)</option>
+            <option value="2">Runda 2 (noaptea)</option>
+          </select>
           <select class="dash-select" id="dd-res-semnal" aria-label="Semnalul">
             <option value="">Orice semnal</option>
-            <option value="favorabil">Favorabil</option>
-            <option value="nefavorabil">Nefavorabil</option>
+            <option value="pentru B">Pentru B</option>
+            <option value="contra B">Contra B</option>
+            <option value="pentru A">Pentru A</option>
+            <option value="contra A">Contra A</option>
+            <option value="favorabil">Favorabil mărcii</option>
+            <option value="nefavorabil">Nefavorabil mărcii</option>
             <option value="neutru">Neutru</option>
           </select>
         </div>

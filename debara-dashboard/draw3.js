@@ -55,8 +55,10 @@ dash.draw('resBody', (tb) => {
   const m = window.ddResM || '';
   const sEl = document.querySelector('#dd-res-semnal');
   const s = sEl ? sEl.value : '';
+  const rEl = document.querySelector('#dd-res-runda');
+  const rd = rEl ? rEl.value : '';
   const rank = (r) => (r.verificare === 'confirmat' ? 0 : /în parte/.test(r.verificare) ? 1 : 2) * 10 + ({'modelul exact': 0, 'model înrudit': 1, 'model mai vechi': 2}[r.apropiere] ?? 3);
-  const all = d[0].filter((r) => (!u || r.unghi === u) && (!m || r.marca === m) && (!s || r.semnal === s)).sort((a, b) => rank(a) - rank(b));
+  const all = d[0].filter((r) => (!u || r.unghi === u) && (!m || r.marca === m) && (!s || r.semnal === s) && (!rd || r.runda === rd)).sort((a, b) => rank(a) - rank(b));
   const list = window.ddResAll ? all : all.slice(0, 25);
   const labels = [...tb.closest('table').querySelectorAll('thead th')].map((th) => th.textContent.trim());
   const cols = ['unghi', 'marca', 'model', 'apropiere', 'constatare', 'semnal', 'tipSursa', 'verificare', 'site'];
@@ -88,12 +90,14 @@ dash.draw('resCount', (el) => {
   const m = window.ddResM || '';
   const sEl = document.querySelector('#dd-res-semnal');
   const s = sEl ? sEl.value : '';
-  const total = d[0].filter((r) => (!u || r.unghi === u) && (!m || r.marca === m) && (!s || r.semnal === s)).length;
+  const rEl = document.querySelector('#dd-res-runda');
+  const rd = rEl ? rEl.value : '';
+  const total = d[0].filter((r) => (!u || r.unghi === u) && (!m || r.marca === m) && (!s || r.semnal === s) && (!rd || r.runda === rd)).length;
   const shown = window.ddResAll ? total : Math.min(25, total);
   el.textContent = shown === total ? `Se văd toate cele ${total} constatări.` : `Se văd primele ${shown} din ${total} constatări, întâi cele verificate și cele despre modelele noastre.`;
 });
 
-document.querySelectorAll('#dd-res-semnal').forEach((s) => s.addEventListener('change', () => { dash.draw('resBody'); dash.draw('resCount'); }));
+document.querySelectorAll('#dd-res-semnal, #dd-res-runda').forEach((s) => s.addEventListener('change', () => { dash.draw('resBody'); dash.draw('resCount'); }));
 document.querySelectorAll('#dd-res-all, #dd-res-less').forEach((b) => b.addEventListener('click', () => {
   window.ddResAll = b.id === 'dd-res-all';
   document.querySelectorAll('#dd-res-all').forEach((x) => { x.hidden = window.ddResAll; });
