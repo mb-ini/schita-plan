@@ -65,8 +65,8 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .finding blockquote { margin: 6px 0 0; padding: 4px 10px; border-left: 2px solid var(--axis); color: var(--muted); font-style: italic; font-size: 13.5px; }
 .bar { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 14px; }
 .bar .lbl { flex: 0 0 46%; }
-.bar .trk { flex: 1; height: 9px; background: var(--grid); border-radius: 99px; overflow: hidden; }
-.bar .fil { height: 100%; background: var(--accent); border-radius: 99px; }
+.bar .trk { display: block; flex: 1; height: 9px; background: var(--grid); border-radius: 99px; overflow: hidden; }
+.bar .fil { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
 .bar .val { flex: 0 0 34px; text-align: right; font-variant-numeric: tabular-nums; }
 .scorebig { font: 600 40px/1 var(--serif); }
 .chart { width: 100%; height: auto; display: block; }
