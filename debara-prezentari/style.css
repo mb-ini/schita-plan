@@ -83,3 +83,13 @@ details > summary { cursor: pointer; margin: 6px 0; padding: 8px 10px; backgroun
 .srow { border-top: 1px solid var(--line); padding: 8px 0 6px; margin-top: 8px; font-size: 14px; }
 .srow .sp { font-variant-numeric: tabular-nums; margin: 0 4px; }
 .srow .chip { white-space: normal; }
+ul.pc.plain li { padding-left: 4px; }
+.pbars { margin: 10px 0; }
+.pbar { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.pbar:last-child { border-bottom: 0; }
+.pbar .pl { font-size: 14px; margin-bottom: 5px; }
+.pbar .pt { display: flex; align-items: center; gap: 8px; }
+.pbar .pf { display: block; height: 12px; border-radius: 99px; background: var(--axis); min-width: 4px; }
+.pbar.rec .pf, .pbar.low .pf { background: var(--ok); }
+.pbar .pv { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 14px; }
+.pbar.rec .pl { font-weight: 600; }
