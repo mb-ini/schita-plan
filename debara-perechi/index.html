@@ -391,8 +391,8 @@ const R = {
 };
 /* the six pairs at the top of the ranking from 23.11.2026; sizes from the makers' sheets, depths with the door closed */
 const TOP = [
-  { id: 1, rank: 'Perechea 1, Miele', title: 'Miele WSD383 WCS + TWC640WP', w: 'Miele WSD383 WCS', d: 'Miele TWC640WP', kitName: 'Miele WTV 502', kitNote: 'grosimea de 3 cm e presupusă; Miele îl dă pentru toate mașinile Miele, în afară de W 1000 și WTZH',
-    prot: 3, protNote: 'cu ușa 65,5 cm după manual (fișa spune 64,3); am presupus o ușă de 3 cm', s: { wW: 59.6, wD: 64.3, wH: 85, dW: 59.6, dD: 65.5, dH: 85, kit: 3, porthole: 50, cord: 200 } },
+  { id: 1, rank: 'Perechea 1, Miele', title: 'Miele WSD383 WCS + TWC640WP', w: 'Miele WSD383 WCS', d: 'Miele TWC640WP', kitName: 'Miele WTV 502', kitNote: '2,5 cm, din fișa Miele; Miele îl dă pentru toate mașinile Miele, în afară de W 1000 și WTZH',
+    prot: 3, protNote: 'cu ușa 65,5 cm după manual (fișa spune 64,3); am presupus o ușă de 3 cm', s: { wW: 59.6, wD: 64.3, wH: 85, dW: 59.6, dD: 65.5, dH: 85, kit: 2.5, porthole: 50, cord: 200 } },
   { id: 2, rank: 'Perechea 2, AEG', title: 'AEG LFR71844SBE + TR838NBCE', w: 'AEG LFR71844SBE', d: 'AEG TR838NBCE', kitName: 'AEG A1WYHSK2', kitNote: '6,5 cm, din fișa kitului; acceptă aparate adânci de 52–67 cm, deci se potrivește, dar AEG nu publică o listă pe cod de produs',
     prot: 2.1, protNote: 'corp 63,6 cm, cu ușa 65,7 cm', s: { wW: 59.6, wD: 60.2, wH: 84.7, dW: 59.6, dD: 65.7, dH: 85, kit: 6.5, porthole: 50, cord: 145 } },
   { id: 3, rank: 'Perechea 3, Bosch', title: 'Bosch WAN2829NBY + WQN246D1BY', w: 'Bosch WAN2829NBY (M Seria 4)', d: 'Bosch WQN246D1BY (U Seria 6)', kitName: 'Bosch WTZ27510', kitNote: '3,5 cm, din fișă; confirmat de Bosch pentru WQN246D1BY',
@@ -569,7 +569,7 @@ function checks(s) {
   const worst = reach.reduce((a, b) => b.len > a.len ? b : a, reach[0]);
   const cable = reach.map(x => `${x.name}: cca ${fmt(x.len, 0)} cm de cablu`).join('; ');
   if (behind && sideGap < 5) add('sock', 'bad', 'Priza rămâne în spatele aparatelor', `Între aparate și peretele cu ușa sunt ${fmt(sideGap)} cm, prea puțin pentru un ștecher. Lasă cel puțin 5 cm sau mută priza. ${cable}.`);
-  else if (behind) add('sock', 'warn', `Priza e în spatele aparatelor, la ${fmt(sideGap)} cm`, `Ștecherul încape, dar se ajunge greu la el. ${cable}.`);
+  else if (behind) add('sock', 'warn', `Priza e în spatele aparatelor, la ${fmt(sideGap)} cm`, `Ștecherul încape, dar după montaj nu mai ajungi la el, iar manualele AEG și Bosch cer ca ștecherul să rămână accesibil; la fel robinetul, care rămâne în spatele mașinii. Priza și robinetul se mută înainte de montaj. ${cable}.`);
   else add('sock', worst.len <= s.cord - 20 ? 'ok' : worst.len <= s.cord ? 'warn' : 'bad', worst.len <= s.cord ? 'Cablul ajunge la priză' : 'Cablul nu ajunge la priză', `${cable}; cablul are ${s.cord}. Priza nu e măsurată.`);
   // 5. machine door and room to load it
   const fc = frontClear(s, r);
