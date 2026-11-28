@@ -93,3 +93,28 @@ ul.pc.plain li { padding-left: 4px; }
 .pbar.rec .pf, .pbar.low .pf { background: var(--ok); }
 .pbar .pv { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 14px; }
 .pbar.rec .pl { font-weight: 600; }
+/* explicații la funcții: buton „?” lângă termen, cu popover */
+.nw { white-space: nowrap; }
+button.tt { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin: 0 1px 0 4px; padding: 0;
+  border: 1.5px solid var(--accent); border-radius: 50%; background: transparent; color: var(--accent); font: 700 12px/1 var(--sans);
+  vertical-align: 2px; cursor: help; }
+button.tt:hover, button.tt[aria-expanded="true"] { background: var(--accent); color: var(--panel); }
+button.tt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tip { max-width: min(340px, calc(100vw - 24px)); padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--panel); color: var(--fg); font: 400 14px/1.5 var(--sans); text-align: left; white-space: normal;
+  box-shadow: 0 8px 28px rgba(0,0,0,.18); }
+.tip b:first-child { display: block; margin-bottom: 4px; }
+@supports (position-area: block-end) {
+  .tip { inset: auto; margin: 6px 0; position-area: block-end;
+    position-try-fallbacks: flip-block; }
+}
+@supports not (position-area: block-end) {
+  .tip { position: fixed; inset: auto 8px 8px 8px; width: auto; max-width: none; margin: 0; }
+}
+@supports not selector(:popover-open) {
+  [popover]:not(.\:popover-open) { display: none; }
+}
+@media (max-width: 600px) {
+  .tip { position: fixed; position-area: none; inset: auto 8px 8px 8px; width: auto; max-width: none; margin: 0;
+    max-height: 60vh; overflow: auto; }
+}
