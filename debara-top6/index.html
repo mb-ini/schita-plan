@@ -273,7 +273,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
           <button class="btn" type="button" id="bPillar">Spatele în linie cu stâlpul</button>
           <button class="btn" type="button" id="bWall">Lipită de peretele 1</button>
         </div>
-        <p class="note">Distanțele sunt până la marginea aparatelor, oricum ar fi întoarse. Lângă stâlp ies racordurile de apă și scurgere, așa că spatele nu poate sta lipit de peretele 1 în dreptul lor.</p>
+        <p class="note">Distanțele sunt până la marginea aparatelor, oricum ar fi întoarse. Lângă stâlp ies racordurile de apă și scurgere, așa că spatele nu poate sta lipit de peretele 1 în dreptul lor. Pe peretele 1 și pe peretele cu ușa merg și țevile albe spre caloriferul din hol, la 34–37 cm, care ies cca 3,2 cm.</p>
       </section>
 
       <section data-only="debara">
@@ -322,6 +322,10 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
           <dt>Golul ușii, fără toc</dt><dd>78</dd>
           <dt>Priza, pe peretele cu ușa, de la peretele 1</dt><dd class="e">39</dd>
           <dt>Priza, înălțime</dt><dd class="e"><span id="socketHo">134</span></dd>
+          <dt>Robinetul mașinii: de la stâlp · înălțime</dt><dd class="e">5 · 62</dd>
+          <dt>Ștuțul gri (probabil scurgerea), înălțime</dt><dd class="e">35</dd>
+          <dt>Țevile spre calorifer: înălțime · cât ies</dt><dd class="e">34 și 37 · 3,2</dd>
+          <dt>Țeava verticală de lângă ușă urcă până la</dt><dd class="e">76</dd>
           <dt>Nișa din peretele 3, adâncime</dt><dd class="e">19,3</dd>
         </dl>
         <div class="grid" style="margin-top:12px">
@@ -329,7 +333,7 @@ textarea.copy { width: 100%; min-height: 140px; margin-top: 8px; font: 12px/1.4 
           <div class="field"><label for="connGap">racorduri, de la stâlp</label><input id="connGap" type="number" step="1" min="0" max="50"></div>
           <div class="field"><label for="connOut">racorduri, cât ies</label><input id="connOut" type="number" step="1" min="0" max="30"></div>
         </div>
-        <p class="note">Valorile cu semn de întrebare nu sunt măsurate. Lungimea vine din plan, nu din cotele de azi. Priza e pusă cam la jumătatea peretelui și cam la nivelul geamului, cum ai descris-o. Racordurile sunt desenate pe peretele 1, lângă stâlp, cu dimensiuni presupuse.</p>
+        <p class="note">Valorile cu semn de întrebare nu sunt măsurate. Lungimea vine din plan, nu din cotele de azi. Priza e pusă cam la jumătatea peretelui și cam la nivelul geamului, cum ai descris-o. Robinetul, ștuțul și țevile albe sunt puse după pozele cu ruleta din 28.11, citite cu 1–2 cm abatere. Cât ies din perete robinetul și ștuțul nu e măsurat, așa că „racorduri, cât ies” rămâne o presupunere.</p>
       </section>
 
       <section data-only="bal" hidden>
@@ -379,6 +383,11 @@ const R = {
   win: { z0: 72.5, z1: 122.5, y0: 134.1 },
   door: { z0: 78, z1: 156 },
   socketZ: 39,
+  // 28.11.2026, read off the tape in the photos (1–2 cm either way): the washer tap on wall 1 by the pillar,
+  // a grey stub at the foot of the pillar (probably the drain) and two white pipes to the hall radiator
+  valve: { x: 19, y: 62 },
+  drain: { z: 7, y: 35 },
+  pipes: { y: [34, 37], off: 2, d: 2.4, out: 3.2, zRiser: 75, yRiser: 76 },
 };
 /* the six pairs at the top of the ranking from 23.11.2026; sizes from the makers' sheets, depths with the door closed */
 const TOP = [
@@ -404,7 +413,7 @@ const DEF = {
   face: 'S', z0: 14, gapDoor: 5, ...CUR.s,
   hinge: 'L', winA: 90, tilt: false, winH: 50, setback: 5,
   doorA: 90, doorOpenA: 90, winOpenA: 90, doorLeaf: 70, doorClear: 78, doorH: 200,
-  socketH: 134, connGap: 2, connOut: 10, nicheH: 190,
+  socketH: 134, connGap: 0, connOut: 10, nicheH: 190,
 };
 const LS = 'debara-top6-v1-p' + PID;
 let S = { ...DEF };
@@ -526,6 +535,15 @@ function checks(s) {
   const bg = backGap(s, r);
   if (hitConn) add('back', 'bad', 'Lovește racordurile', `Racordurile ies cca ${fmt(s.connOut)} cm din peretele 1, iar aparatele sunt la ${fmt(r.z0)} cm de el, chiar în dreptul lor.`);
   else add('back', bg < 5 ? 'warn' : 'ok', `În spate rămân ${fmt(bg)} cm`, bg < 5 ? 'Pentru furtunuri și cablu e bine să rămână cel puțin 5 cm.' : 'Ajunge pentru furtunuri și cablu.');
+  // 1b. the white pipes to the hall radiator: along wall 1 and the door wall at 34–37 cm, then up to 76 cm by the doorway
+  const PP = R.pipes, pZ1 = PP.zRiser + PP.d / 2;
+  const nearDoor = overlap(r.z0, r.z1, 0, pZ1) > 0 ? R.W - PP.out - r.x1 : null;
+  const nearW1 = overlap(r.x0, r.x1, R.P, R.W) > 0 ? r.z0 - PP.out : null;
+  const pg = [nearDoor, nearW1].filter(v => v != null);
+  const g = pg.length ? Math.min(...pg) : Infinity, which = g === nearDoor ? 'de pe peretele cu ușa' : 'de pe peretele 1';
+  if (g < 0) add('pipes', 'bad', 'Atinge țevile spre calorifer', `Țevile albe ${which} ies cca ${fmt(PP.out)} cm din perete, iar aparatele intră ${fmt(-g)} cm peste ele.`);
+  else if (g < 20) add('pipes', g < 2.5 ? 'warn' : 'ok', `Până la țevile spre calorifer rămân ${fmt(g)} cm`, `Țevile albe ${which} ies cca ${fmt(PP.out)} cm din perete. Valoarea e citită din poze, cu 1–2 cm abatere${g < 2.5 ? ', deci e la limită' : ''}.`);
+  else add('pipes', 'ok', 'Țevile spre calorifer nu sunt în drum', `Merg pe peretele 1 și pe peretele cu ușa, la 34–37 cm, și ies cca ${fmt(PP.out)} cm din perete.`);
   // 2. window opens
   const aMax = winMax(s, s.hinge, r, d), aOther = winMax(s, s.hinge === 'L' ? 'R' : 'L', r, d);
   const other = s.hinge === 'L' ? 'pe dreapta' : 'pe stânga';
@@ -618,7 +636,9 @@ function initScene() {
     winGlass: new THREE.MeshStandardMaterial({ color: 0xa9d3ea, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.35 }),
     sky: new THREE.MeshBasicMaterial({ color: 0xdcecf6 }),
     leaf: new THREE.MeshStandardMaterial({ color: 0xd9cfbf, roughness: 0.6 }),
-    pvc: new THREE.MeshStandardMaterial({ color: 0x9aa1a5, roughness: 0.6 }),
+    pvc: new THREE.MeshStandardMaterial({ color: 0x6f767a, roughness: 0.6 }),
+    pipe: new THREE.MeshStandardMaterial({ color: 0xf4f4f1, roughness: 0.45 }),
+    copper: new THREE.MeshStandardMaterial({ color: 0xb87333, roughness: 0.35, metalness: 0.6 }),
     chrome: new THREE.MeshStandardMaterial({ color: 0xd8dde0, roughness: 0.2, metalness: 0.9 }),
     knob: new THREE.MeshStandardMaterial({ color: 0xc9ced1, roughness: 0.25, metalness: 0.8 }),
     blue: new THREE.MeshStandardMaterial({ color: 0x2f6fd6, roughness: 0.5 }),
@@ -861,11 +881,29 @@ function buildLeaf() {
 
 function buildConn() {
   clearGroup(C.conn);
-  const cb = connBox(S), M = C.M, out = Math.max(1, S.connOut);
-  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.5, out, 20), M.pvc); pipe.rotation.x = Math.PI / 2; pipe.position.set(cb.x0 + 5, 42, out / 2); pipe.castShadow = true; C.conn.add(pipe);
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.2, 2, 20), M.pvc); cap.rotation.x = Math.PI / 2; cap.position.set(cb.x0 + 5, 42, out); C.conn.add(cap);
-  const tap = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, Math.max(1, out - 2), 14), M.chrome); tap.rotation.x = Math.PI / 2; tap.position.set(cb.x0 + 12, 68, Math.max(1, out - 2) / 2); C.conn.add(tap);
-  const lever = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 6), M.blue); lever.position.set(cb.x0 + 12, 71, Math.max(1, out - 3)); lever.rotation.x = 0.5; C.conn.add(lever);
+  const cb = connBox(S), M = C.M, out = Math.max(1, S.connOut), V = R.valve, PP = R.pipes;
+  const cyl = (r, len, mat, axis, x, y, z) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, Math.max(0.5, len), 16), mat);
+    if (axis === 'x') m.rotation.z = Math.PI / 2; else if (axis === 'z') m.rotation.x = Math.PI / 2;
+    m.position.set(x, y, z); m.castShadow = true; C.conn.add(m); return m;
+  };
+  // the washer tap: a rosette on wall 1, fed from below by a copper pipe; how far it sticks out is the "racorduri, cât ies" guess
+  cyl(0.8, V.y - 40, M.copper, 'y', V.x, (40 + V.y) / 2, 1.6);
+  cyl(3, 0.8, M.chrome, 'z', V.x, V.y, 0.4);
+  const body = Math.max(1, out - 2);
+  cyl(1.1, body, M.chrome, 'z', V.x, V.y, body / 2);
+  const lever = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 6), M.blue); lever.position.set(V.x, V.y + 3, Math.max(1, out - 3)); lever.rotation.x = 0.5; C.conn.add(lever);
+  // the grey stub at the foot of the pillar, probably the drain (which face of the pillar it is on is a guess)
+  const sl = Math.min(8, out);
+  cyl(2.5, sl, M.pvc, 'x', R.P + sl / 2, R.drain.y, R.drain.z);
+  // the white pipes: along wall 1, along the door wall, then up by the doorway and into the wall toward the hall
+  const xE = R.W - PP.off, zR = PP.zRiser, pr = PP.d / 2;
+  for (const y of PP.y) {
+    cyl(pr, xE - R.P, M.pipe, 'x', (R.P + xE) / 2, y, PP.off);
+    cyl(pr, zR - PP.off, M.pipe, 'z', xE, y, (PP.off + zR) / 2);
+  }
+  cyl(pr * 0.85, PP.yRiser - PP.y[0], M.pipe, 'y', xE, (PP.y[0] + PP.yRiser) / 2, zR);
+  cyl(pr * 0.85, PP.off + 1, M.pipe, 'x', xE + (PP.off + 1) / 2, PP.yRiser, zR);
   const hit = ckSt(checks(S), 'back') === 'bad';
   const zone = box(cb.x0, cb.x1, cb.y0, cb.y1, 0, out, new THREE.MeshBasicMaterial({ color: hit ? 0xd2453a : 0x2f6fd6, transparent: true, opacity: hit ? 0.22 : 0.1, depthWrite: false }));
   C.conn.add(zone);
@@ -880,7 +918,8 @@ const LBL_DEB = [
   { id: 'mw', t: 'Mașina', s: () => `${fmt(S.wW)} × ${fmt(S.wD)} × ${fmt(S.wH)}`, p: () => machFront(0) },
   { id: 'md', t: 'Uscătorul', s: () => `${fmt(S.dW)} × ${fmt(S.dD)} × ${fmt(S.dH)}`, p: () => machFront(1), hide: () => S.layout === 'one' },
   { id: 'soc', t: 'Priza', s: 'estimată, nemăsurată', est: true, p: () => [R.W - 2, S.socketH + 7, R.socketZ] },
-  { id: 'con', t: 'Racorduri', s: 'apă și scurgere, poziție presupusă', est: true, p: () => [connBox(S).x0 + 8, 86, 4] },
+  { id: 'con', t: 'Robinet și scurgere', s: 'la 62 și 35 cm · cât ies, presupus', est: true, p: () => [R.valve.x + 4, 84, 4] },
+  { id: 'pip', t: 'Țevi spre calorifer', s: 'la 34–37 cm, urcă la 76 · din poze', est: true, p: () => [R.W - 8, R.pipes.yRiser + 10, R.pipes.zRiser] },
   { id: 'door', t: 'Ușa', s: 'se deschide spre hol', p: () => [R.W + R.tDoor + 2, S.doorH + 4, (R.door.z0 + R.door.z1) / 2] },
 ];
 function machFront(i) {
@@ -1174,6 +1213,10 @@ function drawPlan(ck) {
   h += `<rect x="0" y="0" width="${P}" height="${P}" class="wl"/><text x="${P / 2}" y="${P + 5}" class="lb" text-anchor="middle">stâlp</text>`;
   const connHit = ckSt(ck, 'back') === 'bad';
   h += `<rect x="${cb.x0}" y="0" width="${cb.x1 - cb.x0}" height="${Math.max(1, cb.z1)}" fill="${connHit ? 'var(--bad)' : '#2f6fd6'}" opacity=".45"/>`;
+  const PPp = R.pipes, pcol = ckSt(ck, 'pipes') === 'bad' ? 'var(--bad)' : 'var(--muted)';
+  h += `<path d="M${P} ${PPp.off}H${W - PPp.off}V${PPp.zRiser}" fill="none" stroke="${pcol}" stroke-width="${PPp.d}" stroke-linejoin="round" opacity=".75"><title>Țevile albe spre caloriferul din hol, la 34–37 cm</title></path>`;
+  h += `<circle cx="${W - PPp.off}" cy="${PPp.zRiser}" r="${PPp.d * 0.75}" fill="${pcol}"/><circle cx="${R.valve.x}" cy="1.2" r="1.5" fill="#2f6fd6"/>`;
+  h += `<text x="${W + tDoor + 2}" y="58" class="lb">țevi calorifer</text>`;
   // machines
   h += `<g class="mach" id="pm">`;
   for (const m of machines(S)) h += `<rect x="${m.x0}" y="${m.z0}" width="${m.x1 - m.x0}" height="${m.z1 - m.z0}" rx=".8"/>`;
